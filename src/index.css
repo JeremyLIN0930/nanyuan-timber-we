@@ -19,6 +19,49 @@
   cursor: auto;
 }
 
+/* ═══════════════════════════════════════════════════════
+   BOOTSTRAP 5 DARK THEME OVERRIDES
+   These MUST come after Bootstrap import to override defaults
+   ═══════════════════════════════════════════════════════ */
+
+/* Override Bootstrap's white body */
+.bg-body, .bg-white, .bg-light {
+  background-color: #050505 !important;
+}
+
+/* Override Bootstrap card/modal backgrounds */
+.card, .modal-content, .offcanvas, .dropdown-menu, .list-group-item {
+  background-color: #0D0D0E !important;
+  color: rgba(255,255,255,0.85) !important;
+  border-color: rgba(255,255,255,0.05) !important;
+}
+
+/* Override Bootstrap form controls for dark theme */
+.form-control, .form-select {
+  background-color: transparent !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+.form-control:focus, .form-select:focus {
+  background-color: transparent !important;
+  color: #fff !important;
+  border-color: #C5A880 !important;
+  box-shadow: 0 0 15px rgba(197,168,128,0.2) !important;
+}
+.form-control::placeholder {
+  color: rgba(255,255,255,0.2) !important;
+}
+
+/* Override Bootstrap's link colors */
+a { color: inherit; text-decoration: none; }
+a:hover { color: #C5A880; }
+
+/* Override Bootstrap btn styles for dark theme */
+.btn { border-radius: 0; }
+
+/* Ensure Bootstrap .container coexists with Tailwind */
+.container-fluid { padding-left: 0; padding-right: 0; }
+
 body {
   font-family: 'Inter', 'Noto Sans TC', sans-serif;
   font-weight: 300;

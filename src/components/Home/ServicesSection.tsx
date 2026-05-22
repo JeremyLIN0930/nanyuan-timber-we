@@ -18,15 +18,22 @@ const TiltCard: React.FC<{ children: React.ReactNode; onClick: () => void }> = (
 
   return (
     <motion.div
-      className="cursor-pointer relative group h-full"
-      style={{ rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 1000 }}
+      style={{ rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 1000, cursor: 'pointer' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
+      className="h-100"
     >
-      <div 
-        className="h-full bg-titanium border border-white/5 group-hover:border-metal-brown group-hover:shadow-[0_0_40px_rgba(197,168,128,0.25)] transition-all duration-500 overflow-hidden" 
-        style={{ transform: 'translateZ(30px)' }}
+      <div
+        className="h-100 overflow-hidden"
+        style={{
+          transform: 'translateZ(30px)',
+          backgroundColor: '#0D0D0E',
+          border: '1px solid rgba(255,255,255,0.05)',
+          transition: 'all 0.5s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#C5A880'; e.currentTarget.style.boxShadow = '0 0 40px rgba(197,168,128,0.25)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.boxShadow = 'none'; }}
       >
         {children}
       </div>
@@ -65,21 +72,24 @@ const ServicesSection: React.FC = () => {
   const [activePopup, setActivePopup] = useState<number | null>(null);
 
   return (
-    <section className="py-[15vh] bg-obsidian relative">
-      <div className="container mx-auto px-6 md:px-12">
-        <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-metal-brown glow-text mb-20">服務項目</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section className="py-5" style={{ backgroundColor: '#050505' }}>
+      <div className="container py-4">
+        <h2 className="fw-bold mb-5" style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.85)', lineHeight: 1.1 }}>服務項目</h2>
+
+        {/* Bootstrap Grid: 1 col mobile, 3 col desktop */}
+        <div className="row g-4">
           {STEPS.map((step, i) => (
-            <TiltCard key={i} onClick={() => setActivePopup(i)}>
-              <div className="p-10 flex flex-col h-full justify-between min-h-[280px]">
-                <span className="text-5xl font-black tracking-tighter text-metal-brown glow-text mb-8">{step.num}</span>
-                <div>
-                  <h3 className="text-xl font-black tracking-tighter text-white mb-3">{step.title}</h3>
-                  <p className="text-sm font-light tracking-widest text-white/40">{step.subtitle}</p>
+            <div className="col-12 col-md-6 col-lg-4" key={i}>
+              <TiltCard onClick={() => setActivePopup(i)}>
+                <div className="p-4 p-lg-5 d-flex flex-column justify-content-between" style={{ minHeight: '260px' }}>
+                  <span className="fw-bold d-block mb-4" style={{ fontSize: 'clamp(2.5rem, 5vw, 3rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.7)', lineHeight: 1.1 }}>{step.num}</span>
+                  <div>
+                    <h3 className="mb-2" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff' }}>{step.title}</h3>
+                    <p style={{ fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)' }}>{step.subtitle}</p>
+                  </div>
                 </div>
-              </div>
-            </TiltCard>
+              </TiltCard>
+            </div>
           ))}
         </div>
       </div>
@@ -87,33 +97,36 @@ const ServicesSection: React.FC = () => {
       {/* Popup Overlay */}
       <AnimatePresence>
         {activePopup !== null && (
-          <motion.div 
-            className="fixed inset-0 flex items-center justify-center p-6 md:p-12"
-            style={{ zIndex: 9990, backgroundColor: 'rgba(5, 5, 5, 0.95)', backdropFilter: 'blur(20px)' }}
+          <motion.div
+            className="d-flex align-items-center justify-content-center p-3 p-md-5"
+            style={{ position: 'fixed', inset: 0, zIndex: 9990, backgroundColor: 'rgba(5,5,5,0.95)', backdropFilter: 'blur(20px)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 cursor-pointer" onClick={() => setActivePopup(null)}></div>
-            
-            <motion.div 
-              className="relative w-full max-w-5xl bg-titanium border border-white/10 overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.8)] flex flex-col md:flex-row"
+            <div className="position-absolute top-0 start-0 w-100 h-100" style={{ cursor: 'pointer' }} onClick={() => setActivePopup(null)}></div>
+
+            <motion.div
+              className="position-relative w-100 overflow-hidden d-flex flex-column flex-md-row"
+              style={{ maxWidth: '960px', backgroundColor: '#0D0D0E', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 0 60px rgba(0,0,0,0.8)' }}
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="w-full md:w-1/2 h-64 md:h-[500px] relative">
-                <img src={STEPS[activePopup].popupImg} className="w-full h-full object-cover" alt={STEPS[activePopup].popupTitle} />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-titanium/50"></div>
+              <div className="w-100" style={{ maxHeight: '250px', minHeight: '200px' }}>
+                <img src={STEPS[activePopup].popupImg} className="w-100 h-100" style={{ objectFit: 'cover' }} alt={STEPS[activePopup].popupTitle} />
               </div>
-              <div className="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
-                <span className="text-2xl font-black tracking-tighter text-metal-brown glow-text mb-4">STEP {STEPS[activePopup].num}</span>
-                <h3 className="text-3xl font-black tracking-tighter text-white mb-8">{STEPS[activePopup].popupTitle}</h3>
-                <p className="text-base font-light tracking-widest text-white/70 leading-relaxed mb-12">
+              <div className="d-none d-md-block" style={{ width: '50%', minHeight: '400px' }}>
+                <img src={STEPS[activePopup].popupImg} className="w-100 h-100" style={{ objectFit: 'cover', display: 'block' }} alt={STEPS[activePopup].popupTitle} />
+              </div>
+              <div className="w-100 p-4 p-md-5 d-flex flex-column justify-content-center" style={{ flex: '1 1 50%' }}>
+                <span className="fw-bold mb-2" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', letterSpacing: '-0.02em', color: '#C5A880', textShadow: '0 0 20px rgba(197,168,128,0.6)' }}>STEP {STEPS[activePopup].num}</span>
+                <h3 className="mb-4" style={{ fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff' }}>{STEPS[activePopup].popupTitle}</h3>
+                <p className="mb-5" style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.95rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8 }}>
                   {STEPS[activePopup].popupContent}
                 </p>
-                <button onClick={() => setActivePopup(null)} className="apple-btn w-fit">
+                <button onClick={() => setActivePopup(null)} className="apple-btn" style={{ width: 'fit-content' }}>
                   關閉視窗 ➔
                 </button>
               </div>

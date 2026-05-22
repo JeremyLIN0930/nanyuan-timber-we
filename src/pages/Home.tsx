@@ -52,19 +52,20 @@ const BeforeAfterSlider: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[60vh] md:h-[80vh] cursor-ew-resize overflow-hidden select-none"
+      className="position-relative w-100 overflow-hidden"
+      style={{ height: 'clamp(300px, 60vh, 80vh)', cursor: 'ew-resize', userSelect: 'none' }}
       onMouseMove={(e) => { if (e.buttons === 1) handleMove(e.clientX); }}
       onTouchMove={(e) => handleMove(e.touches[0].clientX)}
       onMouseDown={(e) => handleMove(e.clientX)}
     >
-      {/* After (base) */}
-      <div className="absolute inset-0" style={{ backgroundImage: "url('/images/luxury_tianmu_home_1779301841564.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="absolute inset-0 bg-obsidian/10"></div>
-        <div className="absolute bottom-8 right-8 text-white text-xs tracking-[0.2em] font-light bg-obsidian/60 backdrop-blur px-5 py-2">完工後 AFTER</div>
+      {/* After */}
+      <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundImage: "url('/images/luxury_tianmu_home_1779301841564.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: 'rgba(5,5,5,0.1)' }}></div>
+        <div className="position-absolute bottom-0 end-0 m-3 m-md-4 px-3 py-2" style={{ color: '#fff', fontSize: '11px', letterSpacing: '0.2em', fontWeight: 300, backgroundColor: 'rgba(5,5,5,0.6)', backdropFilter: 'blur(8px)' }}>完工後 AFTER</div>
       </div>
-      {/* Before (clipped) */}
+      {/* Before */}
       <div
-        className="absolute inset-0"
+        className="position-absolute top-0 start-0 w-100 h-100"
         style={{
           backgroundImage: "url('/images/japanese_wabi_sabi_1779301881798.png')",
           backgroundSize: 'cover', backgroundPosition: 'center',
@@ -72,12 +73,12 @@ const BeforeAfterSlider: React.FC = () => {
           clipPath: `polygon(0 0, ${pos}% 0, ${pos}% 100%, 0 100%)`
         }}
       >
-        <div className="absolute bottom-8 left-8 text-white text-xs tracking-[0.2em] font-light bg-obsidian/60 backdrop-blur px-5 py-2">施工前 BEFORE</div>
+        <div className="position-absolute bottom-0 start-0 m-3 m-md-4 px-3 py-2" style={{ color: '#fff', fontSize: '11px', letterSpacing: '0.2em', fontWeight: 300, backgroundColor: 'rgba(5,5,5,0.6)', backdropFilter: 'blur(8px)' }}>施工前 BEFORE</div>
       </div>
       {/* Handle */}
-      <div className="absolute top-0 bottom-0 w-[2px] z-10" style={{ left: `${pos}%`, transform: 'translateX(-50%)', backgroundColor: '#C5A880', boxShadow: '0 0 25px rgba(197,168,128,0.8)' }}>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border border-metal-brown bg-obsidian/80 backdrop-blur flex items-center justify-center shadow-[0_0_20px_rgba(197,168,128,0.5)]">
-          <span className="text-metal-brown text-xs font-light">⟨⟩</span>
+      <div className="position-absolute top-0 bottom-0" style={{ left: `${pos}%`, transform: 'translateX(-50%)', width: '2px', backgroundColor: '#C5A880', boxShadow: '0 0 25px rgba(197,168,128,0.8)', zIndex: 10 }}>
+        <div className="position-absolute top-50 start-50 translate-middle rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', border: '1px solid #C5A880', backgroundColor: 'rgba(5,5,5,0.8)', backdropFilter: 'blur(8px)', boxShadow: '0 0 20px rgba(197,168,128,0.5)' }}>
+          <span style={{ color: '#C5A880', fontSize: '12px', fontWeight: 300 }}>⟨⟩</span>
         </div>
       </div>
     </div>
@@ -91,7 +92,6 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
 
-  // Auto Slider
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -99,7 +99,6 @@ const Home: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Scroll Zoom
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroScale = useTransform(heroScroll, [0, 0.5], [1, 0.85]);
   const heroRadius = useTransform(heroScroll, [0, 0.5], ['0px', '24px']);
@@ -113,27 +112,27 @@ const Home: React.FC = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-obsidian min-h-screen"
+      style={{ backgroundColor: '#050505', minHeight: '100vh' }}
     >
       {/* ══════════════ BLOCK 1: HERO SLIDER + SCROLL ZOOM ══════════════ */}
-      <section ref={heroRef} className="h-[200vh] relative w-full">
-        <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-obsidian">
+      <section ref={heroRef} className="position-relative w-100" style={{ height: '200vh' }}>
+        <div className="position-sticky top-0 w-100 d-flex align-items-center justify-content-center overflow-hidden" style={{ height: '100vh', backgroundColor: '#050505' }}>
 
           {/* Reveal Text Behind */}
           <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-0"
-            style={{ opacity: revealOpacity, y: revealY }}
+            className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center px-3 px-md-5"
+            style={{ opacity: revealOpacity, y: revealY, zIndex: 0 }}
           >
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-metal-brown glow-text mb-6">重新定義奢華本質</h2>
-            <p className="text-lg md:text-xl font-light tracking-widest text-white/50 leading-relaxed max-w-2xl">
+            <h2 className="fw-bold mb-3" style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.7)', lineHeight: 1.1 }}>重新定義奢華本質</h2>
+            <p className="mx-auto" style={{ fontSize: 'clamp(0.85rem, 2vw, 1.2rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', maxWidth: '600px', lineHeight: 1.8 }}>
               從精密選材到完美落地，<br/>展現無與倫比的建築工藝。
             </p>
           </motion.div>
 
           {/* Scalable Slider */}
           <motion.div
-            className="relative w-full h-full overflow-hidden z-10 bg-black"
-            style={{ scale: heroScale, borderRadius: heroRadius, opacity: heroOpacity, boxShadow: '0 0 80px rgba(0,0,0,0.9)' }}
+            className="position-relative w-100 h-100 overflow-hidden"
+            style={{ scale: heroScale, borderRadius: heroRadius, opacity: heroOpacity, boxShadow: '0 0 80px rgba(0,0,0,0.9)', zIndex: 10, backgroundColor: '#000' }}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -142,41 +141,42 @@ const Home: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1.4, ease: 'easeInOut' }}
-                className="absolute inset-0"
+                className="position-absolute top-0 start-0 w-100 h-100"
                 style={{ backgroundImage: `url(${heroSlides[currentSlide].image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
               >
-                <div className="absolute inset-0 bg-obsidian/50"></div>
+                <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: 'rgba(5,5,5,0.5)' }}></div>
               </motion.div>
             </AnimatePresence>
 
             {/* Hero Text */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-20 px-6">
+            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center px-3 px-md-5" style={{ zIndex: 20, pointerEvents: 'none' }}>
               <h1
-                className="text-4xl md:text-7xl font-black tracking-tighter text-metal-brown mb-4"
-                style={{ textShadow: '0 0 40px rgba(197, 168, 128, 0.85)' }}
+                className="fw-bold mb-2 mb-md-4"
+                style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.85)', lineHeight: 1.1 }}
               >
                 從材料源頭開始
               </h1>
               <p
-                className="text-xl md:text-3xl font-light tracking-widest text-white mb-10"
-                style={{ textShadow: '0 0 25px rgba(255,255,255,0.5)' }}
+                className="mb-4 mb-md-5"
+                style={{ fontSize: 'clamp(1rem, 2.5vw, 1.8rem)', fontWeight: 300, letterSpacing: '0.15em', color: '#fff', textShadow: '0 0 25px rgba(255,255,255,0.5)' }}
               >
                 打造安心落地的空間
               </p>
-              <div className="pointer-events-auto">
-                <button onClick={() => navigate('/projects')} className="apple-btn text-sm text-white hover:text-metal-brown">
+              <div style={{ pointerEvents: 'auto' }}>
+                <button onClick={() => navigate('/projects')} className="apple-btn" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)', color: '#fff' }}>
                   查看作品案例 ➔
                 </button>
               </div>
             </div>
 
             {/* Dots */}
-            <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-4 z-20 pointer-events-auto">
+            <div className="position-absolute bottom-0 start-0 end-0 d-flex justify-content-center gap-3 pb-4" style={{ zIndex: 20, pointerEvents: 'auto' }}>
               {heroSlides.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentSlide(idx)}
-                  className={`h-[3px] transition-all duration-500 ${currentSlide === idx ? 'w-12 bg-metal-brown shadow-[0_0_12px_rgba(197,168,128,0.9)]' : 'w-4 bg-white/25 hover:bg-white/50'}`}
+                  className="border-0 p-0"
+                  style={{ height: '3px', width: currentSlide === idx ? '48px' : '16px', backgroundColor: currentSlide === idx ? '#C5A880' : 'rgba(255,255,255,0.25)', transition: 'all 0.5s', boxShadow: currentSlide === idx ? '0 0 12px rgba(197,168,128,0.9)' : 'none' }}
                 />
               ))}
             </div>
@@ -185,24 +185,26 @@ const Home: React.FC = () => {
       </section>
 
       {/* ══════════════ BLOCK 2: DATA TRUST INDICATORS ══════════════ */}
-      <section className="w-full bg-titanium py-32 border-y border-white/5">
-        <div className="container mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
+      <section className="w-100 py-5 py-lg-5" style={{ backgroundColor: '#0D0D0E', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="container py-4 py-lg-5">
+          <div className="row g-4 g-lg-5 text-center">
             {[
               { num: '100%', label: '原木進口追蹤', desc: '每一塊板材皆有完整的產地認證與含水率檢測報告' },
               { num: '0', label: '惡意追加預算', desc: '合約即為最終報價，杜絕一切隱藏費用' },
               { num: '24/7', label: '雲端監造查看', desc: '隨時透過手機查看施工進度，每日實拍回報' },
             ].map((item, i) => (
-              <FadeInSection key={i} delay={i * 0.15}>
-                <span
-                  className="text-6xl md:text-8xl font-black tracking-tighter text-metal-brown block mb-6"
-                  style={{ textShadow: '0 0 40px rgba(197, 168, 128, 0.7)' }}
-                >
-                  {item.num}
-                </span>
-                <h3 className="text-lg font-black tracking-tighter text-white mb-3">{item.label}</h3>
-                <p className="text-sm font-light tracking-widest text-white/40 leading-relaxed max-w-xs mx-auto">{item.desc}</p>
-              </FadeInSection>
+              <div className="col-12 col-md-4" key={i}>
+                <FadeInSection delay={i * 0.15}>
+                  <span
+                    className="d-block fw-bold mb-3"
+                    style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.7)', lineHeight: 1.1 }}
+                  >
+                    {item.num}
+                  </span>
+                  <h3 className="mb-2" style={{ fontSize: 'clamp(0.95rem, 2vw, 1.15rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff' }}>{item.label}</h3>
+                  <p className="mx-auto" style={{ fontSize: 'clamp(0.75rem, 1.2vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', maxWidth: '280px', lineHeight: 1.8 }}>{item.desc}</p>
+                </FadeInSection>
+              </div>
             ))}
           </div>
         </div>
@@ -212,15 +214,16 @@ const Home: React.FC = () => {
       <ServicesSection />
 
       {/* ══════════════ BLOCK 4: BEFORE / AFTER MAGIC ══════════════ */}
-      <section className="w-full bg-obsidian py-32">
-        <div className="container mx-auto px-6 md:px-12 mb-16">
+      <section className="w-100 py-5" style={{ backgroundColor: '#050505' }}>
+        <div className="container py-4">
           <FadeInSection>
             <h2
-              className="text-4xl md:text-6xl font-black tracking-tighter text-metal-brown glow-text mb-6"
+              className="fw-bold mb-3"
+              style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.85)', lineHeight: 1.1 }}
             >
               空間魔術：擦除對照
             </h2>
-            <p className="text-lg font-light tracking-widest text-white/50 max-w-2xl leading-relaxed">
+            <p className="mb-4" style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', maxWidth: '600px', lineHeight: 1.8 }}>
               左右拖曳滑桿，親手見證破舊空間蛻變為頂級住宅的震撼反差。
             </p>
           </FadeInSection>
@@ -229,56 +232,63 @@ const Home: React.FC = () => {
       </section>
 
       {/* ══════════════ BLOCK 5: PORTFOLIO WALL ══════════════ */}
-      <section className="w-full bg-titanium py-32">
-        <div className="container mx-auto px-6 md:px-12">
-          <FadeInSection className="mb-20">
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-metal-brown glow-text mb-6">
+      <section className="w-100 py-5" style={{ backgroundColor: '#0D0D0E' }}>
+        <div className="container py-4">
+          <FadeInSection className="mb-5">
+            <h2 className="fw-bold mb-3" style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.85)', lineHeight: 1.1 }}>
               極精選作品
             </h2>
-            <p className="text-lg font-light tracking-widest text-white/40">
+            <p style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)' }}>
               點擊探索每一個空間的完整故事。
             </p>
           </FadeInSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Bootstrap Grid: 1 col mobile, 2 col tablet, 3 col desktop */}
+          <div className="row g-4">
             {portfolioItems.map((item, i) => (
-              <FadeInSection key={i} delay={i * 0.08}>
-                <motion.div
-                  className="relative overflow-hidden cursor-pointer group"
-                  whileHover={{ y: -6 }}
-                  onClick={() => navigate('/projects')}
-                >
-                  <div className="aspect-[4/3] relative">
-                    <img src={item.img} className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" alt={item.title} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/30 to-transparent opacity-80"></div>
-                    <div className="absolute bottom-5 left-5">
-                      <span className="text-[10px] font-light tracking-widest text-metal-brown uppercase block mb-1">{item.type}</span>
-                      <h3 className="text-xl font-black tracking-tighter text-white" style={{ textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>{item.title}</h3>
+              <div className="col-12 col-md-6 col-lg-4" key={i}>
+                <FadeInSection delay={i * 0.08}>
+                  <motion.div
+                    className="position-relative overflow-hidden"
+                    style={{ cursor: 'pointer' }}
+                    whileHover={{ y: -6 }}
+                    onClick={() => navigate('/projects')}
+                  >
+                    <div className="position-relative" style={{ aspectRatio: '4/3' }}>
+                      <img src={item.img} className="w-100 h-100" style={{ objectFit: 'cover', opacity: 0.7, transition: 'all 0.7s' }} alt={item.title}
+                        onMouseEnter={e => { (e.target as HTMLImageElement).style.opacity = '1'; (e.target as HTMLImageElement).style.transform = 'scale(1.05)'; }}
+                        onMouseLeave={e => { (e.target as HTMLImageElement).style.opacity = '0.7'; (e.target as HTMLImageElement).style.transform = 'scale(1)'; }}
+                      />
+                      <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(to top, #050505 0%, rgba(5,5,5,0.3) 50%, transparent 100%)', opacity: 0.8 }}></div>
+                      <div className="position-absolute bottom-0 start-0 p-3 p-md-4">
+                        <span className="d-block mb-1" style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textTransform: 'uppercase' }}>{item.type}</span>
+                        <h3 style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>{item.title}</h3>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              </FadeInSection>
+                  </motion.div>
+                </FadeInSection>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ══════════════ BLOCK 6: CTA FULL-WIDTH ══════════════ */}
-      <section className="relative w-full h-[80vh] overflow-hidden">
-        <img src="/images/style_luxury_dark_1779301949701.png" className="absolute inset-0 w-full h-full object-cover opacity-40" alt="CTA" />
-        <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/60 to-obsidian/30"></div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+      <section className="position-relative w-100 overflow-hidden" style={{ height: 'clamp(400px, 70vh, 80vh)' }}>
+        <img src="/images/style_luxury_dark_1779301949701.png" className="position-absolute top-0 start-0 w-100 h-100" style={{ objectFit: 'cover', opacity: 0.4 }} alt="CTA" />
+        <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(to top, #050505 0%, rgba(5,5,5,0.6) 50%, rgba(5,5,5,0.3) 100%)' }}></div>
+        <div className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center px-3 px-md-5">
           <FadeInSection>
             <h2
-              className="text-4xl md:text-7xl font-black tracking-tighter text-metal-brown mb-8"
-              style={{ textShadow: '0 0 50px rgba(197, 168, 128, 0.9)' }}
+              className="fw-bold mb-3 mb-md-4"
+              style={{ fontSize: 'clamp(1.8rem, 5vw, 4rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 50px rgba(197,168,128,0.9)', lineHeight: 1.1 }}
             >
               開啟您的空間之旅
             </h2>
-            <p className="text-lg md:text-xl font-light tracking-widest text-white/70 mb-12 max-w-2xl leading-relaxed">
+            <p className="mx-auto mb-4 mb-md-5" style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.15rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.7)', maxWidth: '600px', lineHeight: 1.8 }}>
               從一次免費諮詢開始，讓南源的頂級職人為您的夢想空間量身打造。
             </p>
-            <button onClick={() => navigate('/contact')} className="apple-btn text-white hover:text-metal-brown text-base">
+            <button onClick={() => navigate('/contact')} className="apple-btn" style={{ fontSize: 'clamp(0.8rem, 1.5vw, 1rem)', color: '#fff' }}>
               立即預約諮詢 ➔
             </button>
           </FadeInSection>

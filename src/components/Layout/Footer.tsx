@@ -3,31 +3,26 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-obsidian border-t border-white/5 pt-20 pb-10">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-20">
+    <footer style={{ backgroundColor: '#050505', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '60px', paddingBottom: '32px' }}>
+      <div className="container px-3 px-md-4">
+        <div className="row g-4 g-md-5 mb-5">
           {/* Brand */}
-          <div>
-            <h3 className="text-2xl font-black tracking-tighter text-metal-brown glow-text mb-4">南源木材</h3>
-            <p className="text-[10px] font-light tracking-[0.25em] uppercase text-white/30 mb-6">NANYUAN TIMBER DESIGN</p>
-            <p className="text-sm font-light tracking-widest text-white/40 leading-relaxed">
+          <div className="col-12 col-md-4">
+            <h3 className="fw-bold mb-2" style={{ fontSize: 'clamp(1.5rem, 3vw, 1.8rem)', letterSpacing: '-0.03em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.85)' }}>南源木材</h3>
+            <p className="mb-3" style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)' }}>NANYUAN TIMBER DESIGN</p>
+            <p style={{ fontSize: 'clamp(0.8rem, 1.2vw, 0.9rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', lineHeight: 1.8 }}>
               源頭理解、細節品質、誠信透明<br/>
               設計、選材、施工一條龍整合服務
             </p>
           </div>
 
           {/* Links */}
-          <div>
-            <h4 className="text-sm font-black tracking-tighter text-white mb-6">快速連結</h4>
-            <ul className="space-y-3">
-              {[
-                { label: '首頁', path: '/' },
-                { label: '關於南源', path: '/about' },
-                { label: '作品案例', path: '/projects' },
-                { label: '預約諮詢', path: '/contact' },
-              ].map(link => (
+          <div className="col-6 col-md-4">
+            <h4 className="fw-bold mb-3" style={{ fontSize: '0.85rem', letterSpacing: '-0.02em', color: '#fff' }}>快速連結</h4>
+            <ul className="list-unstyled d-flex flex-column gap-2">
+              {[{ label: '首頁', path: '/' }, { label: '關於南源', path: '/about' }, { label: '作品案例', path: '/projects' }, { label: '預約諮詢', path: '/contact' }].map(link => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-sm font-light tracking-widest text-white/40 hover:text-metal-brown transition-colors duration-300">
+                  <Link to={link.path} style={{ fontSize: 'clamp(0.75rem, 1.1vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', transition: 'color 0.3s', textDecoration: 'none' }} onMouseEnter={e => (e.target as HTMLElement).style.color = '#C5A880'} onMouseLeave={e => (e.target as HTMLElement).style.color = 'rgba(255,255,255,0.4)'}>
                     {link.label}
                   </Link>
                 </li>
@@ -36,19 +31,19 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Contact */}
-          <div>
-            <h4 className="text-sm font-black tracking-tighter text-white mb-6">聯絡我們</h4>
-            <div className="space-y-3 text-sm font-light tracking-widest text-white/40">
-              <p>Email: contact@nanyuanwood.com.tw</p>
-              <p>Phone: (02) 2345-6789</p>
-              <p>Address: 台北市某某區某某路123號</p>
+          <div className="col-6 col-md-4">
+            <h4 className="fw-bold mb-3" style={{ fontSize: '0.85rem', letterSpacing: '-0.02em', color: '#fff' }}>聯絡我們</h4>
+            <div className="d-flex flex-column gap-2" style={{ fontSize: 'clamp(0.75rem, 1.1vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>
+              <p className="m-0">Email: contact@nanyuanwood.com.tw</p>
+              <p className="m-0">Phone: (02) 2345-6789</p>
+              <p className="m-0">Address: 台北市某某區某某路123號</p>
             </div>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-white/5 pt-8 text-center">
-          <p className="text-[11px] font-light tracking-[0.3em] text-white/15 uppercase">
+        <div className="text-center pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <p className="m-0" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.15)', textTransform: 'uppercase' }}>
             &copy; {new Date().getFullYear()} NANYUAN TIMBER DESIGN. All rights reserved.
           </p>
         </div>

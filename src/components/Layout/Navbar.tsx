@@ -15,15 +15,10 @@ const Navbar: React.FC = () => {
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
-  // Close menu on route change
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   const navLinks = [
     { name: '首頁', path: '/' },
@@ -35,42 +30,100 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Top Bar - always visible */}
-      <nav className="fixed top-0 left-0 w-full z-[9999] py-5 px-6 md:px-12 flex justify-between items-center bg-obsidian/80 backdrop-blur-xl border-b border-white/5">
-        <Link to="/" className="flex flex-col" onClick={() => setIsOpen(false)}>
-          <span className="text-xl md:text-2xl font-black tracking-tighter leading-none text-white">
-            南源木材
-          </span>
-          <span className="text-[9px] md:text-[10px] font-light tracking-[0.25em] mt-1 uppercase text-metal-brown">
-            NANYUAN TIMBER DESIGN
-          </span>
-        </Link>
-        
-        <button 
-          className="text-white hover:text-metal-brown transition-colors duration-300"
-          onClick={toggleMenu}
-          aria-label="Toggle Menu"
-        >
-          {isOpen ? <X size={28} strokeWidth={1.5} /> : <Menu size={28} strokeWidth={1.5} />}
-        </button>
+      {/* ═══ TOP BAR ═══ */}
+      <nav
+        className="navbar navbar-expand-lg fixed-top py-3 px-3 px-md-4 px-lg-5"
+        style={{
+          zIndex: 9999,
+          backgroundColor: 'rgba(5,5,5,0.85)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
+        }}
+      >
+        <div className="container-fluid px-2 px-md-3">
+          {/* Brand */}
+          <Link to="/" className="navbar-brand d-flex flex-column p-0 m-0" onClick={() => setIsOpen(false)}>
+            <span
+              className="fw-bold lh-1"
+              style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)', letterSpacing: '-0.03em', color: '#fff' }}
+            >
+              南源木材
+            </span>
+            <span
+              className="d-none d-sm-block mt-1"
+              style={{ fontSize: '9px', fontWeight: 300, letterSpacing: '0.25em', color: '#C5A880', textTransform: 'uppercase' }}
+            >
+              NANYUAN TIMBER DESIGN
+            </span>
+          </Link>
+
+          {/* ─── Desktop Inline Links (lg+) ─── */}
+          <div className="d-none d-lg-flex align-items-center gap-4">
+            {navLinks.map(link => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className="position-relative"
+                style={{
+                  fontSize: '13px',
+                  fontWeight: location.pathname === link.path ? 900 : 300,
+                  letterSpacing: '0.12em',
+                  color: location.pathname === link.path ? '#C5A880' : 'rgba(255,255,255,0.6)',
+                  textShadow: location.pathname === link.path ? '0 0 20px rgba(197,168,128,0.7)' : 'none',
+                  transition: 'all 0.4s cubic-bezier(0.16,1,0.3,1)',
+                  textDecoration: 'none',
+                }}
+                onMouseEnter={e => {
+                  (e.target as HTMLElement).style.color = '#C5A880';
+                  (e.target as HTMLElement).style.textShadow = '0 0 20px rgba(197,168,128,0.7)';
+                }}
+                onMouseLeave={e => {
+                  if (location.pathname !== link.path) {
+                    (e.target as HTMLElement).style.color = 'rgba(255,255,255,0.6)';
+                    (e.target as HTMLElement).style.textShadow = 'none';
+                  }
+                }}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* ─── Mobile Hamburger Button (<lg) ─── */}
+          <button
+            className="d-lg-none border-0 bg-transparent p-0"
+            onClick={toggleMenu}
+            aria-label="Toggle Menu"
+            style={{ color: isOpen ? '#C5A880' : '#fff', transition: 'color 0.3s' }}
+          >
+            {isOpen ? <X size={26} strokeWidth={1.5} /> : <Menu size={26} strokeWidth={1.5} />}
+          </button>
+        </div>
       </nav>
 
-      {/* Fullscreen Menu Overlay */}
+      {/* ═══ MOBILE FULLSCREEN OVERLAY (<lg) ═══ */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 flex flex-col items-center justify-center"
-            style={{ zIndex: 9998, backgroundColor: 'rgba(5, 5, 5, 0.99)', backdropFilter: 'blur(40px)' }}
+            className="d-flex d-lg-none flex-column align-items-center justify-content-center"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9998,
+              backgroundColor: 'rgba(5, 5, 5, 0.99)',
+              backdropFilter: 'blur(40px)',
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex flex-col items-start space-y-8 px-12">
+            <div className="d-flex flex-column align-items-start px-4 px-sm-5" style={{ gap: '2rem' }}>
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.name}
-                  className="group"
+                  className="position-relative"
                   initial={{ opacity: 0, y: 30, x: -20 }}
                   animate={{ opacity: 1, y: 0, x: 0 }}
                   exit={{ opacity: 0, y: 15 }}
@@ -78,23 +131,28 @@ const Navbar: React.FC = () => {
                 >
                   <Link
                     to={link.path}
-                    className={`inline-block text-2xl md:text-3xl font-black tracking-tight transition-all duration-500 group-hover:translate-x-4 group-hover:text-metal-brown ${
-                      location.pathname === link.path
-                        ? 'text-metal-brown translate-x-4'
-                        : 'text-white'
-                    }`}
-                    style={{
-                      textShadow: location.pathname === link.path
-                        ? '0 0 30px rgba(197, 168, 128, 0.85)'
-                        : 'none',
-                    }}
                     onClick={() => setIsOpen(false)}
-                    onMouseEnter={(e) => {
-                      (e.target as HTMLElement).style.textShadow = '0 0 30px rgba(197, 168, 128, 0.85)';
+                    style={{
+                      fontSize: 'clamp(1.4rem, 5vw, 1.8rem)',
+                      fontWeight: 900,
+                      letterSpacing: '-0.02em',
+                      color: location.pathname === link.path ? '#C5A880' : '#fff',
+                      textShadow: location.pathname === link.path ? '0 0 30px rgba(197,168,128,0.85)' : 'none',
+                      transition: 'all 0.5s cubic-bezier(0.16,1,0.3,1)',
+                      display: 'inline-block',
+                      transform: location.pathname === link.path ? 'translateX(16px)' : 'none',
+                      textDecoration: 'none',
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseEnter={e => {
+                      (e.target as HTMLElement).style.color = '#C5A880';
+                      (e.target as HTMLElement).style.textShadow = '0 0 30px rgba(197,168,128,0.85)';
+                      (e.target as HTMLElement).style.transform = 'translateX(16px)';
+                    }}
+                    onMouseLeave={e => {
                       if (location.pathname !== link.path) {
+                        (e.target as HTMLElement).style.color = '#fff';
                         (e.target as HTMLElement).style.textShadow = 'none';
+                        (e.target as HTMLElement).style.transform = 'none';
                       }
                     }}
                   >
@@ -103,9 +161,10 @@ const Navbar: React.FC = () => {
                 </motion.div>
               ))}
             </div>
-            
-            <motion.div 
-              className="absolute bottom-10 text-xs font-light tracking-[0.3em] text-white/20 uppercase"
+
+            <motion.div
+              className="position-absolute bottom-0 start-0 end-0 text-center pb-4"
+              style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.3em', color: 'rgba(255,255,255,0.15)', textTransform: 'uppercase' }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.8 }}

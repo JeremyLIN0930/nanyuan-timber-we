@@ -31,8 +31,6 @@ const STYLE_INTENTS = [
   { id: 'industrial', label: '精品工業', img: '/images/style_industrial_1779301976370.png' },
 ];
 
-/* ═══════════════════════════ TRANSITION CONFIG ═══════════════════════════ */
-
 const slideTransition = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 /* ═══════════════════════════ COMPONENT ═══════════════════════════ */
@@ -40,16 +38,8 @@ const slideTransition = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 const Contact: React.FC = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    spaceType: '',
-    budget: '',
-    isBespoke: false,
-    style: '',
-    ping: 25,
-    scopes: [] as string[],
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
+    spaceType: '', budget: '', isBespoke: false, style: '',
+    ping: 25, scopes: [] as string[], name: '', phone: '', email: '', address: '',
   });
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
@@ -57,402 +47,217 @@ const Contact: React.FC = () => {
 
   const handleNext = () => setStep(s => Math.min(s + 1, 4));
   const handlePrev = () => setStep(s => Math.max(s - 1, 1));
-
   const toggleScope = (id: string) => {
-    setFormData(prev => ({
-      ...prev,
-      scopes: prev.scopes.includes(id)
-        ? prev.scopes.filter(s => s !== id)
-        : [...prev.scopes, id]
-    }));
+    setFormData(prev => ({ ...prev, scopes: prev.scopes.includes(id) ? prev.scopes.filter(s => s !== id) : [...prev.scopes, id] }));
   };
-
-  const handleFileDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    if (e.dataTransfer.files.length > 0) {
-      setUploadedFile(e.dataTransfer.files[0].name);
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setUploadedFile(e.target.files[0].name);
-    }
-  };
-
-  const resetForm = () => {
-    setStep(1);
-    setFormData({ spaceType: '', budget: '', isBespoke: false, style: '', ping: 25, scopes: [], name: '', phone: '', email: '', address: '' });
-    setUploadedFile(null);
-  };
-
-  /* ─── Validation ─── */
-  const canProceed = () => {
-    if (step === 1) return !!formData.spaceType;
-    if (step === 2) return !!formData.budget && !!formData.style;
-    if (step === 3) return !!formData.name && !!formData.phone;
-    return true;
-  };
+  const handleFileDrop = (e: React.DragEvent) => { e.preventDefault(); setIsDragOver(false); if (e.dataTransfer.files.length > 0) setUploadedFile(e.dataTransfer.files[0].name); };
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => { if (e.target.files && e.target.files.length > 0) setUploadedFile(e.target.files[0].name); };
+  const resetForm = () => { setStep(1); setFormData({ spaceType: '', budget: '', isBespoke: false, style: '', ping: 25, scopes: [], name: '', phone: '', email: '', address: '' }); setUploadedFile(null); };
+  const canProceed = () => { if (step === 1) return !!formData.spaceType; if (step === 2) return !!formData.budget && !!formData.style; if (step === 3) return !!formData.name && !!formData.phone; return true; };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="bg-obsidian min-h-screen pt-40 pb-32"
-    >
-      <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-24 lg:gap-16">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ backgroundColor: '#050505', minHeight: '100vh' }}>
+      <div className="container px-3 px-md-4" style={{ paddingTop: '120px', paddingBottom: '80px' }}>
+        <div className="row g-4 g-lg-5">
 
-        {/* ═══════════════ LEFT: STEP TRAIL ═══════════════ */}
-        <div className="lg:col-span-4 flex flex-col justify-start relative">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-metal-brown mb-16" style={{ textShadow: '0 0 40px rgba(197,168,128,0.85)' }}>預約展間</h1>
-
-          <div className="relative pl-6">
-            {/* Background line */}
-            <div className="absolute top-2 bottom-0 left-[3px] w-[1px] bg-white/10 z-0"></div>
-            {/* Animated progress line */}
-            <motion.div
-              className="absolute top-2 left-[3px] w-[1px] z-10"
-              style={{ backgroundColor: '#C5A880', boxShadow: '0 0 15px rgba(197,168,128,0.8)' }}
-              initial={{ height: '0%' }}
-              animate={{ height: `${(Math.min(step, 3) / 3) * 100}%` }}
-              transition={{ duration: 0.8, ease: 'easeInOut' }}
-            ></motion.div>
-
-            <div className="space-y-14 relative z-20">
-              {[
-                { s: 1, title: '空間類型', desc: '選擇您的空間需求' },
-                { s: 2, title: '預算 · 坪數 · 風格', desc: '精細定義工程範圍' },
-                { s: 3, title: '聯繫 · 上傳', desc: '聯絡方式與平面圖' },
-              ].map(item => (
-                <div key={item.s} className="flex gap-5 items-start relative -ml-[27px]">
-                  <div
-                    className={`w-3 h-3 rounded-full mt-1.5 transition-all duration-500 border-[2px] shrink-0 ${
-                      step >= item.s
-                        ? 'border-metal-brown shadow-[0_0_12px_rgba(197,168,128,0.8)]'
-                        : 'bg-obsidian border-white/20'
-                    }`}
-                    style={step >= item.s ? { backgroundColor: '#C5A880' } : {}}
-                  ></div>
-                  <div>
-                    <h3
-                      className={`text-base font-black tracking-tighter transition-colors duration-500 ${
-                        step >= item.s ? 'text-metal-brown' : 'text-white/30'
-                      }`}
-                      style={step >= item.s ? { textShadow: '0 0 20px rgba(197,168,128,0.6)' } : {}}
-                    >{item.title}</h3>
-                    <p className="text-[11px] font-light tracking-widest text-white/30 mt-1">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ═══════════════ RIGHT: STEP CONTENT ═══════════════ */}
-        <div className="lg:col-span-8 relative min-h-[65vh] flex flex-col">
-          <AnimatePresence mode="wait">
-
-            {/* ──────────────── STEP 1: SPACE TYPE ──────────────── */}
-            {step === 1 && (
-              <motion.div key="step1" className="flex-1" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
-                <h2 className="text-2xl font-black tracking-tighter text-white mb-10 border-b border-white/10 pb-4" style={{ textShadow: '0 0 20px rgba(255,255,255,0.4)' }}>01. 空間選配 SPACE</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {SPACE_TYPES.map(type => {
-                    const isActive = formData.spaceType === type.id;
-                    return (
-                      <div
-                        key={type.id}
-                        onClick={() => setFormData({ ...formData, spaceType: type.id })}
-                        className={`relative cursor-pointer group overflow-hidden transition-all duration-500 ${
-                          isActive
-                            ? 'border-[2px] border-metal-brown shadow-[0_0_25px_rgba(197,168,128,0.35)]'
-                            : 'border border-white/10 hover:border-metal-brown/40 opacity-50 hover:opacity-100'
-                        }`}
-                      >
-                        <div className="aspect-[3/4] relative">
-                          <img src={type.img} className={`w-full h-full object-cover transition-transform duration-700 ${isActive ? 'scale-105' : 'group-hover:scale-105'}`} alt={type.label} />
-                          <div className={`absolute inset-0 transition-all duration-500 ${isActive ? 'bg-metal-brown/10' : 'bg-obsidian/60 group-hover:bg-obsidian/30'}`}></div>
-                          <div className="absolute bottom-4 left-4 right-4">
-                            <span className={`text-base font-black tracking-tighter block mb-1 ${isActive ? 'text-metal-brown' : 'text-white'}`} style={isActive ? { textShadow: '0 0 20px rgba(197,168,128,0.7)' } : {}}>{type.label}</span>
-                            <span className="text-white/40 text-[9px] font-light tracking-[0.2em] block">{type.en}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-
-            {/* ──────────────── STEP 2: BUDGET + PING + SCOPE + STYLE ──────────────── */}
-            {step === 2 && (
-              <motion.div key="step2" className="flex-1" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
-
-                {/* ── Budget List ── */}
-                <h2 className="text-2xl font-black tracking-tighter text-white mb-6 border-b border-white/10 pb-4" style={{ textShadow: '0 0 20px rgba(255,255,255,0.4)' }}>02. 預算區間 BUDGET</h2>
-                <div className="flex flex-col gap-2 mb-8">
-                  {BUDGETS.map(b => {
-                    const isActive = formData.budget === b.label && !formData.isBespoke;
-                    return (
-                      <button
-                        key={b.label}
-                        onClick={() => setFormData({ ...formData, budget: b.label, isBespoke: false })}
-                        className={`w-full px-5 py-4 text-left transition-all duration-300 flex justify-between items-center ${
-                          isActive
-                            ? 'border-[2px] border-metal-brown bg-[rgba(197,168,128,0.2)] text-metal-brown font-black shadow-[0_0_20px_rgba(197,168,128,0.25)]'
-                            : 'border border-white/10 text-white/50 font-light hover:border-metal-brown/40 hover:text-white/80 hover:bg-white/[0.02]'
-                        }`}
-                        style={isActive ? { textShadow: '0 0 15px rgba(197,168,128,0.5)' } : {}}
-                      >
-                        <span className="text-sm tracking-widest">{b.label}</span>
-                        <span className={`text-[10px] tracking-[0.15em] uppercase ${isActive ? 'text-metal-brown/80' : 'text-white/25'}`}>{b.en}</span>
-                      </button>
-                    );
-                  })}
-
-                  {/* Bespoke */}
-                  <button
-                    onClick={() => setFormData({ ...formData, budget: '與設計師詳談', isBespoke: true })}
-                    className={`w-full px-5 py-5 text-left transition-all duration-500 mt-2 ${
-                      formData.isBespoke
-                        ? 'border-[2px] border-metal-brown bg-[rgba(197,168,128,0.2)] shadow-[0_0_30px_rgba(197,168,128,0.3)]'
-                        : 'border border-metal-brown/40 hover:border-metal-brown hover:bg-metal-brown/5'
-                    }`}
-                    style={formData.isBespoke ? { textShadow: '0 0 15px rgba(197,168,128,0.5)' } : {}}
-                  >
-                    <span className={`text-base font-black tracking-tighter block mb-1 ${formData.isBespoke ? 'text-metal-brown' : 'text-metal-brown/70'}`}>與設計師詳談 / BESPOKE DESIGN</span>
-                    <span className="text-[11px] font-light tracking-widest text-white/35">無預算上限的頂級私人工藝空間</span>
-                  </button>
-                </div>
-
-                {/* Bespoke Hint */}
-                <AnimatePresence>
-                  {formData.isBespoke && (
-                    <motion.p
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="text-sm font-light tracking-widest text-metal-brown/80 mb-8 border-l-2 border-metal-brown pl-4 leading-relaxed"
-                      style={{ textShadow: '0 0 10px rgba(197,168,128,0.3)' }}
-                    >
-                      我們將安排資深職人與設計總監，為您量身訂製完全不受限的頂級私人工藝空間。
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-
-                {/* ── Ping / Square Footage ── */}
-                <h3 className="text-lg font-black tracking-tighter text-white mb-4" style={{ textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>空間坪數</h3>
-                <div className="mb-8">
-                  <div className="flex items-center gap-6 mb-3">
-                    <input
-                      type="range"
-                      min="5"
-                      max="200"
-                      value={formData.ping}
-                      onChange={e => setFormData({ ...formData, ping: parseInt(e.target.value) })}
-                      className="flex-1 h-[2px] appearance-none cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, #C5A880 ${((formData.ping - 5) / 195) * 100}%, rgba(255,255,255,0.1) ${((formData.ping - 5) / 195) * 100}%)`,
-                        accentColor: '#C5A880',
-                      }}
-                    />
-                    <div className="min-w-[80px] text-right">
-                      <span className="text-3xl font-black tracking-tighter text-metal-brown" style={{ textShadow: '0 0 20px rgba(197,168,128,0.6)' }}>{formData.ping}</span>
-                      <span className="text-xs font-light tracking-widest text-white/40 ml-1">坪</span>
+          {/* ═══ LEFT: STEP TRAIL ═══ */}
+          <div className="col-12 col-lg-4">
+            <h1 className="fw-bold mb-5" style={{ fontSize: 'clamp(2.5rem, 6vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.85)', lineHeight: 1.1 }}>預約展間</h1>
+            <div className="position-relative ps-4">
+              <div className="position-absolute top-0 bottom-0" style={{ left: '3px', width: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
+              <motion.div className="position-absolute top-0" style={{ left: '3px', width: '1px', backgroundColor: '#C5A880', boxShadow: '0 0 15px rgba(197,168,128,0.8)' }} initial={{ height: '0%' }} animate={{ height: `${(Math.min(step, 3) / 3) * 100}%` }} transition={{ duration: 0.8, ease: 'easeInOut' }}></motion.div>
+              <div className="d-flex flex-column gap-4 position-relative" style={{ zIndex: 20 }}>
+                {[{ s: 1, title: '空間類型', desc: '選擇您的空間需求' }, { s: 2, title: '預算·坪數·風格', desc: '精細定義工程範圍' }, { s: 3, title: '聯繫·上傳', desc: '聯絡方式與平面圖' }].map(item => (
+                  <div key={item.s} className="d-flex align-items-start gap-3" style={{ marginLeft: '-22px' }}>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', marginTop: '5px', border: '2px solid', flexShrink: 0, borderColor: step >= item.s ? '#C5A880' : 'rgba(255,255,255,0.2)', backgroundColor: step >= item.s ? '#C5A880' : '#050505', boxShadow: step >= item.s ? '0 0 12px rgba(197,168,128,0.8)' : 'none', transition: 'all 0.5s' }}></div>
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 900, letterSpacing: '-0.02em', color: step >= item.s ? '#C5A880' : 'rgba(255,255,255,0.3)', textShadow: step >= item.s ? '0 0 20px rgba(197,168,128,0.6)' : 'none', transition: 'color 0.5s' }}>{item.title}</h3>
+                      <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)', marginTop: '2px' }}>{item.desc}</p>
                     </div>
                   </div>
-                  <div className="flex justify-between text-[10px] font-light tracking-widest text-white/20">
-                    <span>5 坪</span>
-                    <span>200 坪</span>
-                  </div>
-                </div>
-
-                {/* ── Renovation Scope Checkboxes ── */}
-                <h3 className="text-lg font-black tracking-tighter text-white mb-4" style={{ textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>希望裝修範圍</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-10">
-                  {RENO_SCOPES.map(scope => {
-                    const isChecked = formData.scopes.includes(scope.id);
-                    return (
-                      <button
-                        key={scope.id}
-                        onClick={() => toggleScope(scope.id)}
-                        className={`flex items-center gap-4 px-5 py-4 transition-all duration-300 text-left ${
-                          isChecked
-                            ? 'border-[2px] border-metal-brown bg-[rgba(197,168,128,0.15)] text-metal-brown'
-                            : 'border border-white/10 text-white/50 hover:border-metal-brown/30 hover:text-white/70'
-                        }`}
-                      >
-                        {/* Custom Checkbox */}
-                        <div className={`w-5 h-5 border-[2px] shrink-0 flex items-center justify-center transition-all duration-300 ${
-                          isChecked
-                            ? 'border-metal-brown bg-metal-brown shadow-[0_0_10px_rgba(197,168,128,0.5)]'
-                            : 'border-white/30 bg-transparent'
-                        }`}>
-                          {isChecked && (
-                            <svg className="w-3 h-3 text-obsidian" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </div>
-                        <span className={`text-sm tracking-widest ${isChecked ? 'font-black' : 'font-light'}`}>{scope.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* ── Style Intent ── */}
-                <h3 className="text-lg font-black tracking-tighter text-white mb-4 border-t border-white/10 pt-8" style={{ textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>視覺意境 STYLE</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {STYLE_INTENTS.map(style => {
-                    const isActive = formData.style === style.id;
-                    return (
-                      <div
-                        key={style.id}
-                        onClick={() => setFormData({ ...formData, style: style.id })}
-                        className={`relative cursor-pointer group overflow-hidden h-28 transition-all duration-500 ${
-                          isActive
-                            ? 'border-[2px] border-metal-brown shadow-[0_0_20px_rgba(197,168,128,0.3)]'
-                            : 'border border-white/10 hover:border-metal-brown/40 opacity-50 hover:opacity-100'
-                        }`}
-                      >
-                        <img src={style.img} className={`w-full h-full object-cover transition-transform duration-700 ${isActive ? 'scale-110' : 'group-hover:scale-105'}`} alt={style.label} />
-                        <div className={`absolute inset-0 transition-all duration-500 flex items-center justify-center ${isActive ? 'bg-obsidian/30' : 'bg-obsidian/70 group-hover:bg-obsidian/40'}`}>
-                          <span className={`text-lg font-black tracking-tighter ${isActive ? 'text-metal-brown' : 'text-white'}`} style={isActive ? { textShadow: '0 0 20px rgba(197,168,128,0.7)' } : {}}>{style.label}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            )}
-
-            {/* ──────────────── STEP 3: CONTACT INFO + UPLOAD ──────────────── */}
-            {step === 3 && (
-              <motion.div key="step3" className="flex-1" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
-                <h2 className="text-2xl font-black tracking-tighter text-white mb-10 border-b border-white/10 pb-4" style={{ textShadow: '0 0 20px rgba(255,255,255,0.4)' }}>03. 聯繫資訊 CONTACT</h2>
-                <div className="space-y-7">
-                  {/* Name */}
-                  <div>
-                    <label className="block text-xs font-light tracking-widest text-metal-brown mb-2" style={{ textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>姓名 / NAME *</label>
-                    <input
-                      type="text"
-                      className="w-full bg-transparent border border-white/15 px-5 py-4 text-white font-black tracking-widest focus:border-metal-brown focus:shadow-[0_0_15px_rgba(197,168,128,0.2)] outline-none transition-all duration-300 placeholder-white/15"
-                      value={formData.name}
-                      onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="請輸入姓名"
-                    />
-                  </div>
-                  {/* Phone */}
-                  <div>
-                    <label className="block text-xs font-light tracking-widest text-metal-brown mb-2" style={{ textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>電話 / PHONE *</label>
-                    <input
-                      type="tel"
-                      className="w-full bg-transparent border border-white/15 px-5 py-4 text-white font-black tracking-widest focus:border-metal-brown focus:shadow-[0_0_15px_rgba(197,168,128,0.2)] outline-none transition-all duration-300 placeholder-white/15"
-                      value={formData.phone}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="請輸入電話"
-                    />
-                  </div>
-                  {/* Email */}
-                  <div>
-                    <label className="block text-xs font-light tracking-widest text-metal-brown mb-2" style={{ textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>信箱 / EMAIL</label>
-                    <input
-                      type="email"
-                      className="w-full bg-transparent border border-white/15 px-5 py-4 text-white font-light tracking-widest focus:border-metal-brown focus:shadow-[0_0_15px_rgba(197,168,128,0.2)] outline-none transition-all duration-300 placeholder-white/15"
-                      value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="請輸入信箱（選填）"
-                    />
-                  </div>
-                  {/* Address */}
-                  <div>
-                    <label className="block text-xs font-light tracking-widest text-metal-brown mb-2" style={{ textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>基地地址 / ADDRESS</label>
-                    <input
-                      type="text"
-                      className="w-full bg-transparent border border-white/15 px-5 py-4 text-white font-light tracking-widest focus:border-metal-brown focus:shadow-[0_0_15px_rgba(197,168,128,0.2)] outline-none transition-all duration-300 placeholder-white/15"
-                      value={formData.address}
-                      onChange={e => setFormData({ ...formData, address: e.target.value })}
-                      placeholder="請輸入基地地址（選填）"
-                    />
-                  </div>
-
-                  {/* Drag & Drop Zone */}
-                  <div>
-                    <label className="block text-xs font-light tracking-widest text-metal-brown mb-3" style={{ textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>平面圖 / 現況照片上傳</label>
-                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*,.pdf" onChange={handleFileSelect} />
-                    <motion.div
-                      whileHover={{ scale: 1.015, boxShadow: '0 0 30px rgba(197,168,128,0.2)' }}
-                      onClick={() => fileInputRef.current?.click()}
-                      onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
-                      onDragLeave={() => setIsDragOver(false)}
-                      onDrop={handleFileDrop}
-                      className={`w-full h-40 border-[2px] border-dashed flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group relative overflow-hidden ${
-                        isDragOver
-                          ? 'border-metal-brown bg-metal-brown/10 scale-[1.02]'
-                          : uploadedFile
-                            ? 'border-metal-brown/60 bg-metal-brown/5'
-                            : 'border-white/15 bg-white/[0.02] hover:border-metal-brown/40 hover:bg-metal-brown/5'
-                      }`}
-                    >
-                      {uploadedFile ? (
-                        <div className="text-center z-10">
-                          <span className="text-metal-brown text-sm font-black tracking-widest block mb-1" style={{ textShadow: '0 0 15px rgba(197,168,128,0.5)' }}>✓ 已上傳</span>
-                          <span className="text-white/50 text-xs font-light tracking-widest">{uploadedFile}</span>
-                        </div>
-                      ) : (
-                        <div className="text-center z-10">
-                          <span className="text-2xl text-white/20 group-hover:text-metal-brown/60 transition-colors block mb-3">⬆</span>
-                          <span className="text-xs font-light tracking-widest text-white/30 group-hover:text-metal-brown transition-colors">
-                            拖拽檔案至此，或點擊上傳平面圖 / 現況照片
-                          </span>
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-tr from-metal-brown/0 via-metal-brown/5 to-metal-brown/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 z-0"></div>
-                    </motion.div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* ──────────────── STEP 4: SUCCESS ──────────────── */}
-            {step === 4 && (
-              <motion.div key="step4" className="flex-1 flex flex-col items-center justify-center text-center py-20" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: 'easeOut' }}>
-                <div className="w-20 h-20 rounded-full border-[2px] border-metal-brown flex items-center justify-center mb-10 shadow-[0_0_40px_rgba(197,168,128,0.4)]">
-                  <svg className="w-8 h-8 text-metal-brown" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-metal-brown mb-8" style={{ textShadow: '0 0 40px rgba(197,168,128,0.8)' }}>南源已收到您的新家藍圖</h2>
-                <p className="text-base font-light tracking-widest text-white/70 mb-16 leading-loose max-w-lg">
-                  職人團隊正在檢閱您的需求，<br/>專員將於 24 小時內與您聯繫。
-                </p>
-                <button onClick={resetForm} className="apple-btn text-base">
-                  返回展間 ➔
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* ═══════════════ NAVIGATION ═══════════════ */}
-          {step < 4 && (
-            <div className="flex justify-between items-center mt-14 pt-6 border-t border-white/10">
-              {step > 1 ? (
-                <button onClick={handlePrev} className="text-white/40 hover:text-white font-light tracking-widest text-sm transition-all duration-300 hover:translate-x-[-4px]">
-                  ⬅ 返回上一步
-                </button>
-              ) : <div></div>}
-
-              <button
-                onClick={handleNext}
-                disabled={!canProceed()}
-                className="font-black tracking-widest text-base transition-all duration-300 apple-btn disabled:opacity-15 disabled:cursor-not-allowed hover:translate-x-1"
-              >
-                {step === 3 ? '送出預約 ➔' : '下一步 ➔'}
-              </button>
+                ))}
+              </div>
             </div>
-          )}
+          </div>
+
+          {/* ═══ RIGHT: STEP CONTENT ═══ */}
+          <div className="col-12 col-lg-8">
+            <AnimatePresence mode="wait">
+
+              {/* ── STEP 1: SPACE TYPE ── */}
+              {step === 1 && (
+                <motion.div key="s1" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
+                  <h2 className="fw-bold mb-4 pb-3" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.5rem)', color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>01. 空間選配 SPACE</h2>
+                  <div className="row g-3">
+                    {SPACE_TYPES.map(type => {
+                      const active = formData.spaceType === type.id;
+                      return (
+                        <div className="col-6 col-md-3" key={type.id}>
+                          <div
+                            onClick={() => setFormData({ ...formData, spaceType: type.id })}
+                            style={{ cursor: 'pointer', overflow: 'hidden', transition: 'all 0.5s', border: active ? '2px solid #C5A880' : '1px solid rgba(255,255,255,0.1)', boxShadow: active ? '0 0 25px rgba(197,168,128,0.35)' : 'none', opacity: active ? 1 : 0.5 }}
+                            onMouseEnter={e => { if (!active) e.currentTarget.style.opacity = '1'; }}
+                            onMouseLeave={e => { if (!active) e.currentTarget.style.opacity = '0.5'; }}
+                          >
+                            <div style={{ aspectRatio: '3/4', position: 'relative' }}>
+                              <img src={type.img} className="w-100 h-100" style={{ objectFit: 'cover', transition: 'transform 0.7s', transform: active ? 'scale(1.05)' : 'scale(1)' }} alt={type.label} />
+                              <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: active ? 'rgba(197,168,128,0.1)' : 'rgba(5,5,5,0.6)', transition: 'all 0.5s' }}></div>
+                              <div className="position-absolute bottom-0 start-0 p-2 p-md-3">
+                                <span className="d-block fw-bold" style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', letterSpacing: '-0.02em', color: active ? '#C5A880' : '#fff', textShadow: active ? '0 0 20px rgba(197,168,128,0.7)' : 'none' }}>{type.label}</span>
+                                <span className="d-block" style={{ fontSize: '9px', fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)' }}>{type.en}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ── STEP 2: BUDGET + PING + SCOPE + STYLE ── */}
+              {step === 2 && (
+                <motion.div key="s2" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
+                  <h2 className="fw-bold mb-4 pb-3" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.5rem)', color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>02. 預算區間 BUDGET</h2>
+
+                  {/* Budget List */}
+                  <div className="d-flex flex-column gap-2 mb-4">
+                    {BUDGETS.map(b => {
+                      const active = formData.budget === b.label && !formData.isBespoke;
+                      return (
+                        <button key={b.label} onClick={() => setFormData({ ...formData, budget: b.label, isBespoke: false })} className="d-flex justify-content-between align-items-center w-100 text-start border-0" style={{ padding: '14px 18px', transition: 'all 0.3s', border: active ? '2px solid #C5A880' : '1px solid rgba(255,255,255,0.1)', backgroundColor: active ? 'rgba(197,168,128,0.2)' : 'transparent', color: active ? '#C5A880' : 'rgba(255,255,255,0.5)', fontWeight: active ? 900 : 300, textShadow: active ? '0 0 15px rgba(197,168,128,0.5)' : 'none', boxShadow: active ? '0 0 20px rgba(197,168,128,0.25)' : 'none' }}>
+                          <span style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)', letterSpacing: '0.1em' }}>{b.label}</span>
+                          <span style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: active ? 0.8 : 0.4 }}>{b.en}</span>
+                        </button>
+                      );
+                    })}
+
+                    {/* Bespoke */}
+                    <button onClick={() => setFormData({ ...formData, budget: '與設計師詳談', isBespoke: true })} className="w-100 text-start border-0 mt-2" style={{ padding: '16px 18px', transition: 'all 0.5s', border: formData.isBespoke ? '2px solid #C5A880' : '1px solid rgba(197,168,128,0.4)', backgroundColor: formData.isBespoke ? 'rgba(197,168,128,0.2)' : 'transparent', boxShadow: formData.isBespoke ? '0 0 30px rgba(197,168,128,0.3)' : 'none' }}>
+                      <span className="d-block fw-bold" style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1rem)', letterSpacing: '-0.02em', color: formData.isBespoke ? '#C5A880' : 'rgba(197,168,128,0.7)' }}>與設計師詳談 / BESPOKE DESIGN</span>
+                      <span className="d-block" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>無預算上限的頂級私人工藝空間</span>
+                    </button>
+                  </div>
+
+                  <AnimatePresence>
+                    {formData.isBespoke && (
+                      <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-4 ps-3" style={{ fontSize: '0.85rem', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(197,168,128,0.8)', borderLeft: '2px solid #C5A880', lineHeight: 1.8 }}>
+                        我們將安排資深職人與設計總監，為您量身訂製完全不受限的頂級私人工藝空間。
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Ping Slider */}
+                  <h3 className="fw-bold mb-3 mt-4" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: '#fff', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>空間坪數</h3>
+                  <div className="d-flex align-items-center gap-3 mb-2">
+                    <input type="range" min="5" max="200" value={formData.ping} onChange={e => setFormData({ ...formData, ping: parseInt(e.target.value) })} className="flex-grow-1" style={{ height: '2px', accentColor: '#C5A880', background: `linear-gradient(to right, #C5A880 ${((formData.ping - 5) / 195) * 100}%, rgba(255,255,255,0.1) ${((formData.ping - 5) / 195) * 100}%)` }} />
+                    <div className="text-end" style={{ minWidth: '70px' }}>
+                      <span className="fw-bold" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: '#C5A880', textShadow: '0 0 20px rgba(197,168,128,0.6)' }}>{formData.ping}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.4)', marginLeft: '4px' }}>坪</span>
+                    </div>
+                  </div>
+
+                  {/* Renovation Scope */}
+                  <h3 className="fw-bold mb-3 mt-4" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: '#fff', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>希望裝修範圍</h3>
+                  <div className="row g-2 mb-4">
+                    {RENO_SCOPES.map(scope => {
+                      const checked = formData.scopes.includes(scope.id);
+                      return (
+                        <div className="col-12 col-md-6" key={scope.id}>
+                          <button onClick={() => toggleScope(scope.id)} className="d-flex align-items-center gap-3 w-100 text-start border-0" style={{ padding: '12px 16px', transition: 'all 0.3s', border: checked ? '2px solid #C5A880' : '1px solid rgba(255,255,255,0.1)', backgroundColor: checked ? 'rgba(197,168,128,0.15)' : 'transparent', color: checked ? '#C5A880' : 'rgba(255,255,255,0.5)' }}>
+                            <div style={{ width: '18px', height: '18px', border: '2px solid', borderColor: checked ? '#C5A880' : 'rgba(255,255,255,0.3)', backgroundColor: checked ? '#C5A880' : 'transparent', boxShadow: checked ? '0 0 10px rgba(197,168,128,0.5)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'all 0.3s' }}>
+                              {checked && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#050505" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                            </div>
+                            <span style={{ fontSize: 'clamp(0.8rem, 1.2vw, 0.9rem)', fontWeight: checked ? 900 : 300, letterSpacing: '0.1em' }}>{scope.label}</span>
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Style Intent */}
+                  <h3 className="fw-bold mb-3 mt-3 pt-3" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: '#fff', textShadow: '0 0 15px rgba(255,255,255,0.3)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>視覺意境 STYLE</h3>
+                  <div className="row g-3">
+                    {STYLE_INTENTS.map(style => {
+                      const active = formData.style === style.id;
+                      return (
+                        <div className="col-6" key={style.id}>
+                          <div onClick={() => setFormData({ ...formData, style: style.id })} className="position-relative overflow-hidden" style={{ height: 'clamp(80px, 15vw, 120px)', cursor: 'pointer', transition: 'all 0.5s', border: active ? '2px solid #C5A880' : '1px solid rgba(255,255,255,0.1)', boxShadow: active ? '0 0 20px rgba(197,168,128,0.3)' : 'none', opacity: active ? 1 : 0.5 }} onMouseEnter={e => { if (!active) e.currentTarget.style.opacity = '1'; }} onMouseLeave={e => { if (!active) e.currentTarget.style.opacity = '0.5'; }}>
+                            <img src={style.img} className="w-100 h-100 position-absolute top-0 start-0" style={{ objectFit: 'cover', transition: 'transform 0.7s', transform: active ? 'scale(1.1)' : 'scale(1)' }} alt={style.label} />
+                            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: active ? 'rgba(5,5,5,0.3)' : 'rgba(5,5,5,0.7)', transition: 'all 0.5s' }}>
+                              <span className="fw-bold" style={{ fontSize: 'clamp(0.9rem, 1.8vw, 1.15rem)', letterSpacing: '-0.02em', color: active ? '#C5A880' : '#fff', textShadow: active ? '0 0 20px rgba(197,168,128,0.7)' : 'none' }}>{style.label}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ── STEP 3: CONTACT + UPLOAD ── */}
+              {step === 3 && (
+                <motion.div key="s3" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
+                  <h2 className="fw-bold mb-4 pb-3" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.5rem)', color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>03. 聯繫資訊 CONTACT</h2>
+                  <div className="d-flex flex-column gap-4">
+                    {[{ label: '姓名 / NAME *', type: 'text', key: 'name' as const, ph: '請輸入姓名' }, { label: '電話 / PHONE *', type: 'tel', key: 'phone' as const, ph: '請輸入電話' }, { label: '信箱 / EMAIL', type: 'email', key: 'email' as const, ph: '請輸入信箱（選填）' }, { label: '基地地址 / ADDRESS', type: 'text', key: 'address' as const, ph: '請輸入基地地址（選填）' }].map(field => (
+                      <div key={field.key}>
+                        <label className="d-block mb-2" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>{field.label}</label>
+                        <input type={field.type} className="w-100" style={{ backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.15)', padding: '12px 16px', color: '#fff', fontWeight: field.key === 'name' || field.key === 'phone' ? 900 : 300, letterSpacing: '0.1em', outline: 'none', transition: 'all 0.3s', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)' }} value={formData[field.key]} onChange={e => setFormData({ ...formData, [field.key]: e.target.value })} placeholder={field.ph} onFocus={e => { e.target.style.borderColor = '#C5A880'; e.target.style.boxShadow = '0 0 15px rgba(197,168,128,0.2)'; }} onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.15)'; e.target.style.boxShadow = 'none'; }} />
+                      </div>
+                    ))}
+                    {/* Drag & Drop */}
+                    <div>
+                      <label className="d-block mb-2" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>平面圖 / 現況照片上傳</label>
+                      <input type="file" ref={fileInputRef} className="d-none" accept="image/*,.pdf" onChange={handleFileSelect} />
+                      <motion.div whileHover={{ scale: 1.015 }} onClick={() => fileInputRef.current?.click()} onDragOver={e => { e.preventDefault(); setIsDragOver(true); }} onDragLeave={() => setIsDragOver(false)} onDrop={handleFileDrop} className="d-flex flex-column align-items-center justify-content-center" style={{ width: '100%', height: '140px', border: `2px dashed ${isDragOver ? '#C5A880' : uploadedFile ? 'rgba(197,168,128,0.6)' : 'rgba(255,255,255,0.15)'}`, backgroundColor: isDragOver ? 'rgba(197,168,128,0.1)' : uploadedFile ? 'rgba(197,168,128,0.05)' : 'rgba(255,255,255,0.02)', cursor: 'pointer', transition: 'all 0.5s' }}>
+                        {uploadedFile ? (
+                          <div className="text-center">
+                            <span className="d-block fw-bold" style={{ color: '#C5A880', fontSize: '0.85rem', letterSpacing: '0.1em', textShadow: '0 0 15px rgba(197,168,128,0.5)' }}>✓ 已上傳</span>
+                            <span className="d-block" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', letterSpacing: '0.1em' }}>{uploadedFile}</span>
+                          </div>
+                        ) : (
+                          <div className="text-center">
+                            <span className="d-block mb-2" style={{ fontSize: '1.5rem', color: 'rgba(255,255,255,0.2)' }}>⬆</span>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.3)' }}>拖拽檔案至此，或點擊上傳</span>
+                          </div>
+                        )}
+                      </motion.div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ── STEP 4: SUCCESS ── */}
+              {step === 4 && (
+                <motion.div key="s4" className="d-flex flex-column align-items-center justify-content-center text-center py-5" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, ease: 'easeOut' }}>
+                  <div className="rounded-circle d-flex align-items-center justify-content-center mb-4" style={{ width: '72px', height: '72px', border: '2px solid #C5A880', boxShadow: '0 0 40px rgba(197,168,128,0.4)' }}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C5A880" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  </div>
+                  <h2 className="fw-bold mb-4" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.8)', letterSpacing: '-0.03em' }}>南源已收到您的新家藍圖</h2>
+                  <p className="mb-5" style={{ fontSize: 'clamp(0.85rem, 1.3vw, 1rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.7)', lineHeight: 2, maxWidth: '400px' }}>
+                    職人團隊正在檢閱您的需求，<br/>專員將於 24 小時內與您聯繫。
+                  </p>
+                  <button onClick={resetForm} className="apple-btn" style={{ fontSize: 'clamp(0.85rem, 1.3vw, 1rem)' }}>返回展間 ➔</button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Navigation */}
+            {step < 4 && (
+              <div className="d-flex justify-content-between align-items-center mt-4 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                {step > 1 ? (
+                  <button onClick={handlePrev} className="border-0 bg-transparent" style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 300, letterSpacing: '0.1em', fontSize: '0.85rem', transition: 'all 0.3s' }} onMouseEnter={e => (e.target as HTMLElement).style.color = '#fff'} onMouseLeave={e => (e.target as HTMLElement).style.color = 'rgba(255,255,255,0.4)'}>
+                    ⬅ 返回上一步
+                  </button>
+                ) : <div></div>}
+                <button onClick={handleNext} disabled={!canProceed()} className="apple-btn" style={{ fontSize: 'clamp(0.85rem, 1.3vw, 1rem)', opacity: canProceed() ? 1 : 0.15, cursor: canProceed() ? 'pointer' : 'not-allowed' }}>
+                  {step === 3 ? '送出預約 ➔' : '下一步 ➔'}
+                </button>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </motion.div>

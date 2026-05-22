@@ -192,40 +192,47 @@ const Projects: React.FC = () => {
   const selectedProject = PROJECTS.find(p => p.id === selectedId);
 
   return (
-    <div className="bg-obsidian min-h-screen pt-32 pb-32">
-      <div className="container mx-auto px-6 md:px-12">
+    <div style={{ backgroundColor: '#050505', minHeight: '100vh', paddingTop: '120px', paddingBottom: '80px' }}>
+      <div className="container px-3 px-md-4">
 
         {/* Header */}
-        <div className="text-left mb-16">
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-metal-brown mb-4" style={{ textShadow: '0 0 40px rgba(197,168,128,0.85)' }}>作品案例</h1>
-          <p className="text-sm font-light tracking-widest text-white/40 uppercase">
+        <div className="text-start mb-5">
+          <h1 className="fw-bold mb-2" style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.85)', lineHeight: 1.1 }}>作品案例</h1>
+          <p style={{ fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>
             Portfolio / Masterpieces — {PROJECTS.length} Selected Works
           </p>
         </div>
 
         {/* Masonry Grid */}
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
+        {/* Bootstrap Grid: 1 col mobile, 2 col tablet, 3 col desktop */}
+        <div className="row g-4">
           {PROJECTS.map((project, i) => (
-            <FadeIn key={project.id} delay={i * 0.06}>
-              <motion.div
-                className="mb-6 cursor-pointer group relative overflow-hidden"
-                onClick={() => setSelectedId(project.id)}
-                whileHover={{ y: -6 }}
-                transition={{ duration: 0.3 }}
-              >
-                <img
-                  src={project.img}
-                  className="w-full h-auto object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 group-hover:scale-[1.03]"
-                  alt={project.title}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/50 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500"></div>
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <span className="text-[10px] font-light tracking-widest text-metal-brown uppercase block mb-1">{project.type}</span>
-                  <h3 className="text-2xl font-black tracking-tighter text-white mb-1" style={{ textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>{project.title}</h3>
-                  <p className="text-xs font-light tracking-widest text-white/40">{project.subtitle} | {project.size}</p>
-                </div>
-              </motion.div>
-            </FadeIn>
+            <div className="col-12 col-md-6 col-lg-4" key={project.id}>
+              <FadeIn delay={i * 0.06}>
+                <motion.div
+                  className="position-relative overflow-hidden"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setSelectedId(project.id)}
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <img
+                    src={project.img}
+                    className="w-100"
+                    style={{ objectFit: 'cover', opacity: 0.6, transition: 'all 0.7s', aspectRatio: '4/3' }}
+                    alt={project.title}
+                    onMouseEnter={e => { (e.target as HTMLImageElement).style.opacity = '1'; (e.target as HTMLImageElement).style.transform = 'scale(1.03)'; }}
+                    onMouseLeave={e => { (e.target as HTMLImageElement).style.opacity = '0.6'; (e.target as HTMLImageElement).style.transform = 'scale(1)'; }}
+                  />
+                  <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(to top, #050505 0%, rgba(5,5,5,0.5) 50%, transparent 100%)', opacity: 0.9 }}></div>
+                  <div className="position-absolute bottom-0 start-0 end-0 p-3 p-md-4">
+                    <span className="d-block mb-1" style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textTransform: 'uppercase' }}>{project.type}</span>
+                    <h3 style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>{project.title}</h3>
+                    <p style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>{project.subtitle} | {project.size}</p>
+                  </div>
+                </motion.div>
+              </FadeIn>
+            </div>
           ))}
         </div>
       </div>
@@ -256,38 +263,38 @@ const Projects: React.FC = () => {
             </button>
 
             {/* Hero Image */}
-            <div className="relative w-full h-[70vh] md:h-[85vh]">
-              <img src={selectedProject.img} className="w-full h-full object-cover" alt={selectedProject.title} />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent"></div>
+            <div className="position-relative w-100" style={{ height: 'clamp(300px, 70vh, 85vh)' }}>
+              <img src={selectedProject.img} className="w-100 h-100" style={{ objectFit: 'cover' }} alt={selectedProject.title} />
+              <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(to top, #050505 0%, rgba(5,5,5,0.2) 50%, transparent 100%)' }}></div>
             </div>
 
             {/* Content */}
-            <div className="container mx-auto px-6 md:px-12 -mt-40 relative z-10 pb-32">
+            <div className="container px-3 px-md-4 position-relative" style={{ marginTop: '-120px', zIndex: 10, paddingBottom: '80px' }}>
 
               {/* Title Block */}
               <div className="mb-20">
-                <div className="flex flex-wrap items-center gap-4 mb-6">
-                  <span className="text-xs font-light tracking-widest text-metal-brown uppercase px-3 py-1 border border-metal-brown/30" style={{ textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>{selectedProject.type}</span>
-                  <span className="text-xs font-light tracking-widest text-white/30">{selectedProject.size}</span>
-                  <span className="text-xs font-light tracking-widest text-white/30">{selectedProject.year}</span>
-                  <span className="text-xs font-light tracking-widest text-white/30">預算 {selectedProject.budget}</span>
+                <div className="d-flex flex-wrap align-items-center gap-2 gap-md-3 mb-4">
+                  <span className="px-3 py-1" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textTransform: 'uppercase', border: '1px solid rgba(197,168,128,0.3)', textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>{selectedProject.type}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)' }}>{selectedProject.size}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)' }}>{selectedProject.year}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.3)' }}>預算 {selectedProject.budget}</span>
                 </div>
-                <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-white mb-4" style={{ textShadow: '0 0 30px rgba(255,255,255,0.4)' }}>{selectedProject.title}</h2>
-                <p className="text-xl md:text-2xl font-light tracking-widest text-metal-brown/70">{selectedProject.subtitle}</p>
+                <h2 className="fw-bold mb-3" style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)', letterSpacing: '-0.05em', color: '#fff', textShadow: '0 0 30px rgba(255,255,255,0.4)', lineHeight: 1.1 }}>{selectedProject.title}</h2>
+                <p style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(197,168,128,0.7)' }}>{selectedProject.subtitle}</p>
               </div>
 
               {/* Highlight */}
-              <div className="border-l-[3px] border-metal-brown pl-8 mb-24" style={{ boxShadow: '-3px 0 15px rgba(197,168,128,0.3)' }}>
-                <p className="text-xl md:text-2xl font-light tracking-widest text-white/80 leading-relaxed">
+              <div className="ps-4 mb-5" style={{ borderLeft: '3px solid #C5A880', boxShadow: '-3px 0 15px rgba(197,168,128,0.3)' }}>
+                <p style={{ fontSize: 'clamp(1rem, 2vw, 1.3rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.8)', lineHeight: 1.8 }}>
                   {selectedProject.highlight}
                 </p>
               </div>
 
               {/* Description Paragraphs */}
-              <div className="max-w-4xl space-y-10 mb-32">
+              <div className="mb-5" style={{ maxWidth: '800px' }}>
                 {selectedProject.description.map((para, i) => (
                   <FadeIn key={i} delay={i * 0.1}>
-                    <p className="text-base md:text-lg font-light tracking-widest text-white/65 leading-[2.2]">
+                    <p className="mb-4" style={{ fontSize: 'clamp(0.85rem, 1.3vw, 1.05rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.65)', lineHeight: 2.2 }}>
                       {para}
                     </p>
                   </FadeIn>
@@ -295,27 +302,32 @@ const Projects: React.FC = () => {
               </div>
 
               {/* Before/After Slider */}
-              <FadeIn className="mb-32">
-                <h3 className="text-3xl font-black tracking-tighter text-metal-brown mb-8" style={{ textShadow: '0 0 25px rgba(197,168,128,0.7)' }}>空間重生：擦除對照</h3>
-                <p className="text-sm font-light tracking-widest text-white/40 mb-8">左右拖曳滑桿，見證空間蛻變。</p>
+              <FadeIn className="mb-5">
+                <h3 className="fw-bold mb-3" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.03em', color: '#C5A880', textShadow: '0 0 25px rgba(197,168,128,0.7)' }}>空間重生：擦除對照</h3>
+                <p className="mb-4" style={{ fontSize: 'clamp(0.75rem, 1.2vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>左右拖曳滑桿，見證空間蛻變。</p>
                 <BeforeAfterSlider beforeImg={selectedProject.beforeImg} afterImg={selectedProject.afterImg} />
               </FadeIn>
 
               {/* Gallery */}
               <FadeIn>
-                <h3 className="text-3xl font-black tracking-tighter text-metal-brown mb-8" style={{ textShadow: '0 0 25px rgba(197,168,128,0.7)' }}>更多細節</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="fw-bold mb-4" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', letterSpacing: '-0.03em', color: '#C5A880', textShadow: '0 0 25px rgba(197,168,128,0.7)' }}>更多細節</h3>
+                <div className="row g-3">
                   {selectedProject.galleryImgs.map((gImg, i) => (
-                    <div key={i} className="relative overflow-hidden group">
-                      <img src={gImg} className="w-full h-[40vh] object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt={`Detail ${i + 1}`} />
-                      <div className="absolute inset-0 bg-gradient-to-t from-obsidian/60 to-transparent"></div>
+                    <div className="col-12 col-md-6" key={i}>
+                      <div className="position-relative overflow-hidden">
+                        <img src={gImg} className="w-100" style={{ height: 'clamp(200px, 40vh, 400px)', objectFit: 'cover', opacity: 0.8, transition: 'all 0.7s' }} alt={`Detail ${i + 1}`}
+                          onMouseEnter={e => { (e.target as HTMLImageElement).style.opacity = '1'; (e.target as HTMLImageElement).style.transform = 'scale(1.05)'; }}
+                          onMouseLeave={e => { (e.target as HTMLImageElement).style.opacity = '0.8'; (e.target as HTMLImageElement).style.transform = 'scale(1)'; }}
+                        />
+                        <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(to top, rgba(5,5,5,0.6) 0%, transparent 100%)' }}></div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </FadeIn>
 
               {/* CTA */}
-              <FadeIn className="mt-32 text-center">
+              <FadeIn className="mt-5 pt-4 text-center">
                 <p className="text-sm font-light tracking-widest text-white/30 mb-6">喜歡這個作品？讓南源為您打造專屬空間</p>
                 <button
                   onClick={() => { setSelectedId(null); window.location.href = '/contact'; }}
