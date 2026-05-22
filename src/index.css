@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;900&family=Noto+Sans+TC:wght@300;900&display=swap');
+
+:root {
+  --metal-brown: #C5A880;
+  --obsidian: #050505;
+  --titanium: #0D0D0E;
+  --off-white: #F5F5F7;
+  --wood-brown: #8B5A2B;
+  --earth-light: #E8E1D9;
+  --earth-dark: #A69B8D;
+  --text-main: #FFFFFF;
+  --text-muted: rgba(255,255,255,0.5);
+  --bg-color: #050505;
+}
+
+* {
+  cursor: auto;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.85);
+  background-color: #050505;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-black {
+  font-weight: 900 !important;
+  letter-spacing: -0.05em !important;
+  color: #C5A880;
+  line-height: 1.1;
+}
+
+/* Subtle Noise Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Glow Effects */
+.glow-text {
+  text-shadow: 0 0 30px rgba(197, 168, 128, 0.85);
+}
+.glow-text-white {
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
+}
+
+/* Apple Style Minimalist Button */
+.apple-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #C5A880;
+  text-transform: uppercase;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  padding-bottom: 2px;
+}
+
+.apple-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background-color: currentColor;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-btn:hover::after {
+  width: 100%;
+}
+
+.apple-btn:hover {
+  text-shadow: 0 0 20px rgba(197, 168, 128, 0.6);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(197, 168, 128, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(197, 168, 128, 0.6);
+}
+
+/* Range Slider Thumb */
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #C5A880;
+  cursor: pointer;
+  border: 2px solid #050505;
+  box-shadow: 0 0 12px rgba(197, 168, 128, 0.6);
+  transition: box-shadow 0.3s;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 20px rgba(197, 168, 128, 0.9);
+}
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #C5A880;
+  cursor: pointer;
+  border: 2px solid #050505;
+  box-shadow: 0 0 12px rgba(197, 168, 128, 0.6);
+}

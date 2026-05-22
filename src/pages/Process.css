@@ -1,0 +1,122 @@
+.process-intro {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+/* Vertical Timeline */
+.timeline-container {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.timeline-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4px;
+  background-color: var(--earth-light);
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: relative;
+  width: 50%;
+  padding: 2rem 3rem;
+}
+
+.timeline-item.left {
+  left: 0;
+  text-align: right;
+}
+
+.timeline-item.right {
+  left: 50%;
+  text-align: left;
+}
+
+.timeline-marker {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: var(--wood-brown);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  z-index: 2;
+  box-shadow: 0 0 0 4px white, 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.timeline-item.left .timeline-marker {
+  right: -20px;
+}
+
+.timeline-item.right .timeline-marker {
+  left: -20px;
+}
+
+.timeline-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+.timeline-item.left .timeline-content {
+  margin-right: 1rem;
+}
+
+.timeline-item.right .timeline-content {
+  margin-left: 1rem;
+}
+
+.timeline-icon {
+  color: var(--wood-brown);
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.timeline-content h3 {
+  color: var(--dark-blue);
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+}
+
+.timeline-content p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .timeline-line {
+    left: 30px;
+  }
+  .timeline-item {
+    width: 100%;
+    padding: 1.5rem 0 1.5rem 70px;
+  }
+  .timeline-item.left, .timeline-item.right {
+    left: 0;
+    text-align: left;
+  }
+  .timeline-marker {
+    left: 10px !important;
+  }
+  .timeline-item.left .timeline-content,
+  .timeline-item.right .timeline-content {
+    margin: 0;
+  }
+}

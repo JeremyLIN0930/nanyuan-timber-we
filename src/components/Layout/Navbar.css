@@ -1,0 +1,124 @@
+.navbar {
+  background-color: var(--off-white);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  z-index: 1001;
+}
+
+.navbar-logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.navbar-logo-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--wood-brown);
+  line-height: 1.2;
+}
+
+.navbar-logo-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 0.125rem;
+}
+
+.navbar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--wood-brown);
+  z-index: 1001;
+  transition: transform 0.3s ease;
+}
+
+.navbar-toggle:hover {
+  transform: scale(1.1);
+}
+
+.fullscreen-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(249, 249, 249, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fullscreen-menu-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  padding: 2rem;
+  margin-top: 80px; /* Offset for navbar */
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+
+.fullscreen-link {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--text-main);
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+  position: relative;
+  display: block;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+.fullscreen-link:hover, .fullscreen-link.active {
+  color: var(--wood-brown);
+  transform: translateY(-5px);
+}
+
+.fullscreen-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 3px;
+  background-color: var(--wood-brown);
+  border-radius: 2px;
+}
+
+/* Make link sizes slightly smaller on mobile to fit all options */
+@media (max-width: 768px) {
+  .fullscreen-menu-content {
+    gap: 1.5rem;
+  }
+  .fullscreen-link {
+    font-size: 1.5rem;
+  }
+}
