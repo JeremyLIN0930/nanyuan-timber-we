@@ -75,6 +75,8 @@ const PROJECTS = [
     size: '45坪',
     year: '2025',
     budget: '280萬',
+    designFocus: '壁癌漏水根治、全室水電重拉與現代溫潤光影設計',
+    materials: '北美黑胡桃木實木地板、高級無毒環保塗料、進口三層防水系統',
     highlight: '壁癌漏水根治 × 北美胡桃木實木地板 × 全室水電管線重拉',
     img: '/images/luxury_tianmu_home_1779301841564.png',
     beforeImg: '/images/old_house_before.png',
@@ -95,6 +97,8 @@ const PROJECTS = [
     size: '22坪',
     year: '2025',
     budget: '58萬',
+    designFocus: '預算精準控制、隱藏式收納、多功能架高木質地坪',
+    materials: '高級樺木合板、雙面塗裝板、低甲醛全室系統櫃、LED 線性燈',
     highlight: '預算控制 60 萬內 × 隱藏式收納 × 多功能木質地坪',
     img: '/images/budget_smart_home.png',
     beforeImg: '/images/old_house_before.png',
@@ -115,6 +119,8 @@ const PROJECTS = [
     size: '40坪',
     year: '2024',
     budget: '350萬',
+    designFocus: '手刷珪藻土漆藝、無縫微水泥質感、無主燈暖光設計',
+    materials: '義大利進口無縫微水泥、手刷珪藻土、碳化防潮橡木地板',
     highlight: '無縫微水泥 × 原木的極致對話 × 手刷漆藝牆面',
     img: '/images/japanese_wabi_sabi_1779301881798.png',
     beforeImg: '/images/old_house_before.png',
@@ -134,6 +140,8 @@ const PROJECTS = [
     size: '200坪',
     year: '2024',
     budget: '800萬',
+    designFocus: '大面積落地玻璃切割、獨立聲學天花板天幕與智能照明',
+    materials: '黑曜大理石材、不鏽鋼拉絲防指紋板、進口電控霧化玻璃',
     highlight: '用建築線條與玻璃切割出現代專業 × 聲學天花板 × 智能照明',
     img: '/images/modern_office_1779301899552.png',
     beforeImg: '/images/old_house_before.png',
@@ -153,6 +161,8 @@ const PROJECTS = [
     size: '10坪',
     year: '2025',
     budget: '120萬',
+    designFocus: '精品飯店質感、大理石對花貼附、浴櫃防潮懸浮設計',
+    materials: '義大利進口 Nero Marquina 黑色大理石、北美白橡木、德國 Hansgrohe 恆溫花灑',
     highlight: '暗黑石材 × 木質浴櫃 × 無框淋浴屏 × 智能馬桶',
     img: '/images/luxury_bathroom_1779301913582.png',
     beforeImg: '/images/old_house_before.png',
@@ -172,6 +182,8 @@ const PROJECTS = [
     size: '60坪',
     year: '2024',
     budget: '450萬',
+    designFocus: '台灣檜木吧台手工打磨、溫暖金色琥珀光影、品牌視覺整合',
+    materials: '台灣檜木原木大板、訂製黃銅管金屬件、頂級調光暖色 LED 燈具',
     highlight: '暖色金屬 × 原木吧台 × 訂製燈具 × 品牌視覺整合',
     img: '/images/high_end_cafe_1779301868615.png',
     beforeImg: '/images/old_house_before.png',
@@ -179,8 +191,8 @@ const PROJECTS = [
     galleryImgs: ['/images/high_end_cafe_1779301868615.png', '/images/style_luxury_dark_1779301949701.png'],
     description: [
       '為一間精品咖啡品牌打造的旗艦店面。設計概念以「琥珀」為靈感——溫暖的金色光芒穿透深色空間，如同陽光灑落在一杯手沖咖啡上。',
-      '8 米長的一體成型原木吧台是全場焦點，選用整塊台灣檜木原木板，經過 60 天的自然乾燥與 8 道手工打磨上油，保留最原始的木紋肌理。天花板懸掛的訂製黃銅燈具群，以不規則高低差排列，模擬咖啡液滴落的動態瞬間。',
-      '從 LOGO 字體到菜單排版、從座椅面料到洗手間的香氛選擇，我們提供了完整的品牌視覺整合服務，確保每一個觸點都傳達一致的品牌溫度。',
+      '8 米長的一體成型原木吧台是全場焦點，選用整塊台灣檜木原木板，經過 60 定自然乾燥與 8 道手工打磨上油，保留最原始的木紋肌理。天花板懸掛的訂製黃銅燈具群，以不規則高低差排列，模擬咖啡液滴落的動態瞬間。',
+      '從 LOGO 字體到菜單排版、從座椅面料到洗手間的空間氛圍，我們提供了完整的品牌視覺整合服務，確保每一個觸點都傳達一致的品牌溫度。',
     ],
   },
 ];
@@ -210,25 +222,71 @@ const Projects: React.FC = () => {
             <div className="col-12 col-md-6 col-lg-4" key={project.id}>
               <FadeIn delay={i * 0.06}>
                 <motion.div
-                  className="position-relative overflow-hidden"
-                  style={{ cursor: 'pointer' }}
+                  className="rounded-1 overflow-hidden h-100 d-flex flex-column"
+                  style={{
+                    backgroundColor: '#0D0D0E',
+                    border: '1px solid rgba(197, 168, 128, 0.1)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
                   onClick={() => setSelectedId(project.id)}
-                  whileHover={{ y: -6 }}
-                  transition={{ duration: 0.3 }}
+                  whileHover={{ y: -6, borderColor: '#C5A880' }}
                 >
-                  <img
-                    src={project.img}
-                    className="w-100"
-                    style={{ objectFit: 'cover', opacity: 0.6, transition: 'all 0.7s', aspectRatio: '4/3' }}
-                    alt={project.title}
-                    onMouseEnter={e => { (e.target as HTMLImageElement).style.opacity = '1'; (e.target as HTMLImageElement).style.transform = 'scale(1.03)'; }}
-                    onMouseLeave={e => { (e.target as HTMLImageElement).style.opacity = '0.6'; (e.target as HTMLImageElement).style.transform = 'scale(1)'; }}
-                  />
-                  <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(to top, #050505 0%, rgba(5,5,5,0.5) 50%, transparent 100%)', opacity: 0.9 }}></div>
-                  <div className="position-absolute bottom-0 start-0 end-0 p-3 p-md-4">
-                    <span className="d-block mb-1" style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textTransform: 'uppercase' }}>{project.type}</span>
-                    <h3 style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff', textShadow: '0 0 15px rgba(255,255,255,0.3)' }}>{project.title}</h3>
-                    <p style={{ fontSize: '12px', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>{project.subtitle} | {project.size}</p>
+                  {/* Image container with Relative badge */}
+                  <div className="position-relative overflow-hidden" style={{ aspectRatio: '16/10' }}>
+                    <img
+                      src={project.img}
+                      className="w-100 h-100"
+                      style={{ objectFit: 'cover', opacity: 0.8, transition: 'all 0.7s' }}
+                      alt={project.title}
+                      onMouseEnter={e => { (e.target as HTMLImageElement).style.transform = 'scale(1.05)'; }}
+                      onMouseLeave={e => { (e.target as HTMLImageElement).style.transform = 'scale(1)'; }}
+                    />
+                    {/* Before/After Tag */}
+                    <div className="position-absolute top-3 start-3">
+                      <span className="px-2 py-1" style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.05em', color: '#fff', backgroundColor: 'rgba(197, 168, 128, 0.85)', backdropFilter: 'blur(4px)' }}>
+                        BEFORE / AFTER
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Details block */}
+                  <div className="p-4 d-flex flex-column flex-grow-1 justify-content-between">
+                    <div>
+                      {/* Name & Type & Pings */}
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <h3 className="mb-0" style={{ fontSize: '1.2rem', fontWeight: 600, color: '#fff' }}>
+                          {project.title}
+                        </h3>
+                        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontWeight: 300, border: '1px solid rgba(255,255,255,0.1)', padding: '2px 6px' }}>
+                          {project.size}
+                        </span>
+                      </div>
+                      
+                      <div className="mb-3" style={{ fontSize: '11px', color: '#C5A880', fontWeight: 400, letterSpacing: '0.05em' }}>
+                        {project.type.split(' / ')[0]}
+                      </div>
+
+                      {/* Design Focus & Materials */}
+                      <div className="mb-4" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', fontWeight: 300 }}>
+                        <div className="d-flex mb-1 align-items-start">
+                          <span className="text-white/40 me-2" style={{ minWidth: '60px' }}>設計重點：</span>
+                          <span className="text-white/80">{project.designFocus}</span>
+                        </div>
+                        <div className="d-flex align-items-start">
+                          <span className="text-white/40 me-2" style={{ minWidth: '60px' }}>使用材料：</span>
+                          <span className="text-white/80">{project.materials}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* View Button */}
+                    <div className="pt-3 border-top border-white/5 d-flex justify-content-between align-items-center">
+                      <span style={{ fontSize: '12px', color: '#C5A880', fontWeight: 400, letterSpacing: '0.1em' }}>
+                        查看完整案例 ➔
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               </FadeIn>

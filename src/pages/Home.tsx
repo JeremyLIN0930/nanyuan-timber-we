@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Trees, ShieldCheck, ClipboardCheck } from 'lucide-react';
 import ServicesSection from '../components/Home/ServicesSection';
 
 /* ─── Reusable Scroll-Driven Fade-In ─── */
@@ -59,17 +60,16 @@ const BeforeAfterSlider: React.FC = () => {
       onMouseDown={(e) => handleMove(e.clientX)}
     >
       {/* After */}
-      <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundImage: "url('/images/luxury_tianmu_home_1779301841564.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: 'rgba(5,5,5,0.1)' }}></div>
+      <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundImage: "url('/images/old_house_after.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: 'rgba(5,5,5,0.15)' }}></div>
         <div className="position-absolute bottom-0 end-0 m-3 m-md-4 px-3 py-2" style={{ color: '#fff', fontSize: '11px', letterSpacing: '0.2em', fontWeight: 300, backgroundColor: 'rgba(5,5,5,0.6)', backdropFilter: 'blur(8px)' }}>完工後 AFTER</div>
       </div>
       {/* Before */}
       <div
         className="position-absolute top-0 start-0 w-100 h-100"
         style={{
-          backgroundImage: "url('/images/japanese_wabi_sabi_1779301881798.png')",
+          backgroundImage: "url('/images/old_house_before.png')",
           backgroundSize: 'cover', backgroundPosition: 'center',
-          filter: 'grayscale(100%) contrast(110%) brightness(60%)',
           clipPath: `polygon(0 0, ${pos}% 0, ${pos}% 100%, 0 100%)`
         }}
       >
@@ -123,9 +123,11 @@ const Home: React.FC = () => {
             className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center px-3 px-md-5"
             style={{ opacity: revealOpacity, y: revealY, zIndex: 0 }}
           >
-            <h2 className="fw-bold mb-3" style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.7)', lineHeight: 1.1 }}>重新定義奢華本質</h2>
-            <p className="mx-auto" style={{ fontSize: 'clamp(0.85rem, 2vw, 1.2rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', maxWidth: '600px', lineHeight: 1.8 }}>
-              從精密選材到完美落地，<br/>展現無與倫比的建築工藝。
+            <h2 className="fw-bold mb-3" style={{ fontSize: 'clamp(1.8rem, 4vw, 3.5rem)', letterSpacing: '-0.02em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.7)', lineHeight: 1.2 }}>
+              從材料源頭開始，打造安心落地的空間
+            </h2>
+            <p className="mx-auto" style={{ fontSize: 'clamp(0.85rem, 1.8vw, 1.1rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', maxWidth: '800px', lineHeight: 1.8 }}>
+              結合木材與材料背景，整合設計、選材與施工流程，讓裝修成果更穩定、更透明、更接近想像。
             </p>
           </motion.div>
 
@@ -151,16 +153,16 @@ const Home: React.FC = () => {
             {/* Hero Text */}
             <div className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center px-3 px-md-5" style={{ zIndex: 20, pointerEvents: 'none' }}>
               <h1
-                className="fw-bold mb-2 mb-md-4"
-                style={{ fontSize: 'clamp(2rem, 6vw, 4.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.85)', lineHeight: 1.1 }}
+                className="fw-bold mb-3 mb-md-4"
+                style={{ fontSize: 'clamp(1.8rem, 4vw, 3.8rem)', letterSpacing: '-0.02em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.85)', lineHeight: 1.2 }}
               >
-                從材料源頭開始
+                從材料源頭開始，打造安心落地的空間
               </h1>
               <p
-                className="mb-4 mb-md-5"
-                style={{ fontSize: 'clamp(1rem, 2.5vw, 1.8rem)', fontWeight: 300, letterSpacing: '0.15em', color: '#fff', textShadow: '0 0 25px rgba(255,255,255,0.5)' }}
+                className="mb-4 mb-md-5 mx-auto"
+                style={{ fontSize: 'clamp(0.85rem, 1.8vw, 1.15rem)', fontWeight: 300, letterSpacing: '0.15em', color: '#fff', textShadow: '0 0 25px rgba(0,0,0,0.8)', maxWidth: '850px', lineHeight: 1.8 }}
               >
-                打造安心落地的空間
+                結合木材與材料背景，整合設計、選材與施工流程，讓裝修成果更穩定、更透明、更接近想像。
               </p>
               <div style={{ pointerEvents: 'auto' }}>
                 <button onClick={() => navigate('/projects')} className="apple-btn" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.9rem)', color: '#fff' }}>
@@ -184,25 +186,64 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* ══════════════ BLOCK 2: DATA TRUST INDICATORS ══════════════ */}
+      {/* ══════════════ BLOCK 2: THREE CORE ADVANTAGES ══════════════ */}
       <section className="w-100 py-5 py-lg-5" style={{ backgroundColor: '#0D0D0E', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div className="container py-4 py-lg-5">
-          <div className="row g-4 g-lg-5 text-center">
+          <FadeInSection className="text-center mb-5">
+            <h2 className="fw-bold mb-3" style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', letterSpacing: '-0.02em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.5)' }}>三大核心優勢</h2>
+            <p className="mx-auto text-muted-custom" style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: 'rgba(255,255,255,0.5)', maxWidth: '600px' }}>
+              從選材到施工，南源以三大核心堅持，為您打造安心穩定的裝修體驗。
+            </p>
+          </FadeInSection>
+          <div className="row g-4 justify-content-center">
             {[
-              { num: '100%', label: '原木進口追蹤', desc: '每一塊板材皆有完整的產地認證與含水率檢測報告' },
-              { num: '0', label: '惡意追加預算', desc: '合約即為最終報價，杜絕一切隱藏費用' },
-              { num: '24/7', label: '雲端監造查看', desc: '隨時透過手機查看施工進度，每日實拍回報' },
+              {
+                icon: <Trees size={32} style={{ color: '#C5A880' }} />,
+                title: '源頭理解',
+                desc: '擁有深厚的木材與材料背景，從源頭精準理解各種材料的物理特性與適用性，為您的空間挑選最合適、最耐用的高品質用料。'
+              },
+              {
+                icon: <ShieldCheck size={32} style={{ color: '#C5A880' }} />,
+                title: '細節品質',
+                desc: '在每一項施工環節皆設立嚴格的檢核點，尤其是防水、木作與油漆工程，我們堅持多次逐項驗收，不放過任何影響居住安全的微小細節。'
+              },
+              {
+                icon: <ClipboardCheck size={32} style={{ color: '#C5A880' }} />,
+                title: '誠信透明',
+                desc: '提供完全透明、逐項列出的工程報價單，簽約金額即為最終造價，絕不惡意追加任何隱藏預算；施工過程全程記錄，讓您住得安心、放心。'
+              }
             ].map((item, i) => (
               <div className="col-12 col-md-4" key={i}>
                 <FadeInSection delay={i * 0.15}>
-                  <span
-                    className="d-block fw-bold mb-3"
-                    style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.7)', lineHeight: 1.1 }}
+                  <div
+                    className="p-4 p-lg-5 h-100 rounded-1 transition-all"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid rgba(197, 168, 128, 0.1)',
+                      boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
+                      transition: 'all 0.4s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget;
+                      el.style.borderColor = '#C5A880';
+                      el.style.backgroundColor = 'rgba(197, 168, 128, 0.05)';
+                      el.style.boxShadow = '0 10px 30px rgba(197, 168, 128, 0.15)';
+                      el.style.transform = 'translateY(-5px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget;
+                      el.style.borderColor = 'rgba(197, 168, 128, 0.1)';
+                      el.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
+                      el.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.2)';
+                      el.style.transform = 'translateY(0)';
+                    }}
                   >
-                    {item.num}
-                  </span>
-                  <h3 className="mb-2" style={{ fontSize: 'clamp(0.95rem, 2vw, 1.15rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff' }}>{item.label}</h3>
-                  <p className="mx-auto" style={{ fontSize: 'clamp(0.75rem, 1.2vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)', maxWidth: '280px', lineHeight: 1.8 }}>{item.desc}</p>
+                    <div className="d-flex align-items-center justify-content-center mb-4 rounded-circle mx-auto" style={{ width: '70px', height: '70px', backgroundColor: 'rgba(197, 168, 128, 0.1)' }}>
+                      {item.icon}
+                    </div>
+                    <h3 className="text-center mb-3" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', fontWeight: 600, color: '#C5A880' }}>{item.title}</h3>
+                    <p style={{ fontSize: 'clamp(0.85rem, 1.2vw, 0.95rem)', fontWeight: 300, color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, textAlign: 'justify', margin: 0 }}>{item.desc}</p>
+                  </div>
                 </FadeInSection>
               </div>
             ))}
@@ -221,10 +262,10 @@ const Home: React.FC = () => {
               className="fw-bold mb-3"
               style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.85)', lineHeight: 1.1 }}
             >
-              空間魔術：擦除對照
+              設計與落地的真實對照
             </h2>
-            <p className="mb-4" style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', maxWidth: '600px', lineHeight: 1.8 }}>
-              左右拖曳滑桿，親手見證破舊空間蛻變為頂級住宅的震撼反差。
+            <p className="mb-4" style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', maxWidth: '750px', lineHeight: 1.8 }}>
+              許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重控管，確保所見即所得。左右拖曳滑桿，親手見證老屋翻修前後的精準落地對照。
             </p>
           </FadeInSection>
         </div>

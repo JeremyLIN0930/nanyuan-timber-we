@@ -40,6 +40,7 @@ const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
     spaceType: '', budget: '', isBespoke: false, style: '',
     ping: 25, scopes: [] as string[], name: '', phone: '', email: '', address: '',
+    description: '', preferredTime: ''
   });
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
@@ -52,7 +53,7 @@ const Contact: React.FC = () => {
   };
   const handleFileDrop = (e: React.DragEvent) => { e.preventDefault(); setIsDragOver(false); if (e.dataTransfer.files.length > 0) setUploadedFile(e.dataTransfer.files[0].name); };
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => { if (e.target.files && e.target.files.length > 0) setUploadedFile(e.target.files[0].name); };
-  const resetForm = () => { setStep(1); setFormData({ spaceType: '', budget: '', isBespoke: false, style: '', ping: 25, scopes: [], name: '', phone: '', email: '', address: '' }); setUploadedFile(null); };
+  const resetForm = () => { setStep(1); setFormData({ spaceType: '', budget: '', isBespoke: false, style: '', ping: 25, scopes: [], name: '', phone: '', email: '', address: '', description: '', preferredTime: '' }); setUploadedFile(null); };
   const canProceed = () => { if (step === 1) return !!formData.spaceType; if (step === 2) return !!formData.budget && !!formData.style; if (step === 3) return !!formData.name && !!formData.phone; return true; };
 
   return (
@@ -206,6 +207,56 @@ const Contact: React.FC = () => {
                         <input type={field.type} className="w-100" style={{ backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.15)', padding: '12px 16px', color: '#fff', fontWeight: field.key === 'name' || field.key === 'phone' ? 900 : 300, letterSpacing: '0.1em', outline: 'none', transition: 'all 0.3s', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)' }} value={formData[field.key]} onChange={e => setFormData({ ...formData, [field.key]: e.target.value })} placeholder={field.ph} onFocus={e => { e.target.style.borderColor = '#C5A880'; e.target.style.boxShadow = '0 0 15px rgba(197,168,128,0.2)'; }} onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.15)'; e.target.style.boxShadow = 'none'; }} />
                       </div>
                     ))}
+                    {/* Hope Contact Time Select */}
+                    <div>
+                      <label className="d-block mb-2" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>希望聯絡時間 / CONTACT TIME</label>
+                      <select
+                        className="form-select w-100"
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          padding: '12px 16px',
+                          color: '#fff',
+                          outline: 'none',
+                          transition: 'all 0.3s',
+                          fontSize: 'clamp(0.85rem, 1.2vw, 1rem)'
+                        }}
+                        value={formData.preferredTime}
+                        onChange={e => setFormData({ ...formData, preferredTime: e.target.value })}
+                      >
+                        <option value="" disabled style={{ backgroundColor: '#0D0D0E', color: 'rgba(255,255,255,0.4)' }}>請選擇方便聯絡的時間</option>
+                        <option value="隨時皆可" style={{ backgroundColor: '#0D0D0E' }}>隨時皆可</option>
+                        <option value="平日上午 (09:00 - 12:00)" style={{ backgroundColor: '#0D0D0E' }}>平日上午 (09:00 - 12:00)</option>
+                        <option value="平日下午 (12:00 - 18:00)" style={{ backgroundColor: '#0D0D0E' }}>平日下午 (12:00 - 18:00)</option>
+                        <option value="平日晚上 (18:00 - 21:00)" style={{ backgroundColor: '#0D0D0E' }}>平日晚上 (18:00 - 21:00)</option>
+                        <option value="假日上午 (09:00 - 12:00)" style={{ backgroundColor: '#0D0D0E' }}>假日上午 (09:00 - 12:00)</option>
+                        <option value="假日中午與下午 (12:00 - 18:00)" style={{ backgroundColor: '#0D0D0E' }}>假日中午與下午 (12:00 - 18:00)</option>
+                        <option value="假日晚上 (18:00 - 21:00)" style={{ backgroundColor: '#0D0D0E' }}>假日晚上 (18:00 - 21:00)</option>
+                      </select>
+                    </div>
+                    {/* Description Textarea */}
+                    <div>
+                      <label className="d-block mb-2" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>裝修需求描述 / DESCRIPTION</label>
+                      <textarea
+                        rows={4}
+                        className="form-control w-100"
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          padding: '12px 16px',
+                          color: '#fff',
+                          fontWeight: 300,
+                          letterSpacing: '0.1em',
+                          outline: 'none',
+                          transition: 'all 0.3s',
+                          fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+                          resize: 'vertical'
+                        }}
+                        value={formData.description}
+                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="請簡述您的裝修需求，例如：偏好建材、隔間變動、特殊收納需求、特殊五金偏好或家庭成員組成等..."
+                      />
+                    </div>
                     {/* Drag & Drop */}
                     <div>
                       <label className="d-block mb-2" style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: '#C5A880', textShadow: '0 0 10px rgba(197,168,128,0.4)' }}>平面圖 / 現況照片上傳</label>

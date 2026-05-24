@@ -1,7 +1,78 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, ShieldCheck, Search, Award } from 'lucide-react';
+import { Trees, Droplets, Hammer, Paintbrush, Cpu, ClipboardCheck, Camera } from 'lucide-react';
 import './Quality.css';
+
+const QUALITY_ITEMS = [
+  {
+    icon: <Trees size={36} className="text-metal-brown" />,
+    title: '材料選用標準',
+    desc: '從源頭把關，只選用穩定耐用的高級板材。',
+    details: [
+      '木材含水率嚴格控制於 8% - 12% 之間，防止日後熱漲冷縮開裂或變形。',
+      '全室板材與接著劑一律採用符合國家級 F1 / F2 低甲醛環保綠建材認證。',
+      '實木與天然皮板皆具備進口檢疫與永續產地追溯報告。'
+    ]
+  },
+  {
+    icon: <Droplets size={36} className="text-metal-brown" />,
+    title: '防水工程檢核',
+    desc: '漏水是居住的夢魘，南源實施最嚴苛的防漏屏障。',
+    details: [
+      '標準施作「三層防水系統」：防塵底漆層 ＋ 不織布抗裂強化層 ＋ 高彈性水泥面漆層。',
+      '浴室濕區防水層塗刷高度一律直達天花板，絕不留水氣滲透死角。',
+      '防水層完工後，一律實施 48 至 72 小時蓄水測試，雙重確認零滲漏方可進行下步泥作。'
+    ]
+  },
+  {
+    icon: <Hammer size={36} className="text-metal-brown" />,
+    title: '木作工程檢核',
+    desc: '傳承職人木藝精隨，精準度與耐用度並存。',
+    details: [
+      '結構接合處收口精度嚴控於 ±1mm 誤差內，線條流暢咬合緊密。',
+      '鉸鏈與滑軌等五金配件全面選用奧地利 Blum 等頂級大廠，均通過 50kg 承重檢測。',
+      '櫃體封邊、修角平整滑順，確保人體接觸時手感溫潤、安全無虞。'
+    ]
+  },
+  {
+    icon: <Paintbrush size={36} className="text-metal-brown" />,
+    title: '油漆工程檢核',
+    desc: '細緻觸感來自繁複工序，無毒塗料安心入住。',
+    details: [
+      '堅持「批土三道 ＋ 機器配合手工細緻打磨」，確保牆面平整如絲。',
+      '完工漆面厚度均勻，實施側光 45 度角光澤檢查，杜絕流掛與起泡。',
+      '全案選用世界級環保無毒健康乳膠漆，氣味溫和，開窗通風即可即時入住。'
+    ]
+  },
+  {
+    icon: <Cpu size={36} className="text-metal-brown" />,
+    title: '弱電管線規劃',
+    desc: '為未來的智能家居生活預留充足的高速基礎。',
+    details: [
+      '全屋網絡布線一律升級採用 Cat6A 雙屏蔽高速網路線，完美支援 10G 寬頻傳輸。',
+      '強弱電管線保持 30cm 以上安全間距，弱電管路加裝防干擾屏蔽波紋金屬管。',
+      '所有水電出線盒、天花板維修口均施作防塵保護蓋，並標示明確專屬電路迴路。'
+    ]
+  },
+  {
+    icon: <ClipboardCheck size={36} className="text-metal-brown" />,
+    title: '多次驗收機制',
+    desc: '分段把關，絕不將問題帶到下一個施工階段。',
+    details: [
+      '實施四大階段驗收：水電封板前驗收、泥作防水蓄水驗收、木作粗裝完工驗收、最終交屋前逐項驗收。',
+      '每一階段皆附有南源專屬品質檢核表（QC Checklist），經監造與業主雙方簽字才可繼續進行。'
+    ]
+  },
+  {
+    icon: <Camera size={36} className="text-metal-brown" />,
+    title: '施工紀錄展示',
+    desc: '讓您身歷其境，隨時掌握現場的第一手進度。',
+    details: [
+      '每日監造人員實拍現場照片，上傳至雲端共用相簿，並標註當日進度細節。',
+      '詳實記載氣候溫度、進場工種、材料規格異動與工程日誌，紀錄永久保存供日後維護查詢。'
+    ]
+  }
+];
 
 const Quality: React.FC = () => {
   return (
@@ -18,28 +89,33 @@ const Quality: React.FC = () => {
 
       <div className="container section-padding">
         
-        {/* Core Principles */}
-        <div className="quality-grid mb-4">
-          <div className="quality-card">
-            <Search className="q-icon" size={40} />
-            <h3>嚴選材料</h3>
-            <p>憑藉木材產業背景，我們深知各種建材的物理特性。拒絕使用來路不明的劣質板材，全數採用符合綠建材標章、低甲醛的優良材料。</p>
-          </div>
-          <div className="quality-card">
-            <ShieldCheck className="q-icon" size={40} />
-            <h3>自有工班</h3>
-            <p>不外包給品質不穩定的臨時工。我們的工班團隊皆具備多年經驗，默契十足，能確保每一道工序皆符合南源的高標準規範。</p>
-          </div>
-          <div className="quality-card">
-            <CheckCircle2 className="q-icon" size={40} />
-            <h3>嚴格檢核</h3>
-            <p>施工期間設立多個查核點（如水電配置、防水測試、泥作平整度等），階段性檢驗合格後才進行下一環節，絕不便宜行事。</p>
-          </div>
-          <div className="quality-card">
-            <Award className="q-icon" size={40} />
-            <h3>安心保固</h3>
-            <p>完工不是結束，而是服務的開始。我們提供基礎工程 3 年、木作與系統櫃 1 年的保固承諾，讓您的居住品質擁有長遠保障。</p>
-          </div>
+        {/* Core Principles Section (7 cards grid) */}
+        <div className="row g-4 mb-5">
+          {QUALITY_ITEMS.map((item, index) => (
+            <div className="col-12 col-md-6 col-lg-4" key={index}>
+              <motion.div
+                className="p-4 p-lg-5 h-100 rounded-1"
+                style={{
+                  backgroundColor: '#0D0D0E',
+                  border: '1px solid rgba(197, 168, 128, 0.1)',
+                  boxShadow: '0 4px 25px rgba(0, 0, 0, 0.2)',
+                  transition: 'all 0.3s ease'
+                }}
+                whileHover={{ y: -5, borderColor: '#C5A880', boxShadow: '0 10px 30px rgba(197, 168, 128, 0.15)' }}
+              >
+                <div className="mb-4 d-flex align-items-center justify-content-center rounded-circle" style={{ width: '70px', height: '70px', backgroundColor: 'rgba(197, 168, 128, 0.05)' }}>
+                  {item.icon}
+                </div>
+                <h3 className="mb-2" style={{ fontSize: '1.25rem', fontWeight: 600, color: '#fff' }}>{item.title}</h3>
+                <p className="mb-4" style={{ fontSize: '13px', color: '#C5A880', fontWeight: 300 }}>{item.desc}</p>
+                <ul className="ps-3 mb-0" style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', fontWeight: 300, lineHeight: 1.8 }}>
+                  {item.details.map((detail, idx) => (
+                    <li className="mb-2" key={idx}>{detail}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+          ))}
         </div>
 
         {/* Quality Standards Comparison */}
