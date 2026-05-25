@@ -7,6 +7,7 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import Services from './pages/Services';
 import Process from './pages/Process';
+import Knowledge from './pages/Knowledge';
 import Quality from './pages/Quality';
 import Blog from './pages/Blog';
 import ClientPortal from './pages/ClientPortal';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/services" element={<Services />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/process" element={<Process />} />
+            <Route path="/knowledge" element={<Knowledge />} />
             <Route path="/quality" element={<Quality />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />

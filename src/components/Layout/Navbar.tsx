@@ -24,7 +24,9 @@ const Navbar: React.FC = () => {
     { name: '首頁', path: '/' },
     { name: '關於南源', path: '/about' },
     { name: '服務項目', path: '/services' },
+    { name: '服務流程', path: '/process' },
     { name: '作品案例', path: '/projects' },
+    { name: '裝修知識', path: '/knowledge' },
     { name: '預約諮詢', path: '/contact' },
   ];
 
