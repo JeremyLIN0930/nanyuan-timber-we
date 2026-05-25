@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { MessageSquare, Ruler, FileText, FileCheck, HardHat, CheckCircle } from 'lucide-react';
+import { Ruler, FileText, HardHat, FileCheck, Trees } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════════════
    DESIGN TOKENS
@@ -15,7 +15,7 @@ const TEXT_DIM    = 'rgba(255,255,255,0.4)';
 const TEXT_MID    = 'rgba(255,255,255,0.65)';
 
 /* ═══════════════════════════════════════════════════════════════
-   PROCESS STEPS DATA
+   PROCESS STEPS DATA (5 Luxury Steps)
 ═══════════════════════════════════════════════════════════════ */
 interface ProcessStep {
   id:    string;
@@ -29,51 +29,43 @@ interface ProcessStep {
 const STEPS: ProcessStep[] = [
   {
     id:    '01',
-    title: '初步諮詢',
-    en:    'INITIAL CONSULTATION',
-    desc:  '線上勾勒您的空間藍圖，進行初步機能偏好、預算範圍與時程規劃評估，安排專屬職人與您初次對談。',
-    icon:  <MessageSquare size={24} style={{ color: GOLD }} />,
-    img:   '/images/modern_office_1779301899552.png',
+    title: '空間規劃',
+    en:    'SPACE PLANNING',
+    desc:  '精品工業風。精密格局配置與動線規劃。運用北美胡桃木實木地板與奢華暗灰石材，結合微水泥牆面交融的光影視覺，勾勒沉浸式空間深度。',
+    icon:  <Ruler size={24} style={{ color: GOLD }} />,
+    img:   '/images/space_planning.png',
   },
   {
     id:    '02',
-    title: '現場勘測',
-    en:    'SITE MEASUREMENT',
-    desc:  '職人團隊親赴現場，使用高精度雷射儀測量空間尺寸，深度診斷屋況、結構安全與採光通風條件。',
-    icon:  <Ruler size={24} style={{ color: GOLD }} />,
-    img:   '/images/old_house_before.png',
+    title: '風格意境',
+    en:    'AMBIANCE DESIGN',
+    desc:  '精品工業風。將礦物特殊塗料、微水泥觸感牆面在曜石黑光影折射下，與原木家具進行質感碰撞，形塑侘寂與工業美學交融的私人場域。',
+    icon:  <FileText size={24} style={{ color: GOLD }} />,
+    img:   '/images/ambiance_design.png',
   },
   {
     id:    '03',
-    title: '設計提案',
-    en:    'DESIGN PROPOSAL',
-    desc:  '繪製詳細平面配置圖，確認空間動線規劃，並提供 3D 風格意象與南源原木等核心建材的選配建議。',
-    icon:  <FileText size={24} style={{ color: GOLD }} />,
-    img:   '/images/japanese_wabi_sabi_1779301881798.png',
+    title: '職人手作',
+    en:    'MASTER CRAFTSMANSHIP',
+    desc:  '精品工業風。資深職人手工藝匠心傳承。現場榫卯工法精密拼接，將天然原木素材以極致精度裁切打磨，為空間注入手作溫度與純粹靈魂。',
+    icon:  <HardHat size={24} style={{ color: GOLD }} />,
+    img:   '/images/master_craftsmanship.png',
   },
   {
     id:    '04',
     title: '工程合約',
-    en:    'CONSTRUCTION CONTRACT',
-    desc:  '提供逐項列出、價格完全透明的精細報價單，建立每週施工甘特圖，確認無追加預算後正式簽約。',
+    en:    'TRANSPARENT AGREEMENT',
+    desc:  '精品工業風。誠信透明的合約與報價。於胡桃木桌上簽署手工皮革工程合約書，條列化所有工料細節與進度查核點，建立最安心的保障。',
     icon:  <FileCheck size={24} style={{ color: GOLD }} />,
-    img:   '/images/budget_smart_home.png',
+    img:   '/images/transparent_agreement.png',
   },
   {
     id:    '05',
-    title: '精湛施工',
-    en:    'CRAFTSMANSHIP BUILD',
-    img:   '/images/renovation_detail.png',
-    desc:  '由現場工班總監與自有工匠親自操刀，遵循嚴格防水、木作檢核點，每日上傳施工照片記錄進度。',
-    icon:  <HardHat size={24} style={{ color: GOLD }} />,
-  },
-  {
-    id:    '06',
-    title: '完工驗收',
-    en:    'FINAL HANDOVER',
-    desc:  '經過 100% 品質檢核與試水測試，進行家具與軟裝定位清潔，提供精裝交屋與一年工程結構保固。',
-    icon:  <CheckCircle size={24} style={{ color: GOLD }} />,
-    img:   '/images/luxury_tianmu_home_1779301841564.png',
+    title: '永續選材',
+    en:    'SUSTAINABLE SELECTION',
+    desc:  '精品工業風。嚴格挑選具備 FSC 永續認證的天然原木（胡桃木、橡木、楓木），在職人木材樣品藝廊中，為您的空間挑選最切合的傳世肌理。',
+    icon:  <Trees size={24} style={{ color: GOLD }} />,
+    img:   '/images/sustainable_selection.png',
   },
 ];
 
@@ -138,7 +130,7 @@ const Process: React.FC = () => {
               服務流程
             </h1>
             <p style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, letterSpacing: '0.18em', color: TEXT_DIM, textTransform: 'uppercase', maxWidth: '600px', margin: '0 auto' }}>
-              透明、嚴謹的六大步驟，確保您的空間精準落地
+              精雕細琢的五大步驟，體現極致工法與品牌誠信
             </p>
           </div>
         </RevealSection>
@@ -244,8 +236,8 @@ const Process: React.FC = () => {
                     ) : (
                       /* Image block */
                       <RevealSection>
-                        <div style={{ overflow: 'hidden', border: `1px solid ${BORDER}`, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', height: '240px' }}>
-                          <img src={step.img} alt={step.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7, transition: 'all 0.5s' }} />
+                        <div style={{ overflow: 'hidden', border: `1px solid ${BORDER}`, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', height: '280px', borderRadius: '4px' }}>
+                          <img src={step.img} alt={step.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.75, transition: 'all 0.5s' }} />
                         </div>
                       </RevealSection>
                     )}
@@ -276,8 +268,8 @@ const Process: React.FC = () => {
                     ) : (
                       /* Image block */
                       <RevealSection>
-                        <div style={{ overflow: 'hidden', border: `1px solid ${BORDER}`, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', height: '240px' }}>
-                          <img src={step.img} alt={step.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7, transition: 'all 0.5s' }} />
+                        <div style={{ overflow: 'hidden', border: `1px solid ${BORDER}`, boxShadow: '0 8px 32px rgba(0,0,0,0.5)', height: '280px', borderRadius: '4px' }}>
+                          <img src={step.img} alt={step.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.75, transition: 'all 0.5s' }} />
                         </div>
                       </RevealSection>
                     )}
@@ -293,7 +285,7 @@ const Process: React.FC = () => {
       <div className="text-center py-5 mt-4" style={{ borderTop: `1px solid ${BORDER}` }}>
         <RevealSection>
           <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: TEXT_DIM, textTransform: 'uppercase', marginBottom: '1rem' }}>
-            每一步都為您把關，落實細節美學
+            每一步都秉持匠心，為您落實細節美學
           </p>
           <button
             onClick={() => window.location.href = '/contact'}
