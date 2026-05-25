@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 
 /* ═══════════════════════════════════════════════════════════════
    DESIGN TOKENS
@@ -844,7 +845,9 @@ const FilterTabs: React.FC<{
 ═══════════════════════════════════════════════════════════════ */
 const Projects: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<CategoryId>('all');
-  const [selectedId,   setSelectedId]   = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedId = searchParams.get('project');
 
   /* Derived: filtered list */
   const filtered = activeFilter === 'all'
@@ -859,7 +862,7 @@ const Projects: React.FC = () => {
   /* Handle filter change — reset scroll + selection */
   const handleFilterChange = (id: CategoryId) => {
     setActiveFilter(id);
-    setSelectedId(null);
+    setSearchParams({});
   };
 
   return (
@@ -911,7 +914,7 @@ const Projects: React.FC = () => {
                 <ProjectCard
                   project={project}
                   delay={i * 0.04}
-                  onClick={() => setSelectedId(project.id)}
+                  onClick={() => setSearchParams({ project: project.id })}
                 />
               </motion.div>
             ))}
@@ -929,7 +932,7 @@ const Projects: React.FC = () => {
         {selectedProject && (
           <ProjectDetail
             project={selectedProject}
-            onClose={() => setSelectedId(null)}
+            onClose={() => setSearchParams({})}
           />
         )}
       </AnimatePresence>
