@@ -1,18 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
+import './Projects.css';
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS
+   DESIGN CONSTANTS
 ═══════════════════════════════════════════════════════════════ */
-const GOLD      = '#C5A880';
-const GOLD_GLOW = 'rgba(197,168,128,0.85)';
-const GOLD_DIM  = 'rgba(197,168,128,0.1)';
-const BG        = '#050505';
-const BG_CARD   = '#0D0D0E';
-const BORDER    = 'rgba(255,255,255,0.08)';
-const TEXT_DIM  = 'rgba(255,255,255,0.4)';
-const TEXT_MID  = 'rgba(255,255,255,0.65)';
+const GOLD = '#C5A880';
 
 /* ═══════════════════════════════════════════════════════════════
    FILTER CATEGORIES
@@ -34,7 +28,7 @@ const CATEGORIES: Category[] = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   PROJECT DATA
+   PROJECT DATA (SEO & GEO Keywords Optimized)
 ═══════════════════════════════════════════════════════════════ */
 interface Project {
   id:          string;
@@ -49,15 +43,16 @@ interface Project {
   materials:   string;
   highlight:   string;
   img:         string;
+  altText:     string;
   beforeImg:   string;
+  beforeAlt:   string;
   afterImg:    string;
+  afterAlt:    string;
   galleryImgs: string[];
   description: string[];
 }
 
 const PROJECTS: Project[] = [
-
-  /* ── 全屋統包 ─────────────────────────────────────── */
   {
     id:          '1',
     category:    'all-house',
@@ -71,8 +66,11 @@ const PROJECTS: Project[] = [
     materials:   '北美黑胡桃木實木地板、高級無毒環保塗料、進口三層防水系統',
     highlight:   '全室格局打通 × 北美胡桃木實木地板 × 奢華暗灰石材',
     img:         '/images/luxury_tianmu_home_1779301841564.png',
+    altText:     '南源木材 天母森光 台北天母奢華住宅 三代同堂原木室內設計案實景',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 老屋翻新施工前 天母住宅漏水與舊格局拆除工程',
     afterImg:    '/images/old_house_after.png',
+    afterAlt:    '南源木材 天母豪宅老屋改裝完工後 北美胡桃木地板實景',
     galleryImgs: ['/images/renovation_detail.png', '/images/luxury_tianmu_home_1779301841564.png'],
     description: [
       '全室格局打通，引入大面積天然採光，將原本陰暗封閉的三房格局，重塑為光線流動、視野開闊的現代開放式公領域。',
@@ -94,8 +92,11 @@ const PROJECTS: Project[] = [
     materials:   '義大利進口卡拉拉大理石、定製鍍鈦黃銅格柵、天花隱藏式冷氣系統',
     highlight:   '頂級大理石 × 客製化格柵木作 × 精工落地高階美學',
     img:         '/images/style_luxury_dark_1779301949701.png',
+    altText:     '南源木材 竹北奢華現代 台灣竹北現代大氣客廳 頂級大理石格柵設計案',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 竹北客廳裝修前 水電基礎工程現場診斷',
     afterImg:    '/images/style_luxury_dark_1779301949701.png',
+    afterAlt:    '南源木材 竹北客廳大理石主牆與鈦金格柵完工實拍',
     galleryImgs: ['/images/style_luxury_dark_1779301949701.png', '/images/modern_office_1779301899552.png'],
     description: [
       '現代奢華大器客廳，以義大利進口卡拉拉大理石大板為主視覺，搭配客製化鍍鈦黃銅格柵木作，完美落地高階精緻美學。',
@@ -104,8 +105,6 @@ const PROJECTS: Project[] = [
       '每一個木作格柵的間距、比例與鍍鈦工藝，均由南源工班現場手工精密調整，確保視覺上的絕對精準落地。',
     ],
   },
-
-  /* ── 水電工程 ─────────────────────────────────────── */
   {
     id:          '3',
     category:    'utility',
@@ -119,14 +118,17 @@ const PROJECTS: Project[] = [
     materials:   '無鹵低煙阻燃電線、不銹鋼熱浸鍍鋅明管、Cat6A 資訊線路',
     highlight:   '壁癌漏水根治 × 全室電線重拉 × 智能家居整合',
     img:         '/images/renovation_detail.png',
+    altText:     '南源木材 青埔弱電安全宅 青埔老屋翻新工程 水電電線管線重拉配置實景',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 青埔老屋原狀 陰暗漏水壁癌嚴重的舊廚衛浴水電管線',
     afterImg:    '/images/renovation_detail.png',
+    afterAlt:    '南源木材 青埔水電管路重拉完成 甲級弱電箱排線實景',
     galleryImgs: ['/images/renovation_detail.png', '/images/style_industrial_1779301976370.png'],
     description: [
       '40年屋齡老公寓，原始屋況嚴峻——主臥壁癌面積達牆面 40%、浴室長年漏水滲透至樓下、全室老舊電線超載嚴重。',
       '南源甲級水電職人從「安全工程」做起：全室電線重拉採用無鹵低煙阻燃線材，配電箱全面升級為 200A 雙迴路設計，並同步暗埋 Cat6A 資訊線路至每個房間。',
       '浴室防水層全面剔除重做三層防水（底層瀝青＋中層不織布＋面層彈性水泥），確保 48 小時試水零滲漏，徹底杜絕漏水隱患。',
-      '同步整合全自動智能家居系統：一鍵場景控制、遠端監控、語音操作。40 年老屋從此升級為現代智慧安全住宅。',
+      '同步整合全自動智能家居系統：一鍵場景控制、遠端監控、語音操作。40 年老屋從此升級為智慧安全住宅。',
     ],
   },
   {
@@ -142,8 +144,11 @@ const PROJECTS: Project[] = [
     materials:   '進口電控霧化玻璃、DALI 智能照明系統、光纖超高速網路佈線',
     highlight:   'DALI 智能照明 × 電控霧化玻璃 × 聲學天花板整合',
     img:         '/images/modern_office_1779301899552.png',
+    altText:     '南源木材 曜石辦公 台北金融科技總部 弱電工程智慧整合案實景',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 商業空間水電交班 複雜線路重新理線工程',
     afterImg:    '/images/modern_office_1779301899552.png',
+    afterAlt:    '南源木材 商業辦公室完工後 電控玻璃與智能燈光控制',
     galleryImgs: ['/images/modern_office_1779301899552.png', '/images/style_industrial_1779301976370.png'],
     description: [
       '為一間金融科技公司 200 坪辦公總部打造全面弱電智能化系統，是南源迄今最複雜的智能整合工程。',
@@ -152,8 +157,6 @@ const PROJECTS: Project[] = [
       '光纖超高速網路佈線採 Tier-3 標準雙路由設計，確保商業辦公連線的絕對穩定性與安全性。',
     ],
   },
-
-  /* ── 工藝油漆 ─────────────────────────────────────── */
   {
     id:          '5',
     category:    'painting',
@@ -167,8 +170,11 @@ const PROJECTS: Project[] = [
     materials:   '義大利進口無縫微水泥、手刷珪藻土塗料、碳化防潮橡木地板',
     highlight:   '義大利礦物塗料 × 手工堆疊批土 × 光影漸層牆面藝術',
     img:         '/images/japanese_wabi_sabi_1779301881798.png',
+    altText:     '南源木材 侘寂茶韻 台北日式空間裝潢 職人手工刷塗義大利礦物漆牆面',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 牆面批土打磨前 粗糙水泥底層診斷',
     afterImg:    '/images/japanese_wabi_sabi_1779301881798.png',
+    afterAlt:    '南源木材 手刷塗料完工 微水泥斑駁質感牆面與榻榻米',
     galleryImgs: ['/images/japanese_wabi_sabi_1779301881798.png', '/images/style_wabi_sabi_1779301962644.png'],
     description: [
       '精選環保無毒義大利頂級特殊礦物塗料，由資深職人純手工層層堆疊批土、噴漆，刻劃出具備細膩紋理與光影漸層的牆面藝術。',
@@ -190,8 +196,11 @@ const PROJECTS: Project[] = [
     materials:   '台灣檜木原木大板、訂製黃銅管金屬件、頂級調光暖色 LED 燈具',
     highlight:   '品牌色調手工噴漆 × 檜木烤漆吧台 × 暖金光影整合',
     img:         '/images/high_end_cafe_1779301868615.png',
+    altText:     '南源木材 琥珀香醇 職人手工噴漆 台灣檜木烤漆吧台 奢華咖啡廳空間',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 商業空間木作框架打底 現場打磨工序',
     afterImg:    '/images/high_end_cafe_1779301868615.png',
+    afterAlt:    '南源木材 台灣檜木吧台手工噴漆保護漆完工光澤',
     galleryImgs: ['/images/high_end_cafe_1779301868615.png', '/images/style_luxury_dark_1779301949701.png'],
     description: [
       '為精品咖啡旗艦店打造品牌專屬調色系統——從牆面的深琥珀棕到天花板的煙燻黑，每一個色彩均依據品牌 Pantone 色號現場精密調配。',
@@ -200,8 +209,6 @@ const PROJECTS: Project[] = [
       '從室內牆面到戶外招牌、從吧台烤漆到椅面皮革，我們提供完整的品牌色彩整合服務，確保每一個視覺觸點高度一致。',
     ],
   },
-
-  /* ── 局部改造 ─────────────────────────────────────── */
   {
     id:          '7',
     category:    'partial',
@@ -215,8 +222,11 @@ const PROJECTS: Project[] = [
     materials:   '高級樺木合板、雙面塗裝板、低甲醛全室系統櫃、LED 線性燈',
     highlight:   '隱藏式收納 × 多功能木質地坪 × 小資精品感落地',
     img:         '/images/budget_smart_home.png',
+    altText:     '南源木材 機能極大化小宅 隱藏式收納 多功能木質地坪 系統櫃與手作木件',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 小宅改裝前格局 陰暗老舊天花板拆除現場',
     afterImg:    '/images/budget_smart_home.png',
+    afterAlt:    '南源木材 架高木地板收納地坪與多功能隱藏桌面完工實景',
     galleryImgs: ['/images/budget_smart_home.png', '/images/style_minimal_wood_1779301932325.png'],
     description: [
       '22 坪小宅需同時滿足臥室、書房、客廳與大量收納，總預算嚴格控制在 60 萬以內。南源以「有限預算混搭系統櫃與職人手作木件」為核心策略。',
@@ -238,8 +248,11 @@ const PROJECTS: Project[] = [
     materials:   '義大利 Nero Marquina 黑色大理石、北美白橡木、德國 Hansgrohe 恆溫花灑',
     highlight:   '大理石對花 × 浮懸木質浴櫃 × 無框淋浴屏',
     img:         '/images/luxury_bathroom_1779301913582.png',
+    altText:     '南源木材 沐光水域 大理石對花 懸浮木質浴櫃 台北天母奢華住宅衛浴改裝',
     beforeImg:   '/images/old_house_before.png',
+    beforeAlt:   '南源木材 舊浴室壁磚敲除及水泥粗胚打底工程',
     afterImg:    '/images/luxury_bathroom_1779301913582.png',
+    afterAlt:    '南源木材 Nero Marquina 大理石對花主牆與無框淋浴門完工實景',
     galleryImgs: ['/images/luxury_bathroom_1779301913582.png', '/images/renovation_detail.png'],
     description: [
       '僅 10 坪的衛浴空間，打造如同精品飯店般的沐浴體驗。主牆面選用義大利 Nero Marquina 黑色大理石大板，以 bookmatching 對花工法呈現鏡面對稱的自然紋理。',
@@ -251,15 +264,15 @@ const PROJECTS: Project[] = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   FADE-IN  (scroll-driven reveal)
+   FADE-IN (scroll-driven reveal)
 ═══════════════════════════════════════════════════════════════ */
 const FadeIn: React.FC<{
   children:  React.ReactNode;
   className?: string;
   delay?:    number;
 }> = ({ children, className = '', delay = 0 }) => {
-  const ref     = useRef<HTMLDivElement>(null);
-  const inView  = useInView(ref, { once: true, margin: '-80px' });
+  const ref    = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
   return (
     <motion.div
       ref={ref}
@@ -278,10 +291,12 @@ const FadeIn: React.FC<{
 ═══════════════════════════════════════════════════════════════ */
 const BeforeAfterSlider: React.FC<{
   beforeImg: string;
+  beforeAlt: string;
   afterImg:  string;
-}> = ({ beforeImg, afterImg }) => {
-  const [pos,  setPos]  = useState(50);
-  const boxRef          = useRef<HTMLDivElement>(null);
+  afterAlt:  string;
+}> = ({ beforeImg, beforeAlt, afterImg, afterAlt }) => {
+  const [pos, setPos] = useState(50);
+  const boxRef        = useRef<HTMLDivElement>(null);
 
   const handleMove = (clientX: number) => {
     if (!boxRef.current) return;
@@ -292,31 +307,41 @@ const BeforeAfterSlider: React.FC<{
   return (
     <div
       ref={boxRef}
-      style={{
-        position:   'relative',
-        width:      '100%',
-        height:     'clamp(260px,55vh,680px)',
-        overflow:   'hidden',
-        cursor:     'ew-resize',
-        userSelect: 'none',
-        border:     `1px solid ${BORDER}`,
-      }}
+      className="ba-slider-container"
       onMouseMove={e => { if (e.buttons === 1) handleMove(e.clientX); }}
       onTouchMove={e => handleMove(e.touches[0].clientX)}
       onMouseDown={e => handleMove(e.clientX)}
     >
       {/* After layer */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${afterImg}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div style={{ position: 'absolute', bottom: '1.25rem', right: '1.25rem', fontSize: '10px', letterSpacing: '0.2em', fontWeight: 300, color: '#fff', backgroundColor: 'rgba(5,5,5,0.65)', backdropFilter: 'blur(8px)', padding: '5px 14px' }}>完工後 AFTER</div>
+      <div 
+        className="ba-reality-side" 
+        style={{ backgroundImage: `url('${afterImg}')` }}
+        role="img"
+        aria-label={afterAlt}
+      >
+        <div className="ba-reality-label">完工後 AFTER</div>
       </div>
+      
       {/* Before layer */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `url('${beforeImg}')`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'grayscale(80%) contrast(110%) brightness(50%)', clipPath: `polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)` }}>
-        <div style={{ position: 'absolute', bottom: '1.25rem', left: '1.25rem', fontSize: '10px', letterSpacing: '0.2em', fontWeight: 300, color: '#fff', backgroundColor: 'rgba(5,5,5,0.65)', backdropFilter: 'blur(8px)', padding: '5px 14px' }}>施工前 BEFORE</div>
+      <div 
+        className="ba-blueprint-side" 
+        style={{ 
+          backgroundImage: `url('${beforeImg}')`,
+          clipPath: `polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`
+        }}
+        role="img"
+        aria-label={beforeAlt}
+      >
+        <div className="ba-blueprint-label">施工前 BEFORE</div>
       </div>
+      
       {/* Divider handle */}
-      <div style={{ position: 'absolute', top: 0, bottom: 0, left: `${pos}%`, transform: 'translateX(-50%)', width: '2px', backgroundColor: GOLD, boxShadow: '0 0 25px rgba(197,168,128,0.8)', zIndex: 10 }}>
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '40px', height: '40px', borderRadius: '50%', border: `1px solid ${GOLD}`, backgroundColor: 'rgba(5,5,5,0.82)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px rgba(197,168,128,0.5)' }}>
-          <span style={{ color: GOLD, fontSize: '12px', fontWeight: 300 }}>⟨⟩</span>
+      <div 
+        className="ba-handle-line" 
+        style={{ left: `${pos}%`, transform: 'translateX(-50%)' }}
+      >
+        <div className="ba-handle-circle">
+          <span className="ba-handle-arrows">⟨⟩</span>
         </div>
       </div>
     </div>
@@ -332,103 +357,81 @@ const ProjectCard: React.FC<{
   onClick: () => void;
 }> = ({ project, delay, onClick }) => (
   <FadeIn delay={delay}>
-    <motion.div
+    <article
       onClick={onClick}
-      whileHover={{ y: -6 }}
-      style={{
-        backgroundColor: BG_CARD,
-        border:          `1px solid ${BORDER}`,
-        boxShadow:       '0 4px 24px rgba(0,0,0,0.35)',
-        cursor:          'pointer',
-        display:         'flex',
-        flexDirection:   'column',
-        height:          '100%',
-        transition:      'border-color 0.35s, box-shadow 0.35s',
-        overflow:        'hidden',
-      }}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(197,168,128,0.5)';
-        (e.currentTarget as HTMLDivElement).style.boxShadow  = '0 8px 32px rgba(197,168,128,0.12)';
-      }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLDivElement).style.borderColor = BORDER;
-        (e.currentTarget as HTMLDivElement).style.boxShadow  = '0 4px 24px rgba(0,0,0,0.35)';
-      }}
+      className="portfolio-card"
     >
       {/* ── Image ── */}
-      <div style={{ aspectRatio: '16/10', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+      <div className="portfolio-img-container">
         <img
           src={project.img}
-          alt={project.title}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.82, transition: 'transform 0.7s, opacity 0.5s', display: 'block' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1.06)'; (e.currentTarget as HTMLImageElement).style.opacity = '1'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1)';    (e.currentTarget as HTMLImageElement).style.opacity = '0.82'; }}
+          alt={project.altText}
+          className="portfolio-img"
+          loading="lazy"
         />
         {/* Category badge */}
-        <div style={{ position: 'absolute', top: '12px', left: '12px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.18em', color: BG, backgroundColor: GOLD, padding: '4px 10px', textTransform: 'uppercase' }}>
+        <div className="portfolio-badge-style">
           {CATEGORIES.find(c => c.id === project.category)?.en ?? ''}
         </div>
         {/* Year badge */}
-        <div style={{ position: 'absolute', top: '12px', right: '12px', fontSize: '9px', fontWeight: 300, letterSpacing: '0.15em', color: '#fff', backgroundColor: 'rgba(5,5,5,0.7)', backdropFilter: 'blur(6px)', padding: '4px 10px' }}>
+        <div className="portfolio-badge-geo">
           {project.year}
         </div>
         {/* Bottom gradient */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,13,14,0.85) 0%, transparent 60%)' }} />
+        <div className="portfolio-img-gradient" />
       </div>
 
       {/* ── Body ── */}
-      <div style={{ padding: 'clamp(16px,2.5vw,24px)', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div className="portfolio-card-content">
 
         {/* Title row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+        <div className="portfolio-card-header">
           <div>
-            <h3 style={{ fontSize: 'clamp(1rem,1.8vw,1.2rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff', margin: 0, lineHeight: 1.2 }}>
+            <h3 className="portfolio-card-title">
               {project.title}
             </h3>
-            <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', color: GOLD, margin: '3px 0 0', textShadow: `0 0 10px ${GOLD_DIM}` }}>
+            <p className="portfolio-card-type">
               {project.subtitle}
             </p>
           </div>
-          <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.1em', color: TEXT_DIM, border: `1px solid ${BORDER}`, padding: '3px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+          <span className="portfolio-badge-size">
             {project.size}
           </span>
         </div>
 
         {/* Meta info */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className="portfolio-card-specs">
           {[
             { label: '設計重點', value: project.designFocus },
             { label: '使用材料', value: project.materials   },
           ].map(row => (
-            <div key={row.label} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-              <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.1em', color: TEXT_DIM, flexShrink: 0, paddingTop: '1px', minWidth: '58px' }}>{row.label}：</span>
-              <span style={{ fontSize: 'clamp(0.73rem,1.1vw,0.8rem)', fontWeight: 300, letterSpacing: '0.04em', color: TEXT_MID, lineHeight: 1.55 }}>{row.value}</span>
+            <div key={row.label} className="portfolio-spec-row">
+              <span className="portfolio-spec-label">{row.label}：</span>
+              <span className="portfolio-spec-val">{row.value}</span>
             </div>
           ))}
         </div>
 
         {/* Highlight pill */}
-        <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: `1px solid ${BORDER}` }}>
-          <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.08em', color: 'rgba(197,168,128,0.7)', margin: 0, lineHeight: 1.6 }}>
+        <div className="portfolio-divider">
+          <p className="portfolio-card-highlight">
             {project.highlight}
           </p>
         </div>
 
         {/* CTA */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', color: GOLD, textShadow: `0 0 12px ${GOLD_DIM}`, cursor: 'pointer' }}>
+        <div className="portfolio-card-action">
+          <span className="portfolio-action-text">
             查看完整案例 ➔
           </span>
         </div>
       </div>
-    </motion.div>
+    </article>
   </FadeIn>
 );
 
 /* ═══════════════════════════════════════════════════════════════
    PROJECT DETAIL OVERLAY
-   — position:fixed, inset:0, z-index:9000, bg:#050505
-   — completely isolates from grid; no bleed-through
 ═══════════════════════════════════════════════════════════════ */
 const ProjectDetail: React.FC<{
   project:  Project;
@@ -442,66 +445,40 @@ const ProjectDetail: React.FC<{
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
-      style={{
-        /* ── ISOLATION LAYER ──
-           position:fixed + inset:0 + z-index:9000 + backgroundColor:#050505
-           completely seals off the overlay from any underlying content.
-           overflow:hidden on this element; inner div handles scroll. */
-        position:        'fixed',
-        inset:           0,
-        zIndex:          9000,
-        backgroundColor: BG,
-        overflow:        'hidden',
-      }}
+      className="detail-modal-overlay"
     >
       {/* Scrollable inner container */}
       <div
         ref={scrollRef}
-        style={{ width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden' }}
+        className="detail-modal-scroll"
       >
 
         {/* ── Close button ──────────────────────────────────── */}
         <button
           onClick={onClose}
-          style={{
-            position:        'fixed',
-            top:             'clamp(16px,3vh,28px)',
-            right:           'clamp(16px,3vw,36px)',
-            zIndex:          9010,
-            background:      'none',
-            border:          `1px solid ${BORDER}`,
-            color:           TEXT_DIM,
-            fontSize:        '11px',
-            fontWeight:      700,
-            letterSpacing:   '0.22em',
-            padding:         '8px 18px',
-            cursor:          'pointer',
-            backdropFilter:  'blur(12px)',
-            backgroundColor: 'rgba(5,5,5,0.75)',
-            transition:      'all 0.3s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.color = GOLD; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = BORDER; e.currentTarget.style.color = TEXT_DIM; }}
+          className="detail-modal-close-btn"
+          aria-label="關閉作品詳情"
         >
-          關閉 ✕
+          ✕
         </button>
 
         {/* ── Hero Image ──────────────────────────────────────── */}
-        <div style={{ position: 'relative', width: '100%', height: 'clamp(280px,65vh,82vh)', overflow: 'hidden' }}>
+        <div className="detail-hero-banner">
           <img
             src={project.img}
-            alt={project.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            alt={project.altText}
+            className="detail-hero-img"
           />
           {/* Gradient to body bg — seamless transition */}
-          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, ${BG} 0%, rgba(5,5,5,0.25) 55%, transparent 100%)` }} />
+          <div className="detail-hero-gradient" />
+          
           {/* Type badge */}
-          <div style={{ position: 'absolute', bottom: 'clamp(90px,14vw,140px)', left: 'clamp(16px,4vw,48px)', display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
-            <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', color: GOLD, border: `1px solid rgba(197,168,128,0.35)`, padding: '4px 14px', backdropFilter: 'blur(8px)', backgroundColor: 'rgba(5,5,5,0.4)' }}>
+          <div className="detail-hero-badge-container">
+            <span className="detail-hero-category">
               {project.type}
             </span>
             {[project.size, project.year, `預算 ${project.budget}`].map(tag => (
-              <span key={tag} style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.15em', color: TEXT_DIM, backgroundColor: 'rgba(5,5,5,0.5)', backdropFilter: 'blur(6px)', padding: '4px 12px' }}>
+              <span key={tag} className="detail-hero-tag">
                 {tag}
               </span>
             ))}
@@ -509,33 +486,30 @@ const ProjectDetail: React.FC<{
         </div>
 
         {/* ── Main content area ────────────────────────────────── */}
-        <div
-          className="container px-3 px-md-4"
-          style={{ position: 'relative', marginTop: '-80px', zIndex: 10, paddingBottom: '80px' }}
-        >
+        <div className="container px-3 px-md-4 detail-body-container">
 
           {/* Title */}
-          <div style={{ marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: 'clamp(2.2rem,7vw,4.5rem)', fontWeight: 900, letterSpacing: '-0.05em', color: '#fff', textShadow: '0 0 30px rgba(255,255,255,0.35)', lineHeight: 1.05, margin: 0 }}>
+          <div className="detail-header-block">
+            <h2 className="detail-title">
               {project.title}
             </h2>
-            <p style={{ fontSize: 'clamp(0.95rem,1.8vw,1.4rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(197,168,128,0.72)', marginTop: '0.5rem' }}>
+            <p className="detail-subtitle-en">
               {project.subtitle}
             </p>
           </div>
 
           {/* Highlight quote */}
-          <div style={{ borderLeft: `3px solid ${GOLD}`, boxShadow: '-4px 0 20px rgba(197,168,128,0.28)', paddingLeft: '1.25rem', marginBottom: '2.5rem' }}>
-            <p style={{ fontSize: 'clamp(0.92rem,1.6vw,1.15rem)', fontWeight: 300, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.82)', lineHeight: 1.85, margin: 0 }}>
+          <div className="detail-concept-border">
+            <p className="detail-concept-text">
               {project.highlight}
             </p>
           </div>
 
           {/* Description paragraphs */}
-          <div style={{ maxWidth: '820px', marginBottom: '3rem' }}>
+          <div className="detail-desc-max-width">
             {project.description.map((para, i) => (
               <FadeIn key={i} delay={i * 0.08}>
-                <p style={{ fontSize: 'clamp(0.84rem,1.25vw,1rem)', fontWeight: 300, letterSpacing: '0.07em', color: 'rgba(255,255,255,0.62)', lineHeight: 2.15, marginBottom: '1.25rem' }}>
+                <p className="detail-desc-text">
                   {para}
                 </p>
               </FadeIn>
@@ -544,32 +518,36 @@ const ProjectDetail: React.FC<{
 
           {/* Before / After slider */}
           <FadeIn className="mb-5">
-            <h3 style={{ fontSize: 'clamp(1.3rem,2.5vw,1.8rem)', fontWeight: 900, letterSpacing: '-0.03em', color: GOLD, textShadow: `0 0 25px ${GOLD_GLOW}`, marginBottom: '0.6rem' }}>
+            <h3 className="detail-section-title">
               空間重生：擦除對照
             </h3>
-            <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', color: TEXT_DIM, marginBottom: '1rem' }}>
+            <p className="detail-section-subtitle-en">
               左右拖曳滑桿，見證空間蛻變。
             </p>
-            <BeforeAfterSlider beforeImg={project.beforeImg} afterImg={project.afterImg} />
+            <BeforeAfterSlider 
+              beforeImg={project.beforeImg} 
+              beforeAlt={project.beforeAlt}
+              afterImg={project.afterImg} 
+              afterAlt={project.afterAlt}
+            />
           </FadeIn>
 
           {/* Gallery */}
           <FadeIn>
-            <h3 style={{ fontSize: 'clamp(1.3rem,2.5vw,1.8rem)', fontWeight: 900, letterSpacing: '-0.03em', color: GOLD, textShadow: `0 0 25px ${GOLD_GLOW}`, marginBottom: '1.25rem' }}>
+            <h3 className="detail-gallery-title">
               更多細節
             </h3>
             <div className="row g-3">
               {project.galleryImgs.map((gImg, i) => (
                 <div className="col-12 col-md-6" key={i}>
-                  <div style={{ overflow: 'hidden', position: 'relative' }}>
+                  <div className="detail-gallery-img-wrapper">
                     <img
                       src={gImg}
-                      alt={`Detail ${i + 1}`}
-                      style={{ width: '100%', height: 'clamp(180px,35vh,380px)', objectFit: 'cover', opacity: 0.82, transition: 'transform 0.7s, opacity 0.5s', display: 'block' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1.05)'; (e.currentTarget as HTMLImageElement).style.opacity = '1'; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1)';    (e.currentTarget as HTMLImageElement).style.opacity = '0.82'; }}
+                      alt={`南源木材 ${project.title} 施工細節圖 ${i + 1}`}
+                      className="detail-gallery-img"
+                      loading="lazy"
                     />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(5,5,5,0.55) 0%, transparent 100%)', pointerEvents: 'none' }} />
+                    <div className="detail-gallery-img-shadow-overlay" />
                   </div>
                 </div>
               ))}
@@ -578,15 +556,14 @@ const ProjectDetail: React.FC<{
 
           {/* CTA */}
           <FadeIn>
-            <div style={{ marginTop: '3.5rem', paddingTop: '2rem', borderTop: `1px solid ${BORDER}`, textAlign: 'center' }}>
-              <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.18em', color: TEXT_DIM, marginBottom: '1.5rem', textTransform: 'uppercase' }}>
-                喜歡這個作品？讓南源為您打造專屬空間
+            <div className="cta-section">
+              <p className="cta-desc">
+                喜歡這個作品？南源木材為您打造台北天母、竹北、青埔客裝與老屋翻新精品空間。
               </p>
               <button
                 onClick={() => { onClose(); window.location.href = '/contact'; }}
-                style={{ fontSize: 'clamp(0.82rem,1.3vw,0.95rem)', letterSpacing: '0.14em', padding: '0.9em 2.8em', border: `1px solid ${GOLD}`, color: BG, backgroundColor: GOLD, cursor: 'pointer', fontWeight: 900, transition: 'box-shadow 0.3s', textTransform: 'uppercase' }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 28px rgba(197,168,128,0.6)')}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
+                className="cta-btn"
+                aria-label="立即預約諮詢"
               >
                 立即預約諮詢 ➔
               </button>
@@ -601,13 +578,6 @@ const ProjectDetail: React.FC<{
 
 /* ═══════════════════════════════════════════════════════════════
    FILTER TABS  —  Bespoke Craftsmanship Edition
-   ─────────────────────────────────────────────────────────────
-   Visual language:
-   • Frosted obsidian pill container (backdrop-filter: blur)
-   • Framer Motion shared layoutId "gold-wire" underline that
-     slides smoothly between active tabs (no JS measurement needed)
-   • Hover: translateY(-2px) + gold colour, cubic-bezier breath
-   • Mobile: overflow-x:auto + scrollbar hidden, finger-swipe ready
 ═══════════════════════════════════════════════════════════════ */
 const FilterTabs: React.FC<{
   active:   CategoryId;
@@ -616,227 +586,86 @@ const FilterTabs: React.FC<{
   const [hovered, setHovered] = React.useState<CategoryId | null>(null);
 
   return (
-    <>
-      {/* ── Inject one-time global styles for webkit scrollbar hide ── */}
-      <style>{`
-        .filter-track::-webkit-scrollbar { display: none; }
-      `}</style>
+    <div className="filter-track">
+      <div className="tab-track-container">
+        {CATEGORIES.map((cat) => {
+          const isActive  = active  === cat.id;
+          const isHovered = hovered === cat.id;
 
-      {/*
-        SCROLL WRAPPER
-        ─────────────
-        overflow-x:auto  → enables finger-swipe on mobile
-        scrollbar-width:none + .filter-track::-webkit-scrollbar → hides
-        scrollbar on every browser while keeping scroll functionality.
-        -webkit-overflow-scrolling:touch → momentum scrolling on iOS.
-      */}
-      <div
-        className="filter-track"
-        style={{
-          overflowX:                 'auto',
-          overflowY:                 'hidden',
-          scrollbarWidth:            'none',
-          WebkitOverflowScrolling:   'touch',
-          marginBottom:              'clamp(2rem,4vh,3.5rem)',
-          /* Extra horizontal padding so the pill shadow isn't clipped */
-          paddingBottom:             '6px',
-          paddingTop:                '4px',
-        }}
-      >
-        {/*
-          FROSTED OBSIDIAN PILL CONTAINER
-          ────────────────────────────────
-          • width:max-content → inner tabs never wrap on narrow screens;
-            the scroll wrapper handles overflow.
-          • border-radius:9999px → perfect pill shape.
-          • backdrop-filter:blur → premium frosted glass look.
-          • The very faint gold outer ring lifts it off the page.
-        */}
-        <div
-          style={{
-            display:         'inline-flex',
-            alignItems:      'stretch',
-            width:           'max-content',
-            gap:             0,
-            borderRadius:    '9999px',
-            background:      'rgba(10,10,10,0.55)',
-            backdropFilter:  'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            border:          '1px solid rgba(197,168,128,0.18)',
-            boxShadow:       '0 4px 32px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04)',
-            padding:         '5px',
-          }}
-        >
-          {CATEGORIES.map((cat) => {
-            const isActive  = active  === cat.id;
-            const isHovered = hovered === cat.id;
+          return (
+            <div key={cat.id} className="position-relative d-inline-block">
+              {isActive && (
+                <motion.div
+                  layoutId="filter-pill"
+                  className="material-pill-glow"
+                  transition={{
+                    type:      'spring',
+                    stiffness: 380,
+                    damping:   34,
+                    mass:      0.9,
+                  }}
+                />
+              )}
 
-            return (
-              /*
-                PER-TAB WRAPPER
-                ───────────────
-                position:relative so the absolute gold underline wire
-                and the Framer Motion layout pill both anchor correctly.
-              */
-              <div
-                key={cat.id}
-                style={{ position: 'relative' }}
+              <button
+                onClick={() => onChange(cat.id)}
+                onMouseEnter={() => setHovered(cat.id)}
+                onMouseLeave={() => setHovered(null)}
+                className="filter-pill-btn"
+                aria-label={`篩選 ${cat.label}`}
               >
-                {/*
-                  ACTIVE BACKGROUND PILL
-                  ───────────────────────
-                  layoutId="pill" → Framer Motion animates this pill's
-                  position and size whenever `active` changes, creating
-                  the smooth sliding highlight without any JS measurement.
-                  It renders BEHIND the button label via z-index.
-                */}
-                {isActive && (
-                  <motion.div
-                    layoutId="filter-pill"
-                    style={{
-                      position:        'absolute',
-                      inset:           0,
-                      borderRadius:    '9999px',
-                      background:      'linear-gradient(135deg, rgba(197,168,128,0.16) 0%, rgba(197,168,128,0.07) 100%)',
-                      border:          '1px solid rgba(197,168,128,0.35)',
-                      boxShadow:       '0 0 18px rgba(197,168,128,0.22), inset 0 0 12px rgba(197,168,128,0.06)',
-                      zIndex:          0,
-                    }}
-                    transition={{
-                      type:      'spring',
-                      stiffness: 380,
-                      damping:   34,
-                      mass:      0.9,
-                    }}
-                  />
-                )}
-
-                {/*
-                  TAB BUTTON
-                  ──────────
-                  z-index:1 keeps label above the sliding pill.
-                  transform:translateY is controlled by isHovered so the
-                  breathing hover effect works even on the active tab.
-                */}
-                <button
-                  onClick={() => onChange(cat.id)}
-                  onMouseEnter={() => setHovered(cat.id)}
-                  onMouseLeave={() => setHovered(null)}
+                <span
+                  className="filter-pill-label"
                   style={{
-                    position:        'relative',
-                    zIndex:          1,
-                    display:         'flex',
-                    flexDirection:   'column',
-                    alignItems:      'center',
-                    justifyContent:  'center',
-                    gap:             '4px',
-                    padding:         'clamp(10px,1.4vw,14px) clamp(18px,2.8vw,32px)',
-                    borderRadius:    '9999px',
-                    background:      'none',
-                    border:          'none',
-                    cursor:          'pointer',
-                    outline:         'none',
-                    whiteSpace:      'nowrap',
-                    /* Breathing hover lift */
-                    transform:       isHovered && !isActive
-                      ? 'translateY(-2px)'
-                      : isActive && isHovered
-                        ? 'translateY(-1px)'
-                        : 'translateY(0)',
-                    transition:      'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
+                    fontWeight: isActive ? 800 : isHovered ? 500 : 300,
+                    color:      isActive ? '#ffffff' : isHovered ? GOLD : 'rgba(255,255,255,0.42)',
+                    textShadow: isActive ? `0 0 18px rgba(197,168,128,0.7), 0 0 6px rgba(255,255,255,0.3)` : 'none',
                   }}
                 >
-                  {/*
-                    CHINESE LABEL
-                    ─────────────
-                    Active   → pure white, bold, gold glow text-shadow
-                    Hovered  → gold colour, medium weight
-                    Resting  → low-contrast rgba(255,255,255,0.4)
-                    All transitions use the same cubic-bezier for cohesion.
-                  */}
-                  <span
-                    style={{
-                      fontSize:      'clamp(0.82rem,1.3vw,0.96rem)',
-                      fontWeight:    isActive ? 800 : isHovered ? 500 : 300,
-                      letterSpacing: '0.06em',
-                      color:         isActive
-                        ? '#ffffff'
-                        : isHovered
-                          ? GOLD
-                          : 'rgba(255,255,255,0.42)',
-                      textShadow:    isActive
-                        ? `0 0 18px rgba(197,168,128,0.7), 0 0 6px rgba(255,255,255,0.3)`
-                        : isHovered
-                          ? `0 0 12px rgba(197,168,128,0.45)`
-                          : 'none',
-                      transition:    'color 0.35s cubic-bezier(0.16,1,0.3,1), font-weight 0.35s, text-shadow 0.35s',
-                    }}
-                  >
-                    {cat.label}
-                  </span>
+                  {cat.label}
+                </span>
 
-                  {/*
-                    ENGLISH SUB-LABEL
-                    ──────────────────
-                    Stays dim and small; brightens proportionally on hover/active.
-                  */}
-                  <span
-                    style={{
-                      fontSize:      '8.5px',
-                      fontWeight:    300,
-                      letterSpacing: '0.24em',
-                      textTransform: 'uppercase',
-                      color:         isActive
-                        ? 'rgba(197,168,128,0.75)'
-                        : isHovered
-                          ? 'rgba(197,168,128,0.55)'
-                          : 'rgba(255,255,255,0.22)',
-                      transition:    'color 0.35s cubic-bezier(0.16,1,0.3,1)',
-                    }}
-                  >
-                    {cat.en}
-                  </span>
+                <span
+                  className="filter-pill-en"
+                  style={{
+                    color: isActive ? 'rgba(197,168,128,0.75)' : isHovered ? 'rgba(197,168,128,0.55)' : 'rgba(255,255,255,0.22)',
+                  }}
+                >
+                  {cat.en}
+                </span>
 
-                  {/*
-                    GOLD WIRE UNDERLINE
-                    ────────────────────
-                    Renders only when this tab is active.
-                    AnimatePresence + initial/exit scale-x gives it a
-                    draw-in / erase-out effect each time the active tab changes.
-                    The wire sits 4px below the English sub-label.
-                  */}
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.span
-                        key="gold-wire"
-                        initial={{ scaleX: 0, opacity: 0 }}
-                        animate={{ scaleX: 1, opacity: 1 }}
-                        exit={{   scaleX: 0, opacity: 0 }}
-                        transition={{
-                          duration:   0.38,
-                          ease:       [0.16, 1, 0.3, 1],
-                          delay:      0.06,
-                        }}
-                        style={{
-                          display:         'block',
-                          width:           'clamp(18px,55%,36px)',
-                          height:          '1.5px',
-                          borderRadius:    '2px',
-                          background:      `linear-gradient(90deg, transparent, ${GOLD}, transparent)`,
-                          boxShadow:       `0 0 8px rgba(197,168,128,0.9), 0 0 20px rgba(197,168,128,0.4)`,
-                          transformOrigin: 'center',
-                          marginTop:       '2px',
-                        }}
-                      />
-                    )}
-                  </AnimatePresence>
-                </button>
-              </div>
-            );
-          })}
-        </div>
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.span
+                      key="gold-wire"
+                      initial={{ scaleX: 0, opacity: 0 }}
+                      animate={{ scaleX: 1, opacity: 1 }}
+                      exit={{   scaleX: 0, opacity: 0 }}
+                      transition={{
+                        duration:   0.38,
+                        ease:       [0.16, 1, 0.3, 1],
+                        delay:      0.06,
+                      }}
+                      className="position-absolute bottom-0 start-50 translate-middle-x"
+                      style={{
+                        display:         'block',
+                        width:           '24px',
+                        height:          '1.5px',
+                        borderRadius:    '2px',
+                        background:      `linear-gradient(90deg, transparent, ${GOLD}, transparent)`,
+                        boxShadow:       `0 0 8px rgba(197,168,128,0.9), 0 0 20px rgba(197,168,128,0.4)`,
+                        transformOrigin: 'center',
+                        marginBottom:    '2px',
+                      }}
+                    />
+                  )}
+                </AnimatePresence>
+              </button>
+            </div>
+          );
+        })}
       </div>
-    </>
+    </div>
   );
 };
 
@@ -866,68 +695,59 @@ const Projects: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      style={{ backgroundColor: BG, minHeight: '100vh' }}
-    >
-      <div
-        className="container px-3 px-md-4"
-        style={{ paddingTop: 'clamp(80px,10vh,120px)', paddingBottom: '80px' }}
-      >
+    <main className="projects-page">
+      <div className="container px-3 px-md-4 projects-container">
 
         {/* ── Page header ─────────────────────────────────── */}
-        <FadeIn className="mb-4">
-          <h1 style={{ fontSize: 'clamp(2.2rem,6vw,4.2rem)', fontWeight: 900, letterSpacing: '-0.05em', color: GOLD, textShadow: `0 0 40px ${GOLD_GLOW}`, lineHeight: 1.05, marginBottom: '0.5rem' }}>
-            作品案例
-          </h1>
-          <p style={{ fontSize: 'clamp(0.68rem,1.1vw,0.82rem)', fontWeight: 300, letterSpacing: '0.18em', color: TEXT_DIM, textTransform: 'uppercase', margin: 0 }}>
-            Portfolio / Masterpieces — {PROJECTS.length} Selected Works
-          </p>
-        </FadeIn>
+        <section className="mb-4">
+          <FadeIn>
+            <h1 className="projects-title">作品案例</h1>
+            <p className="projects-subtitle">
+              南源木材高端住宅、客廳、老屋翻修與油漆水電精工作品。台北天母、竹北、青埔全屋統包翻新設計案例一覽。
+            </p>
+          </FadeIn>
+        </section>
 
         {/* ── Filter tabs ──────────────────────────────────── */}
-        <FilterTabs active={activeFilter} onChange={handleFilterChange} />
+        <section>
+          <FilterTabs active={activeFilter} onChange={handleFilterChange} />
+        </section>
 
         {/* ── Project count hint ───────────────────────────── */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: TEXT_DIM }}>
+        <div className="projects-count-hint">
+          <span className="projects-count-text">
             顯示 {filtered.length} / {PROJECTS.length} 件作品
           </span>
         </div>
 
         {/* ── Card grid ────────────────────────────────────── */}
-        <motion.div layout className="row g-4">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((project, i) => (
-              <motion.div
-                key={project.id}
-                layout
-                className="col-12 col-md-6 col-lg-4"
-                initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                animate={{ opacity: 1, scale: 1,    y: 0  }}
-                exit={{    opacity: 0, scale: 0.96, y: 20 }}
-                transition={{ duration: 0.45, delay: i * 0.05 }}
-              >
-                <ProjectCard
-                  project={project}
-                  delay={i * 0.04}
-                  onClick={() => setSearchParams({ project: project.id })}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        <section>
+          <motion.div layout className="row g-4">
+            <AnimatePresence mode="popLayout">
+              {filtered.map((project, i) => (
+                <motion.div
+                  key={project.id}
+                  layout
+                  className="col-12 col-md-6 col-lg-4"
+                  initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                  animate={{ opacity: 1, scale: 1,    y: 0  }}
+                  exit={{    opacity: 0, scale: 0.96, y: 20 }}
+                  transition={{ duration: 0.45, delay: i * 0.05 }}
+                >
+                  <ProjectCard
+                    project={project}
+                    delay={i * 0.04}
+                    onClick={() => setSearchParams({ project: project.id })}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </section>
 
       </div>
 
-      {/* ── Detail overlay ────────────────────────────────────
-          AnimatePresence ensures smooth in/out transitions.
-          ProjectDetail renders with position:fixed + z:9000 +
-          backgroundColor:#050505 — fully isolated from grid.
-      ────────────────────────────────────────────────────── */}
+      {/* ── Detail overlay ──────────────────────────────────── */}
       <AnimatePresence>
         {selectedProject && (
           <ProjectDetail
@@ -936,7 +756,7 @@ const Projects: React.FC = () => {
           />
         )}
       </AnimatePresence>
-    </motion.div>
+    </main>
   );
 };
 

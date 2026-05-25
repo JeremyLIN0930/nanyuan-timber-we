@@ -1,0 +1,284 @@
+/* ═══════════════════════════════════════════════════════════════
+   KNOWLEDGE & MATERIALS GALLERY STYLESHEET
+═══════════════════════════════════════════════════════════════ */
+
+.knowledge-page {
+  background-color: var(--obsidian, #050505);
+  min-height: 100vh;
+  color: #ffffff;
+  padding-bottom: 80px;
+  overflow-x: hidden;
+}
+
+.knowledge-header-wrapper {
+  padding-top: clamp(80px, 12vh, 140px);
+  padding-bottom: 30px;
+}
+
+.knowledge-title {
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  font-weight: 900 !important;
+  letter-spacing: -0.05em !important;
+  color: var(--metal-brown, #C5A880);
+  text-shadow: 0 0 40px rgba(197, 168, 128, 0.85);
+  margin-bottom: 0.75rem;
+}
+
+.knowledge-subtitle {
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  max-width: 750px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* Filter Tab Track */
+.tab-track {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 3rem;
+  padding-bottom: 8px;
+  padding-top: 4px;
+}
+
+.tab-track::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-track-container {
+  border-radius: 9999px;
+  background: rgba(12, 12, 13, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
+  padding: 5px;
+}
+
+.filter-pill-btn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px clamp(16px, 2.5vw, 28px);
+  border-radius: 9999px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filter-pill-label {
+  font-size: clamp(0.8rem, 1.2vw, 0.92rem);
+  letter-spacing: 0.08em;
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filter-pill-en {
+  font-size: 8px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tab Background Glow Pill */
+.material-pill-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(197, 168, 128, 0.15) 0%, rgba(197, 168, 128, 0.06) 100%);
+  border: 1px solid var(--metal-brown, #C5A880);
+  box-shadow: 0 0 15px rgba(197, 168, 128, 0.85), inset 0 0 10px rgba(197, 168, 128, 0.05);
+  z-index: 0;
+}
+
+/* Count Hint */
+.knowledge-count-hint {
+  margin-bottom: 1.5rem;
+}
+
+.knowledge-count-text {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Material Cards Grid */
+.material-card {
+  background-color: rgba(15, 15, 15, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.material-card:hover {
+  border-color: var(--metal-brown, #C5A880);
+  background: linear-gradient(135deg, rgba(197, 168, 128, 0.08) 0%, rgba(15, 15, 15, 0.85) 100%);
+  box-shadow: 0 16px 40px rgba(197, 168, 128, 0.15);
+  transform: translateY(-4px);
+}
+
+.material-img-container {
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.material-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.75;
+  transition: transform 0.5s ease;
+}
+
+.material-card:hover .material-img {
+  transform: scale(1.03);
+}
+
+.material-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, transparent 60%);
+}
+
+.material-badge-en {
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  color: var(--metal-brown, #C5A880);
+  display: block;
+  text-transform: uppercase;
+}
+
+.material-card-title {
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 900 !important;
+  color: #ffffff;
+  margin: 0;
+  marginTop: 2px;
+}
+
+.material-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 1.25rem;
+}
+
+/* Visual Badge */
+.visual-badge {
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.25rem 1rem;
+  border-radius: 6px;
+  transition: all 0.4s;
+}
+
+.material-card:hover .visual-badge {
+  border-color: rgba(197, 168, 128, 0.25);
+  background-color: rgba(197, 168, 128, 0.04);
+}
+
+.visual-badge-label {
+  font-size: 9px;
+  font-weight: 300;
+  color: var(--metal-brown, #C5A880);
+  letter-spacing: 0.15em;
+  display: block;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.visual-badge-text {
+  font-size: clamp(0.78rem, 1.1vw, 0.86rem);
+  font-weight: 300;
+  color: #ffffff;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Master Interpretation */
+.master-interpretation-label {
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.15em;
+  display: block;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.master-interpretation-text {
+  font-size: clamp(0.78rem, 1.1vw, 0.86rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.8;
+  margin: 0;
+  text-align: justify;
+}
+
+/* CTA Section */
+.cta-section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.cta-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 900 !important;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em !important;
+}
+
+.cta-desc {
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.12em;
+  margin-bottom: 2.5rem;
+  max-width: 650px;
+  margin: 0 auto 2.5rem;
+}
+
+.cta-btn {
+  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
+  letter-spacing: 0.15em;
+  padding: 1em 3.2em;
+  border: 1px solid var(--metal-brown, #C5A880);
+  color: #050505;
+  background-color: var(--metal-brown, #C5A880);
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta-btn:hover {
+  box-shadow: 0 0 32px rgba(197, 168, 128, 0.85);
+  transform: translateY(-3px);
+  color: #050505;
+}

@@ -1,16 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { motion, useDragControls, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import './Services.css';
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS & DESIGN CONSTANTS
+   DESIGN CONSTANTS
 ═══════════════════════════════════════════════════════════════ */
 const GOLD        = '#C5A880';
 const GOLD_GLOW   = 'rgba(197,168,128,0.85)';
-const GOLD_DIM    = 'rgba(197,168,128,0.1)';
-const BG          = '#050505';
-const BORDER      = 'rgba(255,255,255,0.06)';
-const TEXT_DIM    = 'rgba(255,255,255,0.4)';
 
 /* ── Reusable scroll reveal component ── */
 const FadeInSection: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
@@ -30,7 +27,7 @@ const FadeInSection: React.FC<{ children: React.ReactNode; className?: string }>
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   SERVICES DATA ARRAY
+   SERVICES DATA ARRAY (SEO & GEO Optimized description)
 ═══════════════════════════════════════════════════════════════ */
 interface ProcessStep {
   id:    string;
@@ -44,37 +41,37 @@ const STEPS: ProcessStep[] = [
     id:    '01',
     title: '初步諮詢',
     en:    'BESPOKE CONSULTATION',
-    desc:  '傾聽您對場域的無限想像。從生活習性、動線期待到預算範疇，由專業顧問為您進行初步架構勾勒，梳理出最核心的工藝改造方向。'
+    desc:  '傾聽您對場域的無限想像。南源木材專業顧問為您勾勒核心工藝改造方向，結合生活動線與預算範疇，開展客製化空間設計藍圖。'
   },
   {
     id:    '02',
     title: '現場勘測',
     en:    'PRECISION SITE SURVEY',
-    desc:  '職人團隊親赴現場。利用高階雷射丈量儀器進行精確三維尺度記錄，並針對老屋結構、採光風向與水電隱蔽管線進行深度屋況全面診斷。'
+    desc:  '職人團隊親赴現場，使用高階雷射丈量儀器記錄三維尺度。深度診斷老屋結構、採光風向與水電管線，確保設計防漏防震基礎。'
   },
   {
     id:    '03',
     title: '設計提案',
     en:    'CONCEPT & SPACE DESIGN',
-    desc:  '將想像轉化為精確的空間美學。提供客製化格局規劃、職人手作木料選配與立面視覺意境確立，讓木質溫潤與高端設計完美交融。'
+    desc:  '將創意轉化為空間美學。提供客製化格局圖、職人手作木料選配與立面視覺意境，實現台北天母住宅與竹北客廳的精品品味。'
   },
   {
     id:    '04',
     title: '工程合約',
     en:    'TRANSPARENT AGREEMENT',
-    desc:  '堅持誠信透明。條列化詳盡工料報價、精確的工程進度查核點表確立，並提供正式法律效力合約簽署，給您最安心的品質承諾。'
+    desc:  '堅持誠信透明。條列化報價單，明確標示品牌、數量與單價。確立每週施工查核點工程進度，簽署正式工程合約，絕無隱藏追加。'
   },
   {
     id:    '05',
     title: '精湛施工',
     en:    'MASTER CRAFTSMANSHIP',
-    desc:  '南源自有工班、現場總監全程嚴格監督。從拆除工程、水電管線加固到最細膩的大木作木地板工法，皆由資深職人嚴格按圖步步落地。'
+    desc:  '自有專業工班、現場總監全程監督。遵循嚴格防水蓄水測試與防塵木作封邊規範，將設計圖面由資深職人按圖精準落地。'
   },
   {
     id:    '06',
     title: '完工驗收',
     en:    'PERFECT HANDOVER',
-    desc:  '100% 高規格三階段品質交叉檢驗。管線壓力測試、特殊漆面光影檢查、家具軟裝完美定位，以最無瑕的姿態將傳世私人空間交付您手中。'
+    desc:  '高規格品質交叉檢驗。實施管線壓力、特殊漆面側光打磨及試水測試。家具軟裝完美定位清潔，交付尊榮傳世的私人健康空間。'
   }
 ];
 
@@ -96,149 +93,52 @@ const Services: React.FC = () => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      style={{ backgroundColor: BG, minHeight: '100vh', color: '#fff', position: 'relative', overflowX: 'hidden' }}
-    >
-      {/* CSS Injected Styles for Luxury Aesthetics & RWD Timeline */}
-      <style>{`
-        /* Timeline line/wire setups */
-        .timeline-container {
-          position: relative;
-        }
-        
-        @media (max-width: 991.98px) {
-          .timeline-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 20px;
-            width: 1px;
-            background: linear-gradient(180deg, transparent, ${GOLD} 10%, ${GOLD} 90%, transparent);
-            box-shadow: 0 0 8px ${GOLD_GLOW};
-            z-index: 1;
-          }
-          .timeline-col {
-            position: relative;
-            padding-left: 60px !important;
-          }
-          .glow-dot-mobile {
-            display: flex;
-            position: absolute;
-            left: 9px;
-            top: 35px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: ${BG};
-            border: 2px solid ${GOLD};
-            box-shadow: 0 0 10px ${GOLD_GLOW};
-            z-index: 10;
-            align-items: center;
-            justify-content: center;
-          }
-        }
-
-        @media (min-width: 992px) {
-          .timeline-row-1::before {
-            content: '';
-            position: absolute;
-            top: 80px;
-            left: 10%;
-            right: 10%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, ${GOLD} 15%, ${GOLD} 85%, transparent);
-            box-shadow: 0 0 8px ${GOLD_GLOW};
-            z-index: 1;
-          }
-          .timeline-row-2::before {
-            content: '';
-            position: absolute;
-            top: 80px;
-            left: 10%;
-            right: 10%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, ${GOLD} 15%, ${GOLD} 85%, transparent);
-            box-shadow: 0 0 8px ${GOLD_GLOW};
-            z-index: 1;
-          }
-        }
-
-        /* Card custom styling */
-        .process-card {
-          background-color: rgba(15, 15, 15, 0.6);
-          border: 1px solid ${BORDER};
-          border-radius: 8px;
-          padding: 2.5rem 2rem;
-          height: 100%;
-          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-          position: relative;
-          z-index: 2;
-        }
-
-        .process-card:hover {
-          border-color: ${GOLD};
-          background: linear-gradient(135deg, ${GOLD_DIM} 0%, rgba(15, 15, 15, 0.85) 100%);
-          box-shadow: 0 16px 40px rgba(197, 168, 128, 0.15);
-          transform: translateY(-4px);
-        }
-
-        .process-num {
-          font-family: 'Inter', sans-serif;
-          font-weight: 900;
-          color: ${GOLD};
-          text-shadow: 0 0 15px rgba(197, 168, 128, 0.4);
-          font-size: clamp(2rem, 4vw, 3rem);
-          line-height: 1;
-        }
-      `}</style>
+    <main className="services-page">
 
       {/* ── Page Header ─────────────────────────────────── */}
-      <div className="container py-5" style={{ paddingTop: 'clamp(80px, 12vh, 140px)' }}>
+      <section className="container py-5 services-header-wrapper">
         <FadeInSection>
           <div className="text-center mb-5">
-            <h1 style={{ fontSize: 'clamp(2.2rem, 6vw, 4.2rem)', fontWeight: 900, letterSpacing: '-0.05em', color: GOLD, textShadow: `0 0 40px ${GOLD_GLOW}`, marginBottom: '1rem' }}>
-              服務項目與流程
-            </h1>
-            <p style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, letterSpacing: '0.18em', color: TEXT_DIM, textTransform: 'uppercase', maxWidth: '750px', margin: '0 auto', lineHeight: 1.8 }}>
-              從精密木作線條圖到無瑕的實景落地，拖曳下方滑桿，親眼見證南源對細節的精確雕琢。
+            <h1 className="services-title">服務項目與流程</h1>
+            <p className="services-subtitle">
+              南源木材高端室內設計統包翻修，現場總監全程監督，台北天母豪宅、竹北現代客廳、青埔老屋翻新工程之職人工藝流程。
             </p>
           </div>
         </FadeInSection>
-      </div>
+      </section>
 
       {/* ── 100vw Apple Split Slider ───────────────────── */}
-      <section className="w-full relative overflow-hidden mb-5">
+      <section className="slider-section">
         <div 
           ref={containerRef}
-          className="relative w-screen h-[55vh] md:h-[75vh] cursor-ew-resize overflow-hidden"
+          className="slider-container"
           onPointerDown={(e) => dragControls.start(e)}
         >
           {/* Right side: Finished Reality */}
-          <div className="absolute inset-0 w-full h-full" style={{ backgroundImage: "url('/images/luxury_tianmu_home_1779301841564.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-            <div className="absolute inset-0 bg-black/20"></div>
-            <div className="absolute bottom-10 right-10 text-white text-xs tracking-[0.25em] font-light bg-black/75 backdrop-blur-md px-5 py-3 border border-white/5">
+          <div 
+            className="slider-reality-side" 
+            style={{ backgroundImage: "url('/images/luxury_tianmu_home_1779301841564.png')" }}
+            role="img"
+            aria-label="南源木材 台北天母奢華住宅 頂級住宅室內設計實景完工照"
+          >
+            <div className="slider-reality-overlay" />
+            <div className="slider-label-right">
               實景完工照 / REALITY
             </div>
           </div>
 
           {/* Left side: CAD Blueprint */}
           <div 
-            className="absolute inset-0 w-full h-full" 
+            className="slider-blueprint-side" 
             style={{ 
               backgroundImage: "url('/images/modern_office_1779301899552.png')",
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              filter: 'grayscale(100%) contrast(125%) brightness(70%)', 
               clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)`
             }}
+            role="img"
+            aria-label="南源木材 精密木作線條圖 CAD室內設計底稿圖"
           >
-            <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0, 40, 120, 0.15)' }}></div>
-            <div className="absolute bottom-10 left-10 text-white text-xs tracking-[0.25em] font-light bg-black/75 backdrop-blur-md px-5 py-3 border border-white/5">
+            <div className="slider-blueprint-overlay" />
+            <div className="slider-label-left">
               精密木作線條圖 / BLUEPRINT
             </div>
           </div>
@@ -251,30 +151,27 @@ const Services: React.FC = () => {
             dragElastic={0}
             dragMomentum={false}
             onDrag={handleDrag}
-            className="absolute top-0 bottom-0 w-[2px] cursor-ew-resize z-10"
-            style={{ left: `${sliderPos}%`, x: '-50%', backgroundColor: GOLD, boxShadow: `0 0 25px ${GOLD_GLOW}` }}
+            className="slider-handle"
+            style={{ left: `${sliderPos}%`, x: '-50%' }}
           >
-            <div className="absolute top-0 bottom-0 -left-6 w-12 cursor-ew-resize bg-transparent"></div>
-            <div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border bg-black/90 backdrop-blur d-flex align-items-center justify-content-center"
-              style={{ borderColor: GOLD, boxShadow: `0 0 20px ${GOLD_GLOW}` }}
-            >
-              <span className="text-xs" style={{ color: GOLD }}>⟨⟩</span>
+            <div className="slider-handle-area" />
+            <div className="slider-handle-circle">
+              <span className="slider-handle-arrows">⟨⟩</span>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ── Six Craftsmen Service Process Timeline ──────── */}
-      <section className="py-5" style={{ background: 'linear-gradient(180deg, #050505 0%, #080809 100%)' }}>
+      <section className="process-section">
         <div className="container px-3 px-md-4 py-5">
           
           <FadeInSection>
             <div className="mb-5 text-center text-lg-start">
-              <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 900, color: '#fff', letterSpacing: '-0.03em', marginBottom: '0.5rem' }}>
+              <h2 className="process-section-title">
                 六大職人服務流程
               </h2>
-              <p style={{ fontSize: 'clamp(0.8rem, 1.2vw, 0.95rem)', fontWeight: 300, color: TEXT_DIM, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              <p className="process-section-subtitle">
                 Bespoke Process — From Concept to Flawless Execution
               </p>
             </div>
@@ -288,44 +185,33 @@ const Services: React.FC = () => {
                 <div className="col-12 col-lg-4 timeline-col" key={step.id}>
                   
                   {/* Desktop alignment glow dot */}
-                  <div className="d-none d-lg-block position-absolute" style={{
-                    top: '74px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    backgroundColor: BG,
-                    border: `2px solid ${GOLD}`,
-                    boxShadow: `0 0 10px ${GOLD_GLOW}`,
-                    zIndex: 10
-                  }} />
+                  <div className="glow-dot-desktop" />
 
                   {/* Mobile alignment glow dot */}
                   <div className="glow-dot-mobile">
-                    <span style={{ fontSize: '9px', fontWeight: 900, color: GOLD }}>{step.id}</span>
+                    <span className="glow-dot-mobile-number">{step.id}</span>
                   </div>
 
                   <FadeInSection>
-                    <div className="process-card">
+                    <article className="process-card">
                       <div className="d-flex align-items-center justify-content-between mb-3">
-                        <span className="process-num font-black">{step.id}</span>
-                        <span className="d-none d-lg-inline" style={{ fontSize: '9px', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.18)' }}>
+                        <span className="process-num">{step.id}</span>
+                        <span className="process-brand-label">
                           NANYUAN TIMBER
                         </span>
                       </div>
                       
-                      <h3 className="fs-4 text-white" style={{ fontWeight: 900, marginBottom: '4px' }}>
+                      <h3 className="process-card-title">
                         {step.title}
                       </h3>
-                      <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.15em', color: GOLD, display: 'block', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
+                      <span className="process-card-en">
                         {step.en}
                       </span>
                       
-                      <p className="fs-6 font-light text-white/50 leading-relaxed m-0" style={{ textAlign: 'justify', letterSpacing: '0.05em' }}>
+                      <p className="process-card-desc">
                         {step.desc}
                       </p>
-                    </div>
+                    </article>
                   </FadeInSection>
 
                 </div>
@@ -338,44 +224,33 @@ const Services: React.FC = () => {
                 <div className="col-12 col-lg-4 timeline-col" key={step.id}>
                   
                   {/* Desktop alignment glow dot */}
-                  <div className="d-none d-lg-block position-absolute" style={{
-                    top: '74px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    backgroundColor: BG,
-                    border: `2px solid ${GOLD}`,
-                    boxShadow: `0 0 10px ${GOLD_GLOW}`,
-                    zIndex: 10
-                  }} />
+                  <div className="glow-dot-desktop" />
 
                   {/* Mobile alignment glow dot */}
                   <div className="glow-dot-mobile">
-                    <span style={{ fontSize: '9px', fontWeight: 900, color: GOLD }}>{step.id}</span>
+                    <span className="glow-dot-mobile-number">{step.id}</span>
                   </div>
 
                   <FadeInSection>
-                    <div className="process-card">
+                    <article className="process-card">
                       <div className="d-flex align-items-center justify-content-between mb-3">
-                        <span className="process-num font-black">{step.id}</span>
-                        <span className="d-none d-lg-inline" style={{ fontSize: '9px', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.18)' }}>
+                        <span className="process-num">{step.id}</span>
+                        <span className="process-brand-label">
                           NANYUAN TIMBER
                         </span>
                       </div>
                       
-                      <h3 className="fs-4 text-white" style={{ fontWeight: 900, marginBottom: '4px' }}>
+                      <h3 className="process-card-title">
                         {step.title}
                       </h3>
-                      <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.15em', color: GOLD, display: 'block', textTransform: 'uppercase', marginBottom: '1.25rem' }}>
+                      <span className="process-card-en">
                         {step.en}
                       </span>
                       
-                      <p className="fs-6 font-light text-white/50 leading-relaxed m-0" style={{ textAlign: 'justify', letterSpacing: '0.05em' }}>
+                      <p className="process-card-desc">
                         {step.desc}
                       </p>
-                    </div>
+                    </article>
                   </FadeInSection>
 
                 </div>
@@ -387,44 +262,25 @@ const Services: React.FC = () => {
       </section>
 
       {/* ── CTA Consultation Button ─────────────────────── */}
-      <div className="container py-5 text-center mt-5 mb-5">
+      <section className="container py-5 text-center cta-section">
         <FadeInSection>
-          <h3 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', fontWeight: 900, color: '#fff', marginBottom: '1.25rem', letterSpacing: '-0.02em' }}>
+          <h2 className="cta-title">
             與南源職人攜手，構築您的傳世空間
-          </h3>
-          <p style={{ fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', fontWeight: 300, color: TEXT_DIM, letterSpacing: '0.12em', marginBottom: '2.5rem', maxWidth: '650px', margin: '0 auto 2.5rem' }}>
-            我們的專業團隊隨時準備傾聽您的需求，為您量身打造極致溫潤的空間體驗。
+          </h2>
+          <p className="cta-desc">
+            南源木材自有工班工藝落地、報價逐項列出誠信透明。我們隨時準備傾聽您的期待，打造極致空間體驗。
           </p>
           <Link
             to="/contact"
-            style={{
-              fontSize: 'clamp(0.85rem, 1.2vw, 0.95rem)',
-              letterSpacing: '0.15em',
-              padding: '1em 3.2em',
-              border: `1px solid ${GOLD}`,
-              color: '#050505',
-              backgroundColor: GOLD,
-              cursor: 'pointer',
-              fontWeight: 700,
-              textDecoration: 'none',
-              display: 'inline-block',
-              transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.boxShadow = `0 0 32px ${GOLD_GLOW}`;
-              e.currentTarget.style.transform = 'translateY(-3px)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.boxShadow = 'none';
-              e.currentTarget.style.transform = 'none';
-            }}
+            className="cta-btn"
+            aria-label="預約南源木材一對一設計諮詢"
           >
             立即預約諮詢 ➔
           </Link>
         </FadeInSection>
-      </div>
+      </section>
 
-    </motion.div>
+    </main>
   );
 };
 
