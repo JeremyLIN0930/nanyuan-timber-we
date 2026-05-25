@@ -3,11 +3,35 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 /* ═══════════════════════════ DATA ═══════════════════════════ */
 
-const SPACE_TYPES = [
-  { id: 'oldhouse', label: '老屋翻修', en: 'OLD HOUSE RENEWAL', img: '/images/old_house_after.png' },
-  { id: 'budget', label: '小資宅美學', en: 'SMART LIVING', img: '/images/budget_smart_home.png' },
-  { id: 'commercial', label: '商業空間', en: 'COMMERCIAL', img: '/images/high_end_cafe_1779301868615.png' },
-  { id: 'luxury', label: '頂級住宅', en: 'LUXURY RESIDENTIAL', img: '/images/luxury_tianmu_home_1779301841564.png' },
+const SERVICES = [
+  {
+    id: 'full_remodel',
+    label: '全屋改造統包',
+    en: 'FULL HOUSE REMODEL',
+    img: '/images/style_luxury_dark_1779301949701.png',
+    desc: '從格局重塑、木作美學到軟裝鋪陳，提供一條龍的高端精緻統包服務。'
+  },
+  {
+    id: 'utility_eng',
+    label: '水電基礎工程',
+    en: 'UTILITY ENGINEERING',
+    img: '/images/renovation_detail.png',
+    desc: '針對老屋與新成屋，進行全室管線重拉、強弱電規劃、防潮防水基礎加固工程。'
+  },
+  {
+    id: 'paint_craft',
+    label: '工藝油漆工程',
+    en: 'ARTISTIC PAINTING',
+    img: '/images/style_wabi_sabi_1779301962644.png',
+    desc: '精選環保無毒頂級漆料，由資深職人手工操刀，刻劃具備細膩紋理與光澤的牆面藝術。'
+  },
+  {
+    id: 'partial_remodel',
+    label: '局部空間改造',
+    en: 'PARTIAL RENOVATION',
+    img: '/images/minimal_wood_kitchen_1779301855424.png',
+    desc: '針對衛浴、廚房、臥室等局部空間進行機能重組與視覺美化，打造精緻的生活角落。'
+  }
 ];
 
 const BUDGETS = [
@@ -38,7 +62,7 @@ const slideTransition = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 const Contact: React.FC = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    spaceType: '', budget: '', isBespoke: false, style: '',
+    serviceType: '', budget: '', isBespoke: false, style: '',
     ping: 25, scopes: [] as string[], name: '', phone: '', email: '', address: '',
     description: '', preferredTime: ''
   });
@@ -53,8 +77,8 @@ const Contact: React.FC = () => {
   };
   const handleFileDrop = (e: React.DragEvent) => { e.preventDefault(); setIsDragOver(false); if (e.dataTransfer.files.length > 0) setUploadedFile(e.dataTransfer.files[0].name); };
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => { if (e.target.files && e.target.files.length > 0) setUploadedFile(e.target.files[0].name); };
-  const resetForm = () => { setStep(1); setFormData({ spaceType: '', budget: '', isBespoke: false, style: '', ping: 25, scopes: [], name: '', phone: '', email: '', address: '', description: '', preferredTime: '' }); setUploadedFile(null); };
-  const canProceed = () => { if (step === 1) return !!formData.spaceType; if (step === 2) return !!formData.budget && !!formData.style; if (step === 3) return !!formData.name && !!formData.phone; return true; };
+  const resetForm = () => { setStep(1); setFormData({ serviceType: '', budget: '', isBespoke: false, style: '', ping: 25, scopes: [], name: '', phone: '', email: '', address: '', description: '', preferredTime: '' }); setUploadedFile(null); };
+  const canProceed = () => { if (step === 1) return !!formData.serviceType; if (step === 2) return !!formData.budget && !!formData.style; if (step === 3) return !!formData.name && !!formData.phone; return true; };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ backgroundColor: '#050505', minHeight: '100vh' }}>
@@ -63,12 +87,12 @@ const Contact: React.FC = () => {
 
           {/* ═══ LEFT: STEP TRAIL ═══ */}
           <div className="col-12 col-lg-4">
-            <h1 className="fw-bold mb-5" style={{ fontSize: 'clamp(2.5rem, 6vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.85)', lineHeight: 1.1 }}>預約展間</h1>
+            <h1 className="fw-bold mb-5" style={{ fontSize: 'clamp(2.5rem, 6vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.85)', lineHeight: 1.1 }}>預約服務</h1>
             <div className="position-relative ps-4">
               <div className="position-absolute top-0 bottom-0" style={{ left: '3px', width: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
               <motion.div className="position-absolute top-0" style={{ left: '3px', width: '1px', backgroundColor: '#C5A880', boxShadow: '0 0 15px rgba(197,168,128,0.8)' }} initial={{ height: '0%' }} animate={{ height: `${(Math.min(step, 3) / 3) * 100}%` }} transition={{ duration: 0.8, ease: 'easeInOut' }}></motion.div>
               <div className="d-flex flex-column gap-4 position-relative" style={{ zIndex: 20 }}>
-                {[{ s: 1, title: '空間類型', desc: '選擇您的空間需求' }, { s: 2, title: '預算·坪數·風格', desc: '精細定義工程範圍' }, { s: 3, title: '聯繫·上傳', desc: '聯絡方式與平面圖' }].map(item => (
+                {[{ s: 1, title: '服務項目', desc: '選擇您的服務類別' }, { s: 2, title: '需求·預算·風格', desc: '精細定義服務範疇' }, { s: 3, title: '聯繫·上傳', desc: '聯絡資訊與平面圖' }].map(item => (
                   <div key={item.s} className="d-flex align-items-start gap-3" style={{ marginLeft: '-22px' }}>
                     <div style={{ width: '12px', height: '12px', borderRadius: '50%', marginTop: '5px', border: '2px solid', flexShrink: 0, borderColor: step >= item.s ? '#C5A880' : 'rgba(255,255,255,0.2)', backgroundColor: step >= item.s ? '#C5A880' : '#050505', boxShadow: step >= item.s ? '0 0 12px rgba(197,168,128,0.8)' : 'none', transition: 'all 0.5s' }}></div>
                     <div>
@@ -85,28 +109,53 @@ const Contact: React.FC = () => {
           <div className="col-12 col-lg-8">
             <AnimatePresence mode="wait">
 
-              {/* ── STEP 1: SPACE TYPE ── */}
+              {/* ── STEP 1: SERVICE TYPE ── */}
               {step === 1 && (
                 <motion.div key="s1" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
-                  <h2 className="fw-bold mb-4 pb-3" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.5rem)', color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>01. 空間選配 SPACE</h2>
-                  <div className="row g-3">
-                    {SPACE_TYPES.map(type => {
-                      const active = formData.spaceType === type.id;
+                  <h2 className="fw-bold mb-4 pb-3" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.5rem)', color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>01. 服務選配 SERVICE</h2>
+                  <div className="row g-4">
+                    {SERVICES.map(service => {
+                      const active = formData.serviceType === service.id;
                       return (
-                        <div className="col-6 col-md-3" key={type.id}>
+                        <div className="col-12 col-md-6" key={service.id}>
                           <div
-                            onClick={() => setFormData({ ...formData, spaceType: type.id })}
-                            style={{ cursor: 'pointer', overflow: 'hidden', transition: 'all 0.5s', border: active ? '2px solid #C5A880' : '1px solid rgba(255,255,255,0.1)', boxShadow: active ? '0 0 25px rgba(197,168,128,0.35)' : 'none', opacity: active ? 1 : 0.5 }}
+                            onClick={() => setFormData({ ...formData, serviceType: service.id })}
+                            style={{
+                              cursor: 'pointer',
+                              overflow: 'hidden',
+                              transition: 'all 0.5s',
+                              border: active ? '2px solid #C5A880' : '1px solid rgba(255,255,255,0.1)',
+                              boxShadow: active ? '0 0 25px rgba(197,168,128,0.3)' : 'none',
+                              backgroundColor: 'rgba(255,255,255,0.02)',
+                              opacity: active ? 1 : 0.6,
+                              height: '100%',
+                              display: 'flex',
+                              flexDirection: 'column'
+                            }}
                             onMouseEnter={e => { if (!active) e.currentTarget.style.opacity = '1'; }}
-                            onMouseLeave={e => { if (!active) e.currentTarget.style.opacity = '0.5'; }}
+                            onMouseLeave={e => { if (!active) e.currentTarget.style.opacity = '0.6'; }}
                           >
-                            <div style={{ aspectRatio: '3/4', position: 'relative' }}>
-                              <img src={type.img} className="w-100 h-100" style={{ objectFit: 'cover', transition: 'transform 0.7s', transform: active ? 'scale(1.05)' : 'scale(1)' }} alt={type.label} />
-                              <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: active ? 'rgba(197,168,128,0.1)' : 'rgba(5,5,5,0.6)', transition: 'all 0.5s' }}></div>
-                              <div className="position-absolute bottom-0 start-0 p-2 p-md-3">
-                                <span className="d-block fw-bold" style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1rem)', letterSpacing: '-0.02em', color: active ? '#C5A880' : '#fff', textShadow: active ? '0 0 20px rgba(197,168,128,0.7)' : 'none' }}>{type.label}</span>
-                                <span className="d-block" style={{ fontSize: '9px', fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)' }}>{type.en}</span>
+                            <div style={{ aspectRatio: '16/9', overflow: 'hidden', position: 'relative' }}>
+                              <img
+                                src={service.img}
+                                className="w-100 h-100"
+                                style={{
+                                  objectFit: 'cover',
+                                  transition: 'transform 0.7s',
+                                  transform: active ? 'scale(1.05)' : 'scale(1)'
+                                }}
+                                alt={service.label}
+                              />
+                              <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: active ? 'rgba(197,168,128,0.05)' : 'rgba(5,5,5,0.4)', transition: 'all 0.5s' }}></div>
+                            </div>
+                            <div className="p-3 p-md-4 d-flex flex-column flex-grow-1">
+                              <div className="mb-2">
+                                <span className="d-block fw-bold" style={{ fontSize: 'clamp(1rem, 1.8vw, 1.25rem)', letterSpacing: '-0.02em', color: active ? '#C5A880' : '#fff', textShadow: active ? '0 0 20px rgba(197,168,128,0.7)' : 'none' }}>{service.label}</span>
+                                <span className="d-block" style={{ fontSize: '9px', fontWeight: 300, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginTop: '2px' }}>{service.en}</span>
                               </div>
+                              <p className="mb-0 mt-2" style={{ fontSize: 'clamp(0.75rem, 1.1vw, 0.85rem)', fontWeight: 300, lineHeight: 1.6, color: active ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.5)' }}>
+                                {service.desc}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -285,11 +334,11 @@ const Contact: React.FC = () => {
                   <div className="rounded-circle d-flex align-items-center justify-content-center mb-4" style={{ width: '72px', height: '72px', border: '2px solid #C5A880', boxShadow: '0 0 40px rgba(197,168,128,0.4)' }}>
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C5A880" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                   </div>
-                  <h2 className="fw-bold mb-4" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.8)', letterSpacing: '-0.03em' }}>南源已收到您的新家藍圖</h2>
+                  <h2 className="fw-bold mb-4" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', color: '#C5A880', textShadow: '0 0 40px rgba(197,168,128,0.8)', letterSpacing: '-0.03em' }}>南源已收到您的服務預約</h2>
                   <p className="mb-5" style={{ fontSize: 'clamp(0.85rem, 1.3vw, 1rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.7)', lineHeight: 2, maxWidth: '400px' }}>
                     職人團隊正在檢閱您的需求，<br/>專員將於 24 小時內與您聯繫。
                   </p>
-                  <button onClick={resetForm} className="apple-btn" style={{ fontSize: 'clamp(0.85rem, 1.3vw, 1rem)' }}>返回展間 ➔</button>
+                  <button onClick={resetForm} className="apple-btn" style={{ fontSize: 'clamp(0.85rem, 1.3vw, 1rem)' }}>返回服務預約 ➔</button>
                 </motion.div>
               )}
             </AnimatePresence>
