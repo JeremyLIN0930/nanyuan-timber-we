@@ -11,10 +11,12 @@ import Quality from './pages/Quality';
 import Blog from './pages/Blog';
 import ClientPortal from './pages/ClientPortal';
 import CustomCursor from './components/UI/CustomCursor';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <CustomCursor />
       <div className="app-container">
         <Navbar />
