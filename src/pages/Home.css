@@ -407,3 +407,116 @@
     font-size: 1.5rem;
   }
 }
+
+/* 3D Scroll Gallery */
+.scroll-track {
+  position: relative;
+  width: 100%;
+  height: 480vh; /* scroll depth height */
+  background-color: #050505;
+}
+
+.gallery-container {
+  position: sticky;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  background-color: #050505;
+  z-index: 10;
+}
+
+.gallery-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.gallery-item-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(260px, 25vw, 360px);
+  aspect-ratio: 16/11;
+  background-color: #0d0d0e;
+  border: 1px solid rgba(197, 168, 128, 0.15);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 2px;
+}
+
+.gallery-item-card:hover {
+  border-color: #C5A880;
+  box-shadow: 0 0 25px rgba(197, 168, 128, 0.25);
+}
+
+.gallery-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.75;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.gallery-item-card:hover .gallery-item-img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.gallery-item-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem;
+  background: linear-gradient(to top, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.4) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.gallery-item-title {
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.gallery-item-tag {
+  font-size: clamp(9px, 0.8vw, 11px);
+  color: #C5A880;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 0.25rem;
+}
+
+/* Branding Overlay */
+.branding-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  z-index: 100;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(13, 13, 14, 0.9) 0%, rgba(5, 5, 5, 0.98) 75%);
+}
+
+.branding-overlay-content {
+  pointer-events: auto;
+  max-width: 900px;
+}
+
