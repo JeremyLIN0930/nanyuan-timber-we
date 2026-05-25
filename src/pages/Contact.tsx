@@ -72,7 +72,13 @@ const SERVICES: ServiceDef[] = [
 ═══════════════════════════════════════════════════════════════ */
 interface BudgetOption  { label: string; en: string; tier: string; }
 interface ScopeOption   { id: string; label: string; }
-interface StyleOption   { id: string; label: string; img: string; }
+interface StyleOption   {
+  id:         string;
+  label:      string;
+  img:        string;
+  isConsult?: boolean;   // marks the special "consult with master" card
+  desc?:      string;    // long-form copy shown inside the consult card
+}
 
 interface ServiceConfig {
   budgets: BudgetOption[];
@@ -102,6 +108,13 @@ const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
       { id: 'dark',       label: '奢華暗灰', img: '/images/style_luxury_dark_1779301949701.png'   },
       { id: 'wabi',       label: '日式侘寂', img: '/images/style_wabi_sabi_1779301962644.png'     },
       { id: 'industrial', label: '精品工業', img: '/images/style_industrial_1779301976370.png'    },
+      {
+        id:        'consult_full',
+        label:     '與設計總監討論',
+        img:       '/images/luxury_tianmu_home_1779301841564.png',
+        isConsult: true,
+        desc:      '想打破現有的風格框架，創造完全不受限的頂級居住體驗？由南源設計總監與大木作匠人聯合參與，純手工高級定制屬於您的傳世私人空間。',
+      },
     ],
   },
 
@@ -125,6 +138,13 @@ const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
       { id: 'expipe',    label: '工業風明管設計', img: '/images/style_industrial_1779301976370.png'  },
       { id: 'bathroom',  label: '現代簡約衛浴',   img: '/images/luxury_bathroom_1779301913582.png'  },
       { id: 'func',      label: '極致功能主義',   img: '/images/style_minimal_wood_1779301932325.png'},
+      {
+        id:        'consult_utility',
+        label:     '與水電師傅討論',
+        img:       '/images/renovation_detail.png',
+        isConsult: true,
+        desc:      '針對老屋繁複配電安全、智能弱電系統整合，或高端隱蔽衛浴水路管線變更，由南源甲級水電職人直接與您對接，評估最安全的工法技術細節。',
+      },
     ],
   },
 
@@ -148,6 +168,13 @@ const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
       { id: 'velvet',    label: '絲絨觸感霧面', img: '/images/style_luxury_dark_1779301949701.png'  },
       { id: 'morandi',   label: '莫蘭迪色系',   img: '/images/style_minimal_wood_1779301932325.png' },
       { id: 'gradient',  label: '光影漸層',     img: '/images/japanese_wabi_sabi_1779301881798.png' },
+      {
+        id:        'consult_paint',
+        label:     '與油漆職人討論',
+        img:       '/images/style_wabi_sabi_1779301962644.png',
+        isConsult: true,
+        desc:      '對特殊藝術漆、特殊紋理表現、特殊手感工法或現場調色有獨特想法？讓南源資深塗裝職人直接與您現場對接，量身調配專屬牆面藝術。',
+      },
     ],
   },
 
@@ -170,6 +197,13 @@ const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
       { id: 'accent',    label: '重點跳色設計',   img: '/images/style_luxury_dark_1779301949701.png'  },
       { id: 'func',      label: '機能最大化',     img: '/images/minimal_wood_kitchen_1779301855424.png'},
       { id: 'boutique',  label: '精品氛圍質感',   img: '/images/high_end_cafe_1779301868615.png'      },
+      {
+        id:        'consult_partial',
+        label:     '與工班總監討論',
+        img:       '/images/minimal_wood_kitchen_1779301855424.png',
+        isConsult: true,
+        desc:      '局部生活場域（如廚房／浴室／臥室）想挑戰特殊格局變更或異材質拼接？由現場經驗豐富的工班總監親自為您評估，在既有骨架下創造最穩固的工法可能。',
+      },
     ],
   },
 };
@@ -577,6 +611,141 @@ const Step2: React.FC<{
       <div className="row g-3">
         {cfg.styles.map(style => {
           const active = formData.style === style.id;
+
+          /* ── Special "Consult with Master" card (5th slot) ── */
+          if (style.isConsult) {
+            return (
+              <div className="col-12" key={style.id}>
+                <motion.div
+                  whileHover={{ y: -3 }}
+                  onClick={() => setFormData(prev => ({ ...prev, style: style.id }))}
+                  style={{
+                    position:        'relative',
+                    overflow:        'hidden',
+                    cursor:          'pointer',
+                    display:         'flex',
+                    alignItems:      'stretch',
+                    /* Resting border: warm gold, slightly dimmer than active */
+                    border:          active
+                      ? `2px solid ${GOLD}`
+                      : `1px solid rgba(197,168,128,0.55)`,
+                    boxShadow:       active
+                      ? `0 0 35px rgba(197,168,128,0.5), inset 0 0 30px rgba(197,168,128,0.06)`
+                      : `0 0 18px rgba(197,168,128,0.15)`,
+                    backgroundColor: active ? 'rgba(197,168,128,0.08)' : 'rgba(197,168,128,0.03)',
+                    transition:      'all 0.45s',
+                    minHeight:       'clamp(90px,13vw,120px)',
+                  }}
+                >
+                  {/* Left: thumbnail strip */}
+                  <div style={{ width: 'clamp(90px,18vw,150px)', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                    <img
+                      src={style.img}
+                      alt={style.label}
+                      style={{
+                        width:      '100%',
+                        height:     '100%',
+                        objectFit:  'cover',
+                        display:    'block',
+                        transition: 'transform 0.7s, filter 0.5s',
+                        transform:  active ? 'scale(1.08)' : 'scale(1)',
+                        filter:     active ? 'brightness(0.75) sepia(0.2)' : 'brightness(0.45) sepia(0.15)',
+                      }}
+                    />
+                    {/* Gold gradient overlay on image */}
+                    <div style={{
+                      position:   'absolute',
+                      inset:      0,
+                      background: 'linear-gradient(to right, transparent 40%, rgba(5,5,5,0.85) 100%)',
+                    }} />
+                  </div>
+
+                  {/* Right: text block */}
+                  <div style={{
+                    flexGrow:    1,
+                    padding:     'clamp(14px,2vw,22px) clamp(16px,2.5vw,28px)',
+                    display:     'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    gap:         '6px',
+                  }}>
+                    {/* Crown badge */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                      <span style={{
+                        fontSize:        '9px',
+                        fontWeight:      700,
+                        letterSpacing:   '0.22em',
+                        color:           active ? GOLD : 'rgba(197,168,128,0.65)',
+                        textTransform:   'uppercase',
+                        border:          `1px solid ${active ? GOLD : 'rgba(197,168,128,0.4)'}`,
+                        padding:         '3px 8px',
+                        transition:      'all 0.4s',
+                        backgroundColor: active ? 'rgba(197,168,128,0.12)' : 'transparent',
+                      }}>
+                        CONSULT WITH MASTER
+                      </span>
+                    </div>
+
+                    {/* Title */}
+                    <span style={{
+                      fontSize:      'clamp(0.92rem,1.5vw,1.05rem)',
+                      fontWeight:    900,
+                      letterSpacing: '-0.02em',
+                      color:         active ? GOLD : 'rgba(197,168,128,0.85)',
+                      textShadow:    active ? `0 0 20px rgba(197,168,128,0.7)` : 'none',
+                      transition:    'all 0.4s',
+                      lineHeight:    1.2,
+                    }}>
+                      {style.label}
+                    </span>
+
+                    {/* Description copy */}
+                    <p style={{
+                      fontSize:    'clamp(0.74rem,1.05vw,0.82rem)',
+                      fontWeight:  300,
+                      letterSpacing: '0.04em',
+                      color:       active ? 'rgba(255,255,255,0.72)' : 'rgba(255,255,255,0.38)',
+                      lineHeight:  1.75,
+                      margin:      0,
+                      transition:  'color 0.4s',
+                    }}>
+                      {style.desc}
+                    </p>
+                  </div>
+
+                  {/* Active check badge */}
+                  <AnimatePresence>
+                    {active && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.7 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.7 }}
+                        style={{
+                          position:        'absolute',
+                          top:             '10px',
+                          right:           '12px',
+                          width:           '22px',
+                          height:          '22px',
+                          borderRadius:    '50%',
+                          backgroundColor: GOLD,
+                          display:         'flex',
+                          alignItems:      'center',
+                          justifyContent:  'center',
+                          boxShadow:       `0 0 12px rgba(197,168,128,0.7)`,
+                        }}
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={BG_DARK} strokeWidth="3.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
+            );
+          }
+
+          /* ── Standard image style card (slots 1–4) ── */
           return (
             <div className="col-6 col-md-3" key={style.id}>
               <motion.div
