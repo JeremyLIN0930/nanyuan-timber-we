@@ -1,18 +1,23 @@
 /* ═══════════════════════════════════════════════════════════════
    PROCESS TIMELINE STYLESHEET
+   Bespoke Craftsmanship — Slow Mode Rewrite
 ═══════════════════════════════════════════════════════════════ */
 
+/* ── Page Container ─────────────────────────────────────────── */
 .process-page {
   background-color: var(--obsidian, #050505);
   min-height: 100vh;
   color: #ffffff;
   position: relative;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
 }
 
+/* ── Header ─────────────────────────────────────────────────── */
 .process-header-wrapper {
-  padding-top: clamp(80px, 12vh, 140px);
-  padding-bottom: 40px;
+  padding-top: clamp(20px, 4vh, 60px);
+  padding-bottom: 30px;
 }
 
 .process-title {
@@ -34,16 +39,21 @@
   margin: 0 auto;
 }
 
+/* ── Timeline Section Container ─────────────────────────────── */
 .timeline-section {
   position: relative;
 }
 
-/* Card custom styling */
+/* ── Card Base Styling ──────────────────────────────────────── */
 .timeline-card {
+  position: relative;
+  z-index: 2;
   background-color: rgba(13, 13, 14, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .timeline-card:hover {
@@ -53,12 +63,15 @@
   transform: translateY(-4px);
 }
 
-/* MOBILE: VERTICAL SINGLE-COLUMN TRACK */
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE: VERTICAL SINGLE-COLUMN TRACK
+═══════════════════════════════════════════════════════════════ */
 .mobile-timeline-track {
   position: relative;
   padding-left: 40px;
 }
 
+/* Vertical gold thread line (z-index: 1, behind cards) */
 .mobile-thread-line {
   position: absolute;
   top: 10px;
@@ -67,13 +80,17 @@
   width: 1.5px;
   background-color: rgba(197, 168, 128, 0.3);
   box-shadow: 0 0 8px rgba(197, 168, 128, 0.1);
+  z-index: 1;
 }
 
+/* Each step item wrapper */
 .mobile-timeline-item {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   position: relative;
+  z-index: 2;
 }
 
+/* Node dot on the vertical line */
 .mobile-node-dot {
   position: absolute;
   left: -36px;
@@ -96,11 +113,14 @@
   color: var(--metal-brown, #C5A880);
 }
 
+/* ── Mobile Card Image Container ────────────────────────────── */
 .mobile-card-img-container {
   aspect-ratio: 16/9;
   overflow: hidden;
   position: relative;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
+  max-height: 220px;
+  border-radius: 4px 4px 0 0;
 }
 
 .mobile-card-img {
@@ -108,12 +128,14 @@
   height: 100%;
   object-fit: cover;
   opacity: 0.8;
+  display: block;
 }
 
 .mobile-card-img-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(13, 13, 14, 0.9) 0%, transparent 80%);
+  pointer-events: none;
 }
 
 .mobile-card-badge-container {
@@ -145,14 +167,18 @@
   color: rgba(255, 255, 255, 0.65);
   line-height: 1.8;
   margin: 0;
+  text-align: justify;
 }
 
-/* PC: STAGGERED ALTERNATING TIMELINE */
+/* ═══════════════════════════════════════════════════════════════
+   PC: STAGGERED ALTERNATING TIMELINE
+═══════════════════════════════════════════════════════════════ */
 .pc-timeline-track {
   position: relative;
   padding: 40px 0;
 }
 
+/* Center vertical wire (z-index: 1, stays BEHIND cards) */
 .pc-center-wire {
   position: absolute;
   top: 0;
@@ -162,13 +188,17 @@
   background-color: rgba(197, 168, 128, 0.3);
   transform: translateX(-50%);
   box-shadow: 0 0 10px rgba(197, 168, 128, 0.1);
+  z-index: 1;
 }
 
+/* Each row in the alternating layout */
 .pc-timeline-row {
   margin-bottom: 5rem;
   position: relative;
+  z-index: 2;
 }
 
+/* Central step number circle */
 .pc-central-circle {
   position: absolute;
   left: 50%;
@@ -192,6 +222,7 @@
   color: var(--metal-brown, #C5A880);
 }
 
+/* Icon wrapper */
 .pc-card-icon-wrapper {
   display: inline-flex;
   align-items: center;
@@ -203,6 +234,7 @@
   margin-bottom: 1.25rem;
 }
 
+/* Card text styling */
 .pc-card-en {
   font-size: 10px;
   font-weight: 300;
@@ -230,12 +262,15 @@
   text-align: justify;
 }
 
+/* ── PC Image Wrapper (constrainted height, proper cover) ──── */
 .pc-image-wrapper {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   height: 280px;
   border-radius: 4px;
+  position: relative;
+  z-index: 2;
 }
 
 .pc-image {
@@ -244,13 +279,15 @@
   object-fit: cover;
   opacity: 0.75;
   transition: all 0.5s;
+  display: block;
 }
 
 .pc-image-wrapper:hover .pc-image {
   transform: scale(1.02);
+  opacity: 0.9;
 }
 
-/* Decorative Footer message */
+/* ── Decorative Footer Message ──────────────────────────────── */
 .footer-message-section {
   text-align: center;
   padding-top: 3rem;
@@ -284,4 +321,40 @@
   box-shadow: 0 0 24px rgba(197, 168, 128, 0.6);
   transform: translateY(-2px);
   color: #050505;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE OVERRIDES
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .process-header-wrapper {
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
+
+  .process-title {
+    font-size: 1.8rem !important;
+    letter-spacing: 0.02em;
+  }
+
+  .process-subtitle {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* Strict image height cap for silky smooth scrolling */
+  .mobile-card-img-container {
+    max-height: 200px !important;
+    aspect-ratio: 16/9;
+  }
+
+  .mobile-timeline-item {
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-message-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    margin-top: 1.5rem;
+  }
 }

@@ -1,29 +1,39 @@
 /* ═══════════════════════════════════════════════════════════════
    SERVICES & TIMELINE STYLESHEET
+   Bespoke Craftsmanship — Slow Mode Rewrite
 ═══════════════════════════════════════════════════════════════ */
 
-.page-layout-container {
-  padding-top: 120px;
-  scroll-margin-top: 120px;
-}
-
-@media (max-width: 768px) {
-  .page-layout-container {
-    padding-top: 90px;
-  }
-}
-
+/* ── Page Container ─────────────────────────────────────────── */
 .services-page {
   background-color: var(--obsidian, #050505);
   min-height: 100vh;
   color: #ffffff;
   position: relative;
   overflow-x: hidden;
+  /* Mobile smooth scrolling performance */
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
 }
 
-/* ✅ 避免雙重 padding */
+/* ── Header ─────────────────────────────────────────────────── */
 .services-header-wrapper {
   padding-top: 0;
+  padding-bottom: 0;
+}
+
+.services-header-content {
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+.services-eyebrow {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.35em;
+  color: var(--metal-brown, #C5A880);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
 
 .services-title {
@@ -46,7 +56,7 @@
   line-height: 1.8;
 }
 
-/* Slider Section & Handle */
+/* ── Before/After Slider Section ────────────────────────────── */
 .slider-section {
   width: 100%;
   position: relative;
@@ -56,16 +66,10 @@
 
 .slider-container {
   position: relative;
-  width: 100vw;
+  width: 100%;
   height: 55vh;
   cursor: ew-resize;
   overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .slider-container {
-    height: 75vh;
-  }
 }
 
 .slider-reality-side {
@@ -112,6 +116,7 @@
   -webkit-backdrop-filter: blur(8px);
   padding: 12px 20px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 5;
 }
 
 .slider-label-left {
@@ -127,6 +132,7 @@
   -webkit-backdrop-filter: blur(8px);
   padding: 12px 20px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 5;
 }
 
 .slider-handle {
@@ -170,11 +176,16 @@
   color: var(--metal-brown, #C5A880);
 }
 
-/* Timeline Custom Styling */
+/* ── Process Timeline Section ───────────────────────────────── */
 .process-section {
   padding-top: 3rem;
   padding-bottom: 3rem;
   background: linear-gradient(180deg, #050505 0%, #080809 100%);
+}
+
+.process-heading {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
 .process-section-title {
@@ -193,11 +204,17 @@
   text-transform: uppercase;
 }
 
+/* ── Timeline Container (the parent that holds glow wire) ──── */
 .timeline-container {
   position: relative;
 }
 
-/* Vertical wire for mobile */
+/* 
+ * CRITICAL FIX: The vertical timeline wire must sit BEHIND cards.
+ * z-index: 1 on the wire, z-index: 2 on each card.
+ */
+
+/* Vertical wire for mobile (<992px) */
 @media (max-width: 991.98px) {
   .timeline-container::before {
     content: '';
@@ -215,5 +232,290 @@
     );
     box-shadow: 0 0 8px rgba(197, 168, 128, 0.85);
     z-index: 1;
+  }
+}
+
+/* ── Timeline Column (each step wrapper) ────────────────────── */
+.timeline-col {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Desktop Glow Dot (hidden on mobile) ────────────────────── */
+.glow-dot-desktop {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .glow-dot-desktop {
+    display: block;
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--metal-brown, #C5A880);
+    box-shadow: 0 0 12px rgba(197, 168, 128, 0.85);
+    z-index: 3;
+  }
+}
+
+/* ── Mobile Glow Dot (visible only on mobile) ───────────────── */
+.glow-dot-mobile {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  .glow-dot-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: -32px;
+    top: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--obsidian, #050505);
+    border: 2px solid var(--metal-brown, #C5A880);
+    box-shadow: 0 0 12px rgba(197, 168, 128, 0.85);
+    z-index: 5;
+  }
+
+  .glow-dot-mobile-number {
+    font-size: 9px;
+    font-weight: 900;
+    color: var(--metal-brown, #C5A880);
+    line-height: 1;
+  }
+}
+
+/* ── Process Card ───────────────────────────────────────────── */
+.process-card {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(13, 13, 14, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: 4px;
+}
+
+.process-card:hover {
+  border-color: var(--metal-brown, #C5A880);
+  background: linear-gradient(135deg, rgba(197, 168, 128, 0.08) 0%, rgba(13, 13, 14, 0.7) 100%);
+  box-shadow: 0 16px 40px rgba(197, 168, 128, 0.15);
+  transform: translateY(-4px);
+}
+
+.process-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.process-num {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 900 !important;
+  color: var(--metal-brown, #C5A880);
+  text-shadow: 0 0 20px rgba(197, 168, 128, 0.5);
+  line-height: 1;
+  letter-spacing: -0.02em !important;
+}
+
+.process-brand-label {
+  font-size: 8px;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.15);
+  text-transform: uppercase;
+}
+
+.process-card-title {
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+  font-weight: 900 !important;
+  color: #ffffff;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em !important;
+}
+
+.process-card-en {
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  color: var(--metal-brown, #C5A880);
+  display: block;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.process-card-desc {
+  font-size: clamp(0.8rem, 1.1vw, 0.92rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.85;
+  margin: 0;
+  text-align: justify;
+}
+
+/* ── CTA Section ────────────────────────────────────────────── */
+.cta-section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.cta-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 900 !important;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em !important;
+}
+
+.cta-desc {
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.12em;
+  max-width: 650px;
+  margin: 0 auto 2.5rem;
+}
+
+.cta-btn {
+  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
+  letter-spacing: 0.15em;
+  padding: 1em 3.2em;
+  border: 1px solid var(--metal-brown, #C5A880);
+  color: #050505;
+  background-color: var(--metal-brown, #C5A880);
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cta-btn:hover {
+  box-shadow: 0 0 32px rgba(197, 168, 128, 0.85);
+  transform: translateY(-3px);
+  color: #050505;
+}
+
+/* ── Desktop Horizontal Timeline Rows ───────────────────────── */
+@media (min-width: 992px) {
+  .timeline-container {
+    position: relative;
+    padding-top: 2rem;
+  }
+
+  /* Horizontal gold wire connecting rows — BEHIND cards */
+  .timeline-row-1::before,
+  .timeline-row-2::before {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(197, 168, 128, 0.4) 15%,
+      rgba(197, 168, 128, 0.4) 85%,
+      transparent
+    );
+    box-shadow: 0 0 10px rgba(197, 168, 128, 0.3);
+    z-index: 1;
+  }
+
+  .timeline-row-1,
+  .timeline-row-2 {
+    margin-bottom: 4rem;
+    position: relative;
+  }
+}
+
+/* ── Mobile Specific Layout Fixes ───────────────────────────── */
+@media (max-width: 991.98px) {
+  /* Eliminate black void from excessive heights */
+  .slider-container {
+    height: 40vh;
+    min-height: 200px;
+    max-height: 300px;
+  }
+
+  .slider-label-right,
+  .slider-label-left {
+    bottom: 12px;
+    padding: 6px 12px;
+    font-size: 9px;
+  }
+
+  .slider-label-right {
+    right: 12px;
+  }
+
+  .slider-label-left {
+    left: 12px;
+  }
+
+  /* Compact spacing for mobile */
+  .slider-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .process-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  /* Mobile timeline needs left padding for the dot+wire */
+  .timeline-container {
+    padding-left: 20px;
+  }
+
+  .timeline-col {
+    padding-left: 20px;
+  }
+
+  /* Timeline rows have no bottom gap on mobile */
+  .timeline-row-1,
+  .timeline-row-2 {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* ── Mobile Responsive Title Sizing ─────────────────────────── */
+@media (max-width: 768px) {
+  .services-title {
+    font-size: 1.8rem !important;
+    letter-spacing: 0.02em;
+  }
+
+  .services-subtitle {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+  }
+
+  .process-section-title {
+    font-size: 1.5rem !important;
+  }
+}
+
+/* ── Page Layout Container (used by ServicesSection on Home) ── */
+.page-layout-container {
+  padding-top: 120px;
+  scroll-margin-top: 120px;
+}
+
+@media (max-width: 768px) {
+  .page-layout-container {
+    padding-top: 90px;
   }
 }
