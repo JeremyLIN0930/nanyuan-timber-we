@@ -1,141 +1,200 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, useDragControls, useInView } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import '../../pages/Services.css';
 
-const TiltCard: React.FC<{ children: React.ReactNode; onClick: () => void }> = ({ children, onClick }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 20 });
-  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 20 });
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [8, -8]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-8, 8]);
+interface ProcessStep {
+  id: string;
+  title: string;
+  en: string;
+  desc: string;
+}
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width - 0.5);
-    y.set((e.clientY - rect.top) / rect.height - 0.5);
-  };
-  const handleMouseLeave = () => { x.set(0); y.set(0); };
+const STEPS: ProcessStep[] = [
+  {
+    id: '01',
+    title: '初步諮詢',
+    en: 'BESPOKE CONSULTATION',
+    desc: '傾聽您對場域的無限想像，開展客製化空間設計藍圖。'
+  },
+  {
+    id: '02',
+    title: '現場勘測',
+    en: 'PRECISION SITE SURVEY',
+    desc: '職人團隊親赴現場，記錄尺度、採光、結構與管線細節。'
+  },
+  {
+    id: '03',
+    title: '設計提案',
+    en: 'CONCEPT & SPACE DESIGN',
+    desc: '將創意轉化為空間美學，提供格局、材質與視覺提案。'
+  },
+  {
+    id: '04',
+    title: '工程合約',
+    en: 'TRANSPARENT AGREEMENT',
+    desc: '條列式報價與施工節點，確保合作流程清楚透明。'
+  },
+  {
+    id: '05',
+    title: '精湛施工',
+    en: 'MASTER CRAFTSMANSHIP',
+    desc: '由自有工班與現場總監執行，精準落實設計圖面。'
+  },
+  {
+    id: '06',
+    title: '完工驗收',
+    en: 'PERFECT HANDOVER',
+    desc: '高規格檢驗細節，交付安心、完整且具質感的空間。'
+  }
+];
+
+const FadeInSection: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+}> = ({ children, className = '' }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
     <motion.div
-      style={{ rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 1000, cursor: 'pointer' }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onClick={onClick}
-      className="h-100"
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div
-        className="h-100 overflow-hidden"
-        style={{
-          transform: 'translateZ(30px)',
-          backgroundColor: '#0D0D0E',
-          border: '1px solid rgba(255,255,255,0.05)',
-          transition: 'all 0.5s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = '#C5A880'; e.currentTarget.style.boxShadow = '0 0 40px rgba(197,168,128,0.25)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.boxShadow = 'none'; }}
-      >
-        {children}
-      </div>
+      {children}
     </motion.div>
   );
 };
 
-const STEPS = [
-  {
-    num: '01',
-    title: '數位選配預約',
-    subtitle: '點擊探索視覺預覽技術 ➔',
-    popupTitle: '數位選配預約',
-    popupContent: '線上配備未來新家，即時生成視覺預覽。我們利用最新的渲染技術，讓您在施工前就能看見未來的模樣。從格局配置到燈光模擬，每一處都精準呈現。',
-    popupImg: '/images/style_minimal_wood_1779301932325.png'
-  },
-  {
-    num: '02',
-    title: '職人源頭選材',
-    subtitle: '點擊探索頂級材料工藝 ➔',
-    popupTitle: '職人源頭選材',
-    popupContent: '直接對接林場，嚴格把關木材含水率與韌性。每一塊進入南源工坊的木材，都經過含水率測試、紋理評估與結構韌性檢驗，從根本解決台灣潮濕氣候帶來的建材耗損問題。',
-    popupImg: '/images/japanese_wabi_sabi_1779301881798.png'
-  },
-  {
-    num: '03',
-    title: '透明施工監造',
-    subtitle: '點擊探索雲端施工日誌 ➔',
-    popupTitle: '透明施工監造',
-    popupContent: '雲端施工日誌 24/7 全天候查看。每日進度由工地主管實拍回報，杜絕一切不合理的預算追加。追加預算為 0，這是我們對每一位業主的誠信承諾。',
-    popupImg: '/images/modern_office_1779301899552.png'
-  }
-];
+const Services: React.FC = () => {
+  const [sliderPos, setSliderPos] = useState(50);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragControls = useDragControls();
 
-const ServicesSection: React.FC = () => {
-  const [activePopup, setActivePopup] = useState<number | null>(null);
+  const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: { point: { x: number } }) => {
+    if (!containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = info.point.x - rect.left;
+    const nextPos = Math.max(5, Math.min(95, (x / rect.width) * 100));
+
+    setSliderPos(nextPos);
+  };
 
   return (
-    <section className="py-5" style={{ backgroundColor: '#050505' }}>
-      <div className="container py-4">
-        <h2 className="fw-bold mb-5" style={{ fontSize: 'clamp(1.8rem, 5vw, 3.5rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.85)', lineHeight: 1.1 }}>服務項目</h2>
+    <motion.main
+      className="services-page page-layout-container"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <header className="container services-header-wrapper">
+        <FadeInSection>
+          <div className="services-header-content">
+            <p className="services-eyebrow">NANYUAN TIMBER</p>
+            <h1 className="services-title">服務項目與流程</h1>
+            <p className="services-subtitle">
+              南源木材以設計、選材、施工整合為核心，打造兼具機能、美學與職人工藝的高端室內空間。
+            </p>
+          </div>
+        </FadeInSection>
+      </header>
 
-        {/* Bootstrap Grid: 1 col mobile, 3 col desktop */}
-        <div className="row g-4">
-          {STEPS.map((step, i) => (
-            <div className="col-12 col-md-6 col-lg-4" key={i}>
-              <TiltCard onClick={() => setActivePopup(i)}>
-                <div className="p-4 p-lg-5 d-flex flex-column justify-content-between" style={{ minHeight: '260px' }}>
-                  <span className="fw-bold d-block mb-4" style={{ fontSize: 'clamp(2.5rem, 5vw, 3rem)', letterSpacing: '-0.05em', color: '#C5A880', textShadow: '0 0 30px rgba(197,168,128,0.7)', lineHeight: 1.1 }}>{step.num}</span>
-                  <div>
-                    <h3 className="mb-2" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff' }}>{step.title}</h3>
-                    <p style={{ fontSize: 'clamp(0.7rem, 1.2vw, 0.85rem)', fontWeight: 300, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)' }}>{step.subtitle}</p>
-                  </div>
-                </div>
-              </TiltCard>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Popup Overlay */}
-      <AnimatePresence>
-        {activePopup !== null && (
-          <motion.div
-            className="d-flex align-items-center justify-content-center p-3 p-md-5"
-            style={{ position: 'fixed', inset: 0, zIndex: 9990, backgroundColor: 'rgba(5,5,5,0.95)', backdropFilter: 'blur(20px)' }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+      <section className="slider-section" aria-label="設計圖與完工實景對照">
+        <div
+          ref={containerRef}
+          className="slider-container"
+          onPointerDown={(event) => dragControls.start(event)}
+        >
+          <div
+            className="slider-reality-side"
+            role="img"
+            aria-label="南源木材室內設計完工實景"
           >
-            <div className="position-absolute top-0 start-0 w-100 h-100" style={{ cursor: 'pointer' }} onClick={() => setActivePopup(null)}></div>
+            <div className="slider-reality-overlay" />
+            <p className="slider-label-right">實景完工照 / REALITY</p>
+          </div>
 
-            <motion.div
-              className="position-relative w-100 overflow-hidden d-flex flex-column flex-md-row"
-              style={{ maxWidth: '960px', backgroundColor: '#0D0D0E', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 0 60px rgba(0,0,0,0.8)' }}
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="w-100" style={{ maxHeight: '250px', minHeight: '200px' }}>
-                <img src={STEPS[activePopup].popupImg} className="w-100 h-100" style={{ objectFit: 'cover' }} alt={STEPS[activePopup].popupTitle} />
-              </div>
-              <div className="d-none d-md-block" style={{ width: '50%', minHeight: '400px' }}>
-                <img src={STEPS[activePopup].popupImg} className="w-100 h-100" style={{ objectFit: 'cover', display: 'block' }} alt={STEPS[activePopup].popupTitle} />
-              </div>
-              <div className="w-100 p-4 p-md-5 d-flex flex-column justify-content-center" style={{ flex: '1 1 50%' }}>
-                <span className="fw-bold mb-2" style={{ fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', letterSpacing: '-0.02em', color: '#C5A880', textShadow: '0 0 20px rgba(197,168,128,0.6)' }}>STEP {STEPS[activePopup].num}</span>
-                <h3 className="mb-4" style={{ fontSize: 'clamp(1.4rem, 3vw, 1.8rem)', fontWeight: 900, letterSpacing: '-0.02em', color: '#fff' }}>{STEPS[activePopup].popupTitle}</h3>
-                <p className="mb-5" style={{ fontSize: 'clamp(0.8rem, 1.3vw, 0.95rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.7)', lineHeight: 1.8 }}>
-                  {STEPS[activePopup].popupContent}
-                </p>
-                <button onClick={() => setActivePopup(null)} className="apple-btn" style={{ width: 'fit-content' }}>
-                  關閉視窗 ➔
-                </button>
-              </div>
-            </motion.div>
+          <div
+            className="slider-blueprint-side"
+            role="img"
+            aria-label="南源木材室內設計規劃圖"
+            style={{
+              clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)`
+            }}
+          >
+            <div className="slider-blueprint-overlay" />
+            <p className="slider-label-left">精密木作線條圖 / BLUEPRINT</p>
+          </div>
+
+          <motion.div
+            drag="x"
+            dragControls={dragControls}
+            dragConstraints={containerRef}
+            dragElastic={0}
+            dragMomentum={false}
+            onDrag={handleDrag}
+            className="slider-handle"
+            style={{ left: `${sliderPos}%`, x: '-50%' }}
+            aria-hidden="true"
+          >
+            <div className="slider-handle-circle">
+              <span>⟨⟩</span>
+            </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </section>
+        </div>
+      </section>
+
+      <section className="process-section" aria-labelledby="process-title">
+        <div className="container">
+          <FadeInSection>
+            <div className="process-heading">
+              <h2 id="process-title" className="process-section-title">
+                六大職人服務流程
+              </h2>
+              <p className="process-section-subtitle">
+                Bespoke Process — From Concept to Flawless Execution
+              </p>
+            </div>
+          </FadeInSection>
+
+          <div className="timeline-container">
+            {STEPS.map((step) => (
+              <FadeInSection className="timeline-item" key={step.id}>
+                <article className="process-card">
+                  <div className="process-card-top">
+                    <span className="process-num">{step.id}</span>
+                    <span className="process-brand-label">NANYUAN TIMBER</span>
+                  </div>
+
+                  <h3 className="process-card-title">{step.title}</h3>
+                  <p className="process-card-en">{step.en}</p>
+                  <p className="process-card-desc">{step.desc}</p>
+                </article>
+              </FadeInSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="cta-section container" aria-labelledby="cta-title">
+        <FadeInSection>
+          <h2 id="cta-title" className="cta-title">
+            與南源職人攜手，構築您的理想空間
+          </h2>
+          <p className="cta-desc">
+            從設計規劃到工程落地，南源木材以透明流程與職人工藝，陪您完成每一處細節。
+          </p>
+          <Link to="/contact" className="cta-btn">
+            立即預約諮詢
+          </Link>
+        </FadeInSection>
+      </section>
+    </motion.main>
   );
 };
 
-export default ServicesSection;
+export default Services;

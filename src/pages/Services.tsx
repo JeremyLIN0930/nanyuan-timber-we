@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom';
 import './Services.css';
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN CONSTANTS
+   DESIGN TOKENS
 ═══════════════════════════════════════════════════════════════ */
-const GOLD        = '#C5A880';
-const GOLD_GLOW   = 'rgba(197,168,128,0.85)';
 
 /* ── Reusable scroll reveal component ── */
 const FadeInSection: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {

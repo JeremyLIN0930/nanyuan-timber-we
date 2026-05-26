@@ -421,11 +421,89 @@
   top: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh; /* Fix mobile browser UI jump */
   overflow: hidden;
   perspective: 1000px;
   perspective-origin: 50% 50%;
   background-color: #050505;
   z-index: 10;
+}
+
+/* Corridor rings for Home */
+.corridor-ring-edge {
+  position: absolute;
+  background-color: var(--metal-brown, #C5A880);
+  transition: none;
+}
+@media (max-width: 768px) {
+  .corridor-ring-edge {
+    opacity: 0.15 !important;
+  }
+}
+
+/* Ambient Glow for center */
+.ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(200px, 40vw, 500px);
+  height: clamp(120px, 25vh, 300px);
+  background: radial-gradient(ellipse at center, rgba(197, 168, 128, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 5;
+  pointer-events: none;
+  filter: blur(20px);
+}
+@media (max-width: 768px) {
+  .ambient-glow {
+    background: radial-gradient(ellipse at center, rgba(197, 168, 128, 0.45) 0%, transparent 70%);
+    width: clamp(250px, 70vw, 400px);
+    height: clamp(180px, 35vh, 300px);
+  }
+}
+
+/* Scroll Hint Bottom */
+.scroll-hint {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .scroll-hint {
+    bottom: 12vh; /* Increase margin for immersive hotel feel */
+  }
+}
+
+/* Fix Navbar Overlap for Home Pages / Section Titles */
+.page-main-container,
+.main-content {
+  padding-top: 120px;
+  scroll-margin-top: 120px;
+}
+
+.page-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+}
+
+@media (max-width: 768px) {
+  .page-main-container,
+  .main-content {
+    padding-top: 95px !important;
+    scroll-margin-top: 95px !important;
+  }
+  .page-title,
+  h1 {
+    font-size: 1.8rem !important;
+    letter-spacing: 0.15em;
+  }
 }
 
 .gallery-frame {

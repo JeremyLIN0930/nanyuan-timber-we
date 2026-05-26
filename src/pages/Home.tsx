@@ -142,13 +142,13 @@ const CorridorRing: React.FC<{ depth: number; index: number }> = ({ depth, index
       pointerEvents:   'none',
     }}>
       {/* top edge */}
-      <div style={{ ...edgeStyle, top: 0, left: 0, right: 0, height: `${thickness}px` }} />
+      <div className="corridor-ring-edge" style={{ ...edgeStyle, top: 0, left: 0, right: 0, height: `${thickness}px` }} />
       {/* bottom edge */}
-      <div style={{ ...edgeStyle, bottom: 0, left: 0, right: 0, height: `${thickness}px` }} />
+      <div className="corridor-ring-edge" style={{ ...edgeStyle, bottom: 0, left: 0, right: 0, height: `${thickness}px` }} />
       {/* left edge */}
-      <div style={{ ...edgeStyle, top: 0, left: 0, bottom: 0, width: `${thickness}px` }} />
+      <div className="corridor-ring-edge" style={{ ...edgeStyle, top: 0, left: 0, bottom: 0, width: `${thickness}px` }} />
       {/* right edge */}
-      <div style={{ ...edgeStyle, top: 0, right: 0, bottom: 0, width: `${thickness}px` }} />
+      <div className="corridor-ring-edge" style={{ ...edgeStyle, top: 0, right: 0, bottom: 0, width: `${thickness}px` }} />
 
       {/* Corner accent dots */}
       {[
@@ -367,19 +367,7 @@ const Home: React.FC = () => {
           }} />
 
           {/* ── Ambient glow at vanishing point ── */}
-          <div style={{
-            position:      'absolute',
-            top:           '50%',
-            left:          '50%',
-            transform:     'translate(-50%,-50%)',
-            width:         'clamp(200px,40vw,500px)',
-            height:        'clamp(120px,25vh,300px)',
-            background:    `radial-gradient(ellipse at center, rgba(197,168,128,0.12) 0%, transparent 70%)`,
-            borderRadius:  '50%',
-            zIndex:        5,
-            pointerEvents: 'none',
-            filter:        'blur(20px)',
-          }} />
+          <div className="ambient-glow" />
 
           {/* ── Perspective rail lines (static, on top of tunnel) ── */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 6, pointerEvents: 'none' }}>
@@ -517,18 +505,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* ── Scroll hint at bottom ── */}
-          <div style={{
-            position:      'absolute',
-            bottom:        'clamp(1.5rem, 4vh, 2.5rem)',
-            left:          '50%',
-            transform:     'translateX(-50%)',
-            zIndex:        40,
-            display:       'flex',
-            flexDirection: 'column',
-            alignItems:    'center',
-            gap:           '0.5rem',
-            pointerEvents: 'none',
-          }}>
+          <div className="scroll-hint">
             <span style={{
               fontSize:      'clamp(9px, 1.1vw, 11px)',
               letterSpacing: '0.28em',

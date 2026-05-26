@@ -4,6 +4,12 @@ import { Link } from 'react-router-dom';
 import './Knowledge.css';
 
 /* ═══════════════════════════════════════════════════════════════
+   DESIGN CONSTANTS
+═══════════════════════════════════════════════════════════════ */
+const GOLD = '#C5A880';
+const GOLD_GLOW = 'rgba(197,168,128,0.85)';
+
+/* ═══════════════════════════════════════════════════════════════
    FILTER CATEGORIES
 ═══════════════════════════════════════════════════════════════ */
 type CategoryId = 'all' | 'wood' | 'painting' | 'stone-metal';
@@ -62,6 +68,7 @@ const MATERIALS: MaterialItem[] = [
     title:    '義大利特殊礦物塗料',
     en:       'ITALIAN ARTISTIC PLASTER',
     img:      '/images/style_wabi_sabi_1779301962644.png',
+    altText:  '南源木材 義大利礦物塗料 藝術塗裝牆面',
     visual:   '在曜石黑與暖棕光影交錯下，牆面呈現粗獷卻觸感絲滑的自然礦物紋路與微水泥斑駁感。',
     desc:     '由資深塗裝職人純手工層層批土、抹壓，拒絕機械式的死板。每一道光影打在牆面上，都會折射出獨一無二的莫蘭迪漸層手感。'
   },

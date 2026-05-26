@@ -175,3 +175,22 @@ input[type='range']::-moz-range-thumb {
   border: 2px solid #050505;
   box-shadow: 0 0 12px rgba(197, 168, 128, 0.6);
 }
+
+/* ═══════════════════════════════════════════════════════
+   GLOBAL NAVBAR OVERLAP FIX (Padding & Mobile Titles)
+   ═══════════════════════════════════════════════════════ */
+.main-content {
+  padding-top: 120px;
+  scroll-margin-top: 120px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 95px !important;
+    scroll-margin-top: 95px !important;
+  }
+  h1, .page-title, .section-title {
+    font-size: 1.8rem !important;
+    letter-spacing: 0.15em;
+  }
+}
