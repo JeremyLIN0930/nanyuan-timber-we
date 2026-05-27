@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import './Knowledge.css';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -286,40 +285,6 @@ const Knowledge: React.FC = () => {
 
       </section>
 
-      {/* Unified CTA Section */}
-      <section className="knowledge-cta-section container">
-        <RevealSection>
-          <h3 className="knowledge-cta-title">
-            準備好開始您的空間改造了嗎？
-          </h3>
-          <p className="knowledge-cta-desc">
-            南源木材堅持品質至上的職人精神，從材料源頭到精湛施工，為您打造經得起時間考驗的理想居所。
-          </p>
-          <nav className="knowledge-cta-buttons" aria-label="預約服務快速連結">
-            <Link
-              to="/contact"
-              className="knowledge-cta-btn knowledge-cta-btn--primary"
-              aria-label="與職人預約諮詢"
-            >
-              立即預約諮詢 ➜
-            </Link>
-            <Link
-              to="/projects"
-              className="knowledge-cta-btn knowledge-cta-btn--secondary"
-            >
-              查看作品案例
-            </Link>
-            <a
-              href="https://line.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="knowledge-cta-btn knowledge-cta-btn--secondary"
-            >
-              加入 LINE 詢問
-            </a>
-          </nav>
-        </RevealSection>
-      </section>
 
     </main>
   );

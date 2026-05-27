@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Trees, ShieldCheck, ClipboardCheck } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -696,32 +696,6 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-
-      {/* ══ BLOCK 6: UNIFIED CTA — 唯一完全體預約引導 ══ */}
-      <section className="home-cta-section">
-        <FadeInSection>
-          <h2 className="home-cta-title">準備好開始您的空間改造了嗎？</h2>
-          <p className="home-cta-desc">
-            結合木材背景與工藝，南源從設計、選材到施工，提供一條龍的高級室內裝修落地服務。
-          </p>
-          <nav className="home-cta-buttons" aria-label="預約服務快速連結">
-            <Link to="/contact" className="home-cta-btn home-cta-btn--primary">
-              立即預約諮詢 ➜
-            </Link>
-            <Link to="/projects" className="home-cta-btn home-cta-btn--secondary">
-              查看作品案例
-            </Link>
-            <a
-              href="https://line.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="home-cta-btn home-cta-btn--line"
-            >
-              加入 LINE 詢問
-            </a>
-          </nav>
-        </FadeInSection>
-      </section>
 
     </motion.div>
   );

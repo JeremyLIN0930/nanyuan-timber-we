@@ -20,15 +20,15 @@ interface Category {
 }
 
 const CATEGORIES: Category[] = [
-  { id: 'all',       label: '全部作品', en: 'ALL'         },
-  { id: 'all-house', label: '全屋統包', en: 'FULL REMODEL'},
-  { id: 'utility',   label: '水電工程', en: 'UTILITY'     },
-  { id: 'painting',  label: '工藝油漆', en: 'PAINTING'    },
-  { id: 'partial',   label: '局部改造', en: 'PARTIAL'     },
+  { id: 'all',       label: '全部作品', en: 'ALL'          },
+  { id: 'all-house', label: '全屋統包', en: 'FULL REMODEL' },
+  { id: 'utility',   label: '水電工程', en: 'UTILITY'      },
+  { id: 'painting',  label: '工藝油漆', en: 'PAINTING'     },
+  { id: 'partial',   label: '局部改造', en: 'PARTIAL'      },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   PROJECT DATA (SEO & GEO Keywords Optimized)
+   PROJECT DATA
 ═══════════════════════════════════════════════════════════════ */
 interface Project {
   id:          string;
@@ -264,12 +264,12 @@ const PROJECTS: Project[] = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   FADE-IN (scroll-driven reveal)
+   FADE-IN  (scroll-driven reveal)
 ═══════════════════════════════════════════════════════════════ */
 const FadeIn: React.FC<{
-  children:  React.ReactNode;
+  children:   React.ReactNode;
   className?: string;
-  delay?:    number;
+  delay?:     number;
 }> = ({ children, className = '', delay = 0 }) => {
   const ref    = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -295,8 +295,8 @@ const BeforeAfterSlider: React.FC<{
   afterImg:  string;
   afterAlt:  string;
 }> = ({ beforeImg, beforeAlt, afterImg, afterAlt }) => {
-  const [pos, setPos] = useState(50);
-  const boxRef        = useRef<HTMLDivElement>(null);
+  const [pos,  setPos]  = useState(50);
+  const boxRef          = useRef<HTMLDivElement>(null);
 
   const handleMove = (clientX: number) => {
     if (!boxRef.current) return;
@@ -313,31 +313,31 @@ const BeforeAfterSlider: React.FC<{
       onMouseDown={e => handleMove(e.clientX)}
     >
       {/* After layer */}
-      <div 
-        className="ba-reality-side" 
+      <div
+        className="ba-reality-side"
         style={{ backgroundImage: `url('${afterImg}')` }}
         role="img"
         aria-label={afterAlt}
       >
         <div className="ba-reality-label">完工後 AFTER</div>
       </div>
-      
+
       {/* Before layer */}
-      <div 
-        className="ba-blueprint-side" 
-        style={{ 
+      <div
+        className="ba-blueprint-side"
+        style={{
           backgroundImage: `url('${beforeImg}')`,
-          clipPath: `polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`
+          clipPath: `polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`,
         }}
         role="img"
         aria-label={beforeAlt}
       >
         <div className="ba-blueprint-label">施工前 BEFORE</div>
       </div>
-      
+
       {/* Divider handle */}
-      <div 
-        className="ba-handle-line" 
+      <div
+        className="ba-handle-line"
         style={{ left: `${pos}%`, transform: 'translateX(-50%)' }}
       >
         <div className="ba-handle-circle">
@@ -357,11 +357,9 @@ const ProjectCard: React.FC<{
   onClick: () => void;
 }> = ({ project, delay, onClick }) => (
   <FadeIn delay={delay}>
-    <article
-      onClick={onClick}
-      className="portfolio-card"
-    >
-      {/* ── Image ── */}
+    <article onClick={onClick} className="portfolio-card">
+
+      {/* Image */}
       <div className="portfolio-img-container">
         <img
           src={project.img}
@@ -369,37 +367,24 @@ const ProjectCard: React.FC<{
           className="portfolio-img"
           loading="lazy"
         />
-        {/* Category badge */}
         <div className="portfolio-badge-style">
           {CATEGORIES.find(c => c.id === project.category)?.en ?? ''}
         </div>
-        {/* Year badge */}
-        <div className="portfolio-badge-geo">
-          {project.year}
-        </div>
-        {/* Bottom gradient */}
+        <div className="portfolio-badge-geo">{project.year}</div>
         <div className="portfolio-img-gradient" />
       </div>
 
-      {/* ── Body ── */}
+      {/* Body */}
       <div className="portfolio-card-content">
 
-        {/* Title row */}
         <div className="portfolio-card-header">
           <div>
-            <h3 className="portfolio-card-title">
-              {project.title}
-            </h3>
-            <p className="portfolio-card-type">
-              {project.subtitle}
-            </p>
+            <h3 className="portfolio-card-title">{project.title}</h3>
+            <p className="portfolio-card-type">{project.subtitle}</p>
           </div>
-          <span className="portfolio-badge-size">
-            {project.size}
-          </span>
+          <span className="portfolio-badge-size">{project.size}</span>
         </div>
 
-        {/* Meta info */}
         <div className="portfolio-card-specs">
           {[
             { label: '設計重點', value: project.designFocus },
@@ -412,18 +397,12 @@ const ProjectCard: React.FC<{
           ))}
         </div>
 
-        {/* Highlight pill */}
         <div className="portfolio-divider">
-          <p className="portfolio-card-highlight">
-            {project.highlight}
-          </p>
+          <p className="portfolio-card-highlight">{project.highlight}</p>
         </div>
 
-        {/* CTA */}
         <div className="portfolio-card-action">
-          <span className="portfolio-action-text">
-            查看完整案例 ➔
-          </span>
+          <span className="portfolio-action-text">查看完整案例 ➔</span>
         </div>
       </div>
     </article>
@@ -434,8 +413,8 @@ const ProjectCard: React.FC<{
    PROJECT DETAIL OVERLAY
 ═══════════════════════════════════════════════════════════════ */
 const ProjectDetail: React.FC<{
-  project:  Project;
-  onClose:  () => void;
+  project: Project;
+  onClose: () => void;
 }> = ({ project, onClose }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -447,13 +426,9 @@ const ProjectDetail: React.FC<{
       transition={{ duration: 0.35 }}
       className="detail-modal-overlay"
     >
-      {/* Scrollable inner container */}
-      <div
-        ref={scrollRef}
-        className="detail-modal-scroll"
-      >
+      <div ref={scrollRef} className="detail-modal-scroll">
 
-        {/* ── Close button ──────────────────────────────────── */}
+        {/* Close button */}
         <button
           onClick={onClose}
           className="detail-modal-close-btn"
@@ -462,81 +437,60 @@ const ProjectDetail: React.FC<{
           ✕
         </button>
 
-        {/* ── Hero Image ──────────────────────────────────────── */}
+        {/* Hero image */}
         <div className="detail-hero-banner">
           <img
             src={project.img}
             alt={project.altText}
             className="detail-hero-img"
           />
-          {/* Gradient to body bg — seamless transition */}
           <div className="detail-hero-gradient" />
-          
-          {/* Type badge */}
           <div className="detail-hero-badge-container">
-            <span className="detail-hero-category">
-              {project.type}
-            </span>
+            <span className="detail-hero-category">{project.type}</span>
             {[project.size, project.year, `預算 ${project.budget}`].map(tag => (
-              <span key={tag} className="detail-hero-tag">
-                {tag}
-              </span>
+              <span key={tag} className="detail-hero-tag">{tag}</span>
             ))}
           </div>
         </div>
 
-        {/* ── Main content area ────────────────────────────────── */}
+        {/* Main body */}
         <div className="container px-3 px-md-4 detail-body-container">
 
           {/* Title */}
           <div className="detail-header-block">
-            <h2 className="detail-title">
-              {project.title}
-            </h2>
-            <p className="detail-subtitle-en">
-              {project.subtitle}
-            </p>
+            <h2 className="detail-title">{project.title}</h2>
+            <p className="detail-subtitle-en">{project.subtitle}</p>
           </div>
 
           {/* Highlight quote */}
           <div className="detail-concept-border">
-            <p className="detail-concept-text">
-              {project.highlight}
-            </p>
+            <p className="detail-concept-text">{project.highlight}</p>
           </div>
 
-          {/* Description paragraphs */}
+          {/* Description */}
           <div className="detail-desc-max-width">
             {project.description.map((para, i) => (
               <FadeIn key={i} delay={i * 0.08}>
-                <p className="detail-desc-text">
-                  {para}
-                </p>
+                <p className="detail-desc-text">{para}</p>
               </FadeIn>
             ))}
           </div>
 
           {/* Before / After slider */}
           <FadeIn className="mb-5">
-            <h3 className="detail-section-title">
-              空間重生：擦除對照
-            </h3>
-            <p className="detail-section-subtitle-en">
-              左右拖曳滑桿，見證空間蛻變。
-            </p>
-            <BeforeAfterSlider 
-              beforeImg={project.beforeImg} 
+            <h3 className="detail-section-title">空間重生：擦除對照</h3>
+            <p className="detail-section-subtitle-en">左右拖曳滑桿，見證空間蛻變。</p>
+            <BeforeAfterSlider
+              beforeImg={project.beforeImg}
               beforeAlt={project.beforeAlt}
-              afterImg={project.afterImg} 
+              afterImg={project.afterImg}
               afterAlt={project.afterAlt}
             />
           </FadeIn>
 
           {/* Gallery */}
           <FadeIn>
-            <h3 className="detail-gallery-title">
-              更多細節
-            </h3>
+            <h3 className="detail-gallery-title">更多細節</h3>
             <div className="row g-3">
               {project.galleryImgs.map((gImg, i) => (
                 <div className="col-12 col-md-6" key={i}>
@@ -586,14 +540,21 @@ const FilterTabs: React.FC<{
   const [hovered, setHovered] = React.useState<CategoryId | null>(null);
 
   return (
+    /*
+      .filter-track  → outer scroll wrapper with centred flex
+      .tab-track-container → the frosted obsidian pill capsule
+      Tasks 2 & 3: centering is handled entirely in Projects.css.
+      No inline justify-content here — CSS owns the layout.
+    */
     <div className="filter-track">
       <div className="tab-track-container">
-        {CATEGORIES.map((cat) => {
+        {CATEGORIES.map(cat => {
           const isActive  = active  === cat.id;
           const isHovered = hovered === cat.id;
 
           return (
             <div key={cat.id} className="position-relative d-inline-block">
+              {/* Sliding active pill background */}
               {isActive && (
                 <motion.div
                   layoutId="filter-pill"
@@ -613,27 +574,43 @@ const FilterTabs: React.FC<{
                 onMouseLeave={() => setHovered(null)}
                 className="filter-pill-btn"
                 aria-label={`篩選 ${cat.label}`}
+                style={{
+                  transform: isHovered && !isActive ? 'translateY(-2px)' : 'translateY(0)',
+                }}
               >
+                {/* Chinese label */}
                 <span
                   className="filter-pill-label"
                   style={{
                     fontWeight: isActive ? 800 : isHovered ? 500 : 300,
-                    color:      isActive ? '#ffffff' : isHovered ? GOLD : 'rgba(255,255,255,0.42)',
-                    textShadow: isActive ? `0 0 18px rgba(197,168,128,0.7), 0 0 6px rgba(255,255,255,0.3)` : 'none',
+                    color:      isActive
+                      ? '#ffffff'
+                      : isHovered
+                        ? GOLD
+                        : 'rgba(255,255,255,0.42)',
+                    textShadow: isActive
+                      ? `0 0 18px rgba(197,168,128,0.7), 0 0 6px rgba(255,255,255,0.3)`
+                      : 'none',
                   }}
                 >
                   {cat.label}
                 </span>
 
+                {/* English sub-label */}
                 <span
                   className="filter-pill-en"
                   style={{
-                    color: isActive ? 'rgba(197,168,128,0.75)' : isHovered ? 'rgba(197,168,128,0.55)' : 'rgba(255,255,255,0.22)',
+                    color: isActive
+                      ? 'rgba(197,168,128,0.75)'
+                      : isHovered
+                        ? 'rgba(197,168,128,0.55)'
+                        : 'rgba(255,255,255,0.22)',
                   }}
                 >
                   {cat.en}
                 </span>
 
+                {/* Gold wire underline (active only) */}
                 <AnimatePresence>
                   {isActive && (
                     <motion.span
@@ -641,11 +618,7 @@ const FilterTabs: React.FC<{
                       initial={{ scaleX: 0, opacity: 0 }}
                       animate={{ scaleX: 1, opacity: 1 }}
                       exit={{   scaleX: 0, opacity: 0 }}
-                      transition={{
-                        duration:   0.38,
-                        ease:       [0.16, 1, 0.3, 1],
-                        delay:      0.06,
-                      }}
+                      transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1], delay: 0.06 }}
                       className="position-absolute bottom-0 start-50 translate-middle-x"
                       style={{
                         display:         'block',
@@ -678,17 +651,14 @@ const Projects: React.FC = () => {
 
   const selectedId = searchParams.get('project');
 
-  /* Derived: filtered list */
   const filtered = activeFilter === 'all'
     ? PROJECTS
     : PROJECTS.filter(p => p.category === activeFilter);
 
-  /* Derived: selected project object */
   const selectedProject = selectedId
     ? PROJECTS.find(p => p.id === selectedId) ?? null
     : null;
 
-  /* Handle filter change — reset scroll + selection */
   const handleFilterChange = (id: CategoryId) => {
     setActiveFilter(id);
     setSearchParams({});
@@ -698,7 +668,7 @@ const Projects: React.FC = () => {
     <main className="projects-page">
       <div className="container px-3 px-md-4 projects-container">
 
-        {/* ── Page header ─────────────────────────────────── */}
+        {/* Page header */}
         <section className="mb-4">
           <FadeIn>
             <h1 className="projects-title">作品案例</h1>
@@ -708,19 +678,19 @@ const Projects: React.FC = () => {
           </FadeIn>
         </section>
 
-        {/* ── Filter tabs ──────────────────────────────────── */}
+        {/* Filter tabs */}
         <section>
           <FilterTabs active={activeFilter} onChange={handleFilterChange} />
         </section>
 
-        {/* ── Project count hint ───────────────────────────── */}
+        {/* Count hint */}
         <div className="projects-count-hint">
           <span className="projects-count-text">
             顯示 {filtered.length} / {PROJECTS.length} 件作品
           </span>
         </div>
 
-        {/* ── Card grid ────────────────────────────────────── */}
+        {/* Card grid */}
         <section>
           <motion.div layout className="row g-4">
             <AnimatePresence mode="popLayout">
@@ -747,7 +717,7 @@ const Projects: React.FC = () => {
 
       </div>
 
-      {/* ── Detail overlay ──────────────────────────────────── */}
+      {/* Detail overlay */}
       <AnimatePresence>
         {selectedProject && (
           <ProjectDetail

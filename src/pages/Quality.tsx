@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import './Quality.css';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -165,34 +164,6 @@ const Quality: React.FC = () => {
           <div className={`quality-geometric-bg quality-geometric-bg--${activeTab}`} />
         </div>
 
-      </section>
-
-      {/* ── CTA ─────────────────────────────────────────────── */}
-      <section className="quality-cta-section container">
-        <FadeInSection>
-          <h2 className="quality-cta-title">
-            準備好開始您的空間改造了嗎？
-          </h2>
-          <p className="quality-cta-desc">
-            南源木材堅持品質至上的職人精神，從材料源頭到精湛施工，為您打造經得起時間考驗的理想居所。
-          </p>
-          <nav className="quality-cta-buttons" aria-label="預約服務快速連結">
-            <Link to="/contact" className="quality-cta-primary">
-              立即預約諮詢 ➜
-            </Link>
-            <Link to="/projects" className="quality-cta-secondary">
-              查看作品案例
-            </Link>
-            <a
-              href="https://line.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="quality-cta-secondary"
-            >
-              加入 LINE 詢問
-            </a>
-          </nav>
-        </FadeInSection>
       </section>
 
     </main>
