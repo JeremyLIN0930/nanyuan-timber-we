@@ -151,16 +151,29 @@ const Services: React.FC = () => {
         </div>
       </section>
 
-      {/* Layer 4: CTA */}
+      {/* Layer 4: Unified CTA */}
       <section className="services-cta-section container">
         <FadeInSection>
-          <h2 className="services-cta-title">開啟您的空間旅程</h2>
+          <h2 className="services-cta-title">準備好開始您的空間改造了嗎？</h2>
           <p className="services-cta-desc">
-            預約免費諮詢，讓南源木材為您量身打造理想居所
+            南源木材堅持品質至上的職人精神，從材料源頭到精湛施工，為您打造經得起時間考驗的理想居所。
           </p>
-          <Link to="/contact" className="services-cta-btn">
-            立即預約諮詢
-          </Link>
+          <nav className="services-cta-buttons" aria-label="預約服務快速連結">
+            <Link to="/contact" className="services-cta-btn services-cta-btn--primary">
+              立即預約諮詢 ➜
+            </Link>
+            <Link to="/projects" className="services-cta-btn services-cta-btn--secondary">
+              查看作品案例
+            </Link>
+            <a
+              href="https://line.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="services-cta-btn services-cta-btn--secondary"
+            >
+              加入 LINE 詢問
+            </a>
+          </nav>
         </FadeInSection>
       </section>
     </main>

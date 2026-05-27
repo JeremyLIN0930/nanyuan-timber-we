@@ -1,135 +1,330 @@
-.quality-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+/* ═══════════════════════════════════════════════════════════════
+   QUALITY PAGE — Bespoke Accordion Design
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Wrapper ───────────────────────────────────────────── */
+.quality-page {
+  background-color: #050505;
+  min-height: 100vh;
+  color: #ffffff;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
-.quality-card {
-  background: white;
-  padding: 2.5rem 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  border-top: 4px solid var(--wood-brown);
-  transition: transform 0.3s ease;
+/* ── Header ─────────────────────────────────────────────────── */
+.quality-header-section {
+  padding-top: 140px;
+  padding-bottom: 40px;
+  text-align: center;
 }
 
-.quality-card:hover {
-  transform: translateY(-5px);
+.quality-title {
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  font-weight: 900 !important;
+  color: #C5A880;
+  text-shadow: 0 0 40px rgba(197, 168, 128, 0.85);
+  letter-spacing: -0.03em !important;
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
 }
 
-.q-icon {
-  color: var(--wood-brown);
-  margin-bottom: 1.5rem;
-}
-
-.quality-card h3 {
-  color: var(--dark-blue);
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
-}
-
-.quality-card p {
-  color: var(--text-muted);
-  line-height: 1.6;
-  font-size: 0.95rem;
-}
-
-/* Comparison Table Section */
-.standards-section {
-  padding: 4rem;
-  border-radius: 12px;
-  margin-top: 4rem;
-}
-
-.standards-header {
-  margin-bottom: 3rem;
-}
-
-.standards-header h2 {
-  color: var(--dark-blue);
+.quality-subtitle {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.15em;
   margin-bottom: 0.5rem;
 }
 
-.standards-header p {
-  color: var(--text-muted);
+.quality-en {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  margin: 0;
 }
 
-.comparison-table {
-  background: white;
-  border-radius: 8px;
+/* ── Accordion Section ──────────────────────────────────────── */
+.quality-accordion-section {
+  padding-bottom: 4rem;
+}
+
+/* Tabs Row */
+.quality-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 3rem;
+}
+
+.quality-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.quality-tab:hover {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(197, 168, 128, 0.03);
+}
+
+.quality-tab--active {
+  color: #C5A880;
+  border-bottom-color: #C5A880;
+  background: rgba(197, 168, 128, 0.05);
+}
+
+.quality-tab-icon {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.quality-tab-title {
+  display: block;
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.quality-tab-en {
+  display: block;
+  font-size: 8px;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+  opacity: 0.5;
+}
+
+/* Panel */
+.quality-panel {
+  position: relative;
+  min-height: 300px;
+  background: #0a0a0a;
+  border: 1px solid rgba(197, 168, 128, 0.08);
+  border-radius: 4px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.comp-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1.5fr;
-  border-bottom: 1px solid #eee;
+.quality-panel-content {
+  position: relative;
+  z-index: 2;
 }
 
-.comp-row:last-child {
+/* Items */
+.quality-item {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.quality-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
   border-bottom: none;
 }
 
-.comp-header {
-  background-color: var(--dark-gray);
-  color: white;
-  font-weight: bold;
+.quality-item-title {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  font-weight: 900 !important;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em !important;
 }
 
-.comp-col {
-  padding: 1.5rem;
+.quality-item-desc {
+  font-size: clamp(0.8rem, 1.1vw, 0.9rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.8;
+  margin: 0;
 }
 
-.comp-col.item {
-  font-weight: bold;
-  background-color: rgba(0,0,0,0.02);
-  color: var(--dark-blue);
+/* ── Geometric Backgrounds (Pure CSS) ───────────────────────── */
+.quality-geometric-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.04;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
 }
 
-.comp-col.general {
-  color: var(--text-muted);
+/* Waterproof: concentric ripple circles */
+.quality-geometric-bg--waterproof {
+  background:
+    radial-gradient(circle at 85% 50%, transparent 60px, rgba(197, 168, 128, 0.3) 61px, transparent 62px),
+    radial-gradient(circle at 85% 50%, transparent 100px, rgba(197, 168, 128, 0.25) 101px, transparent 102px),
+    radial-gradient(circle at 85% 50%, transparent 140px, rgba(197, 168, 128, 0.2) 141px, transparent 142px),
+    radial-gradient(circle at 85% 50%, transparent 180px, rgba(197, 168, 128, 0.15) 181px, transparent 182px);
 }
 
-.comp-col.nanyuan {
-  color: var(--wood-brown);
-  font-weight: 500;
-  background-color: rgba(139, 90, 43, 0.05);
+/* Electrical: diagonal grid lines (red-blue conceptual) */
+.quality-geometric-bg--electrical {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(197, 168, 128, 0.15) 20px,
+      rgba(197, 168, 128, 0.15) 21px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 30px,
+      rgba(120, 160, 200, 0.08) 30px,
+      rgba(120, 160, 200, 0.08) 31px
+    );
 }
 
-.comp-header .comp-col.nanyuan {
-  background-color: var(--wood-brown);
-  color: white;
+/* Woodwork: concentric tree rings */
+.quality-geometric-bg--woodwork {
+  background:
+    repeating-radial-gradient(
+      circle at 80% 50%,
+      transparent 0px,
+      transparent 25px,
+      rgba(197, 168, 128, 0.1) 26px,
+      transparent 27px
+    );
 }
 
+/* ── CTA Section ────────────────────────────────────────────── */
+.quality-cta-section {
+  text-align: center;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.quality-cta-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 900 !important;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em !important;
+}
+
+.quality-cta-desc {
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.4);
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+}
+
+.quality-cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.quality-cta-primary {
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  padding: 0.9em 2.8em;
+  background: transparent;
+  border: 1px solid #C5A880;
+  color: #C5A880;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+}
+
+.quality-cta-primary:hover {
+  background: rgba(197, 168, 128, 0.08);
+  text-shadow: 0 0 12px rgba(197, 168, 128, 0.5);
+  transform: translateY(-1px);
+  color: #C5A880;
+}
+
+.quality-cta-secondary {
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  padding: 0.9em 2.8em;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+}
+
+.quality-cta-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE
+═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .standards-section {
-    padding: 2rem 1rem;
+  .quality-header-section {
+    padding-top: 105px;
   }
-  .comp-row {
-    grid-template-columns: 1fr;
-    border-bottom: 2px solid #ccc;
+
+  .quality-title {
+    font-size: 1.8rem !important;
   }
-  .comp-col.item {
-    background-color: var(--dark-gray);
-    color: white;
-    padding: 0.8rem 1rem;
+
+  .quality-tabs {
+    flex-direction: column;
+    border-bottom: none;
+    gap: 0;
   }
-  .comp-header {
+
+  .quality-tab {
+    border-bottom: none;
+    border-left: 2px solid transparent;
+    text-align: left;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .quality-tab--active {
+    border-left-color: #C5A880;
+    border-bottom-color: transparent;
+  }
+
+  .quality-tab-icon {
+    display: inline;
+    font-size: 1.2rem;
+    margin-bottom: 0;
+  }
+
+  .quality-tab-title {
+    display: inline;
+    font-size: 0.9rem;
+  }
+
+  .quality-tab-en {
     display: none;
   }
-  .comp-col.general::before {
-    content: '一般標準：';
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #666;
+
+  .quality-panel {
+    min-height: auto;
   }
-  .comp-col.nanyuan::before {
-    content: '南源承諾：';
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--wood-brown);
+
+  .quality-cta-buttons {
+    flex-direction: column;
+    align-items: center;
   }
 }
