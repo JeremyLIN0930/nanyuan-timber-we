@@ -185,9 +185,60 @@ input[type='range']::-moz-range-thumb {
   /* No padding-top: pages manage their own spacing */
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL MOBILE-FIRST RESPONSIVE DEFENCE
+   ─────────────────────────────────────────────────────────────
+   1. Smooth scrolling + overflow-x kill
+   2. Touch acceleration for all scrollable containers
+   3. Dynamic clamp font sizes
+   4. Mobile image height caps
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Smooth scrolling + overflow protection ── */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden !important;
+}
+
+/* ── Touch acceleration for smooth swiping ── */
+main,
+section,
+.container,
+[class*="scroll"],
+[class*="accordion"],
+[class*="card"] {
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* ── Dynamic heading sizes with clamp ── */
 @media (max-width: 768px) {
   h1, .page-title, .section-title {
-    font-size: 1.8rem !important;
-    letter-spacing: 0.15em;
+    font-size: clamp(1.6rem, 6vw, 2.4rem) !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  h2 {
+    font-size: clamp(1.4rem, 5vw, 2rem) !important;
+  }
+
+  h3 {
+    font-size: clamp(1.1rem, 4vw, 1.5rem) !important;
+  }
+
+  /* ── Mobile image height caps ── */
+  .home-ba-side,
+  .home-portfolio-card-img,
+  .home-process-step-img,
+  img[class*="slider"],
+  img[class*="project"],
+  img[class*="portfolio"] {
+    max-height: 240px !important;
+    object-fit: cover !important;
+  }
+
+  /* ── Prevent horizontal scroll on all sections ── */
+  section,
+  .container {
+    overflow-x: hidden !important;
   }
 }
