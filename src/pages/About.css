@@ -1,320 +1,117 @@
-/* ===================================
-   About Page — Luxury Immersive Layout
-   =================================== */
+/* ═══════════════════════════════════════════════════════════════
+   About.css  —  南源木材 About 頁面樣式
+   ─────────────────────────────────────────────────────────────
+   負責以下兩件事：
+   1. Hero 標題安全位置（Navbar 間距）
+   2. 年輪 CSS @keyframes 呼吸動畫
+   所有其他樣式均在 About.tsx 的 inline style 處理。
+═══════════════════════════════════════════════════════════════ */
 
-/* Page wrapper */
-.about-page {
-  background: #050505;
-  min-height: 100vh;
-  color: #ffffff;
-  overflow-x: hidden;
+/* ──────────────────────────────────────────────────────────────
+   CUSTOM PROPERTY: Navbar height
+   同步到 Navbar.tsx 的實際高度。
+   Desktop:  ~72px（品牌文字 + padding 12px×2）
+   Mobile:   ~60px
+   ────────────────────────────────────────────────────────────── */
+:root {
+  --navbar-h: 72px;
 }
 
-/* ===================================
-   Hero Slider
-   =================================== */
-.about-hero-slider {
-  position: relative;
-  width: 100%;
-  height: 80vh;
-  overflow: hidden;
-  margin-top: -120px;
+@media (max-width: 991px) {
+  :root {
+    --navbar-h: 60px;
+  }
 }
 
-.about-hero-slide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 1.2s ease-in-out;
+/* ──────────────────────────────────────────────────────────────
+   BUG 1 FIX: Hero copy block — positioned from TOP
+   ─────────────────────────────────────────────────────────────
+   .about-hero-copy 絕對定位，top 從 Navbar 底部再加
+   10vh 的呼吸空間，確保「關於南源」大標題永遠在導覽列下方
+   完整顯示。
+
+   left/right/max-width 維持響應式。
+   ────────────────────────────────────────────────────────────── */
+.about-hero-copy {
+  position:   absolute;
+  top:        calc(var(--navbar-h) + 10vh);
+  left:       clamp(20px, 6vw, 80px);
+  right:      clamp(20px, 6vw, 80px);
+  max-width:  clamp(280px, 55vw, 680px);
 }
 
-.about-hero-slide.active {
-  opacity: 1;
-}
-
-.about-hero-slide-bg {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: transform 8s ease-out;
-}
-
-.about-hero-slide.active .about-hero-slide-bg {
-  transform: scale(1.08);
-}
-
-.about-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    #050505 0%,
-    rgba(5, 5, 5, 0.4) 40%,
-    rgba(5, 5, 5, 0.6) 100%
-  );
-}
-
-/* ===================================
-   Hero Content
-   =================================== */
-.about-hero-content {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0 1.5rem;
-  z-index: 10;
-}
-
+/* Hero title font-size — CSS variable so media query can override */
 .about-hero-title {
-  font-size: clamp(2.8rem, 9vw, 7rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: #c5a880;
-  text-shadow: 0 0 60px rgba(197, 168, 128, 0.85);
-  margin: 0;
-  line-height: 1;
+  font-size: clamp(2.8rem, 8vw, 6.5rem);
 }
 
-.about-hero-subtitle {
-  font-size: clamp(0.85rem, 1.8vw, 1.15rem);
-  font-weight: 300;
-  letter-spacing: 0.35em;
-  color: rgba(255, 255, 255, 0.65);
-  margin-top: 1.5rem;
-  text-transform: uppercase;
-}
-
-/* ===================================
-   Hero Pagination Dots
-   =================================== */
-.about-hero-pagination {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 15;
-  display: flex;
-  gap: 0.75rem;
-}
-
-.about-hero-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.4s;
-}
-
-.about-hero-dot:hover {
-  background-color: rgba(255, 255, 255, 0.7);
-}
-
-.about-hero-dot.active {
-  background-color: #c5a880;
-  transform: scale(1.3);
-  box-shadow: 0 0 12px rgba(197, 168, 128, 0.8);
-}
-
-/* ===================================
-   Story Section
-   =================================== */
-.about-story-section {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
-.about-story-lead {
-  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-  font-weight: 300;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.9;
-  max-width: 900px;
-  margin: 0 auto 3rem;
-}
-
-.about-story-secondary {
-  font-size: clamp(1rem, 2vw, 1.4rem);
-  font-weight: 300;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.45);
-  line-height: 1.9;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-/* ===================================
-   Stats Grid
-   =================================== */
-.about-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 4rem;
-  margin-top: 5rem;
-}
-
-.about-stat-item {
-  text-align: center;
-}
-
-.about-stat-number {
-  font-size: clamp(3rem, 8vw, 5rem);
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  color: #c5a880;
-  text-shadow: 0 0 30px rgba(197, 168, 128, 0.5);
-  display: block;
-  margin-bottom: 0.5rem;
-  line-height: 1;
-}
-
-.about-stat-label {
-  font-size: 11px;
-  font-weight: 300;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-}
-
-/* ===================================
-   Rings Parallax Section
-   =================================== */
-.about-rings-section {
-  height: 200vh;
-  position: relative;
-  width: 100%;
-}
-
-.about-rings-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.about-rings-container {
-  position: relative;
-  width: 500px;
-  height: 500px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.about-rings-wrapper {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.about-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 0.5px solid rgba(197, 168, 128, 0.3);
-}
-
-.about-ring--lg {
-  width: 450px;
-  height: 450px;
-  border-color: rgba(197, 168, 128, 0.3);
-}
-
-.about-ring--md {
-  width: 300px;
-  height: 300px;
-  border-color: rgba(197, 168, 128, 0.4);
-}
-
-.about-ring--sm {
-  width: 150px;
-  height: 150px;
-  border-color: rgba(197, 168, 128, 0.5);
-}
-
-.about-rings-text {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  max-width: 20rem;
-  padding: 0 1.5rem;
-}
-
-.about-rings-title {
-  font-size: 1.875rem;
-  font-weight: 900;
-  letter-spacing: -0.025em;
-  color: #c5a880;
-  text-shadow: 0 0 40px rgba(197, 168, 128, 0.6);
-  margin-bottom: 1rem;
-  line-height: 1.2;
-}
-
-.about-rings-description {
-  font-size: 0.875rem;
-  font-weight: 300;
-  letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 2;
-}
-
-/* ===================================
-   Responsive — Mobile
-   =================================== */
+/* Mobile: shrink title, tighten top gap */
 @media (max-width: 768px) {
-  .about-hero-slider {
-    height: 60vh;
+  .about-hero-copy {
+    top:       calc(var(--navbar-h) + 6vh);
+    max-width: calc(100% - 40px);
   }
 
   .about-hero-title {
-    font-size: 2.2rem;
+    font-size: 2rem;   /* absolute fallback for very small screens */
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   BUG 2 FIX: Year-ring CSS breathing animation
+   ─────────────────────────────────────────────────────────────
+   .about-ring-css applies to the five inner concentric rings.
+
+   Animation: rings-pulse
+     Scale oscillates 1.0 → 1.025 → 1.0 every 8 s (linear),
+     simulating the slow expansion of tree rings.
+     Opacity breathes 1.0 → 0.35 → 1.0, giving a gentle glow.
+
+   Each ring receives a different animation-delay (set inline
+   in About.tsx) so they pulse in a staggered wave pattern,
+   not all at once.
+
+   Hardware acceleration: transform + opacity are both GPU-
+   composited properties — no layout/paint cost.
+   ────────────────────────────────────────────────────────────── */
+.about-ring-css {
+  animation: rings-pulse 8s infinite linear;
+  transform-origin: center center;
+}
+
+@keyframes rings-pulse {
+  0%   { transform: scale(1.00); opacity: 1;    }
+  25%  { transform: scale(1.02); opacity: 0.55; }
+  50%  { transform: scale(1.025);opacity: 0.35; }
+  75%  { transform: scale(1.01); opacity: 0.60; }
+  100% { transform: scale(1.00); opacity: 1;    }
+}
+
+/* Mobile: reduce ring opacity further for text readability */
+@media (max-width: 768px) {
+  .about-ring-css {
+    animation: rings-pulse-mobile 8s infinite linear;
   }
 
-  .about-stats-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
+  @keyframes rings-pulse-mobile {
+    0%   { transform: scale(1.00); opacity: 0.55; }
+    25%  { transform: scale(1.02); opacity: 0.28; }
+    50%  { transform: scale(1.025);opacity: 0.16; }
+    75%  { transform: scale(1.01); opacity: 0.30; }
+    100% { transform: scale(1.00); opacity: 0.55; }
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Stats bar: remove right border on last mobile cell
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .about-stat-cell {
+    border-right:  none !important;
+    border-bottom: 1px solid rgba(197, 168, 128, 0.28);
   }
 
-  .about-rings-container {
-    width: 300px;
-    height: 300px;
-  }
-
-  .about-ring--lg {
-    width: 280px;
-    height: 280px;
-  }
-
-  .about-ring--md {
-    width: 190px;
-    height: 190px;
-  }
-
-  .about-ring--sm {
-    width: 100px;
-    height: 100px;
-  }
-
-  .about-rings-title {
-    font-size: 1.5rem;
-  }
-
-  .about-rings-description {
-    font-size: 0.75rem;
+  .about-stat-cell:last-child {
+    border-bottom: none !important;
   }
 }
