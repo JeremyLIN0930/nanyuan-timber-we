@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trees, ShieldCheck, ClipboardCheck } from 'lucide-react';
@@ -6,10 +6,103 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Home.css';
 
+import heroMaterial     from '../assets/home-hero-material.jpg';
+import heroCraft        from '../assets/home-hero-craft.jpg';
+import heroTransparency from '../assets/home-hero-transparency.jpg';
+import heroRealization  from '../assets/home-hero-realization.jpg';
+
+import compareRender  from '../assets/compare-render.jpg';
+import compareReality from '../assets/compare-reality.jpg';
+
+import process01 from '../assets/process-01.jpg';
+import process02 from '../assets/process-02.jpg';
+import process03 from '../assets/process-03.jpg';
+import process04 from '../assets/process-04.jpg';
+import process05 from '../assets/process-05.jpg';
+import process06 from '../assets/process-06.jpg';
+
 gsap.registerPlugin(ScrollTrigger);
 
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════════════════ */
+const GOLD     = '#C5A880';
+const GOLD_DIM = 'rgba(197,168,128,0.18)';
+const GOLD_MID = 'rgba(197,168,128,0.45)';
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO BACKGROUND IMAGES — mapped to 4 tunnel labels
+   index 0 = 材料源頭, 1 = 工藝精準, 2 = 誠信透明, 3 = 空間落地
+═══════════════════════════════════════════════════════════════ */
+const HERO_BACKGROUNDS = [heroMaterial, heroCraft, heroTransparency, heroRealization];
+
+/* ═══════════════════════════════════════════════════════════════
+   TUNNEL LABELS — each with its own dedicated hero background
+═══════════════════════════════════════════════════════════════ */
+const TUNNEL_LABELS = [
+  { text: '材料源頭', sub: 'MATERIAL ORIGIN',  zMultiplier: 2  },
+  { text: '工藝精準', sub: 'CRAFTSMANSHIP',    zMultiplier: 5  },
+  { text: '誠信透明', sub: 'TRANSPARENCY',     zMultiplier: 8  },
+  { text: '空間落地', sub: 'SPACE REALIZATION', zMultiplier: 11 },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   PROCESS STEP DATA — using src/assets/ images with fallback
+═══════════════════════════════════════════════════════════════ */
+const PROCESS_STEPS = [
+  {
+    id: '01', title: '初步諮詢', en: 'BESPOKE CONSULTATION',
+    desc: '傾聽您對場域的無限想像，開展客製化空間設計藍圖。',
+    img: process01,
+  },
+  {
+    id: '02', title: '現場勘測', en: 'PRECISION SITE SURVEY',
+    desc: '職人團隊親赴現場，記錄尺度、採光、結構與管線細節。',
+    img: process02,
+  },
+  {
+    id: '03', title: '設計提案', en: 'CONCEPT & SPACE DESIGN',
+    desc: '將創意轉化為空間美學，提供格局、材質與視覺提案。',
+    img: process03,
+  },
+  {
+    id: '04', title: '工程合約', en: 'TRANSPARENT AGREEMENT',
+    desc: '條列式報價與施工節點，確保合作流程清楚透明。',
+    img: process04,
+  },
+  {
+    id: '05', title: '精湛施工', en: 'MASTER CRAFTSMANSHIP',
+    desc: '由自有工班與現場總監執行，精準落實設計圖面。',
+    img: process05,
+  },
+  {
+    id: '06', title: '完工驗收', en: 'PERFECT HANDOVER',
+    desc: '高規格檢驗細節，交付安心、完整且具質感的空間。',
+    img: process06,
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   PORTFOLIO ITEMS
+═══════════════════════════════════════════════════════════════ */
+const portfolioItems = [
+  { title: '天母森光', type: '頂級住宅', img: '/images/luxury_tianmu_home_1779301841564.png' },
+  { title: '侘寂茶韻', type: '日式空間', img: '/images/japanese_wabi_sabi_1779301881798.png' },
+  { title: '極簡廚境', type: '廚房改裝', img: '/images/minimal_wood_kitchen_1779301855424.png' },
+  { title: '曜石辦公', type: '企業總部', img: '/images/modern_office_1779301899552.png' },
+  { title: '沐光水域', type: '衛浴翻新', img: '/images/luxury_bathroom_1779301913582.png' },
+  { title: '琥珀香醇', type: '商業空間', img: '/images/high_end_cafe_1779301868615.png' },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   CORRIDOR TUNNEL CONSTANTS
+═══════════════════════════════════════════════════════════════ */
+const RING_COUNT = 14;
+const RING_STEP  = 900;
+const TOTAL_Z    = RING_COUNT * RING_STEP;
+
 /* ─────────────────────────────────────────────────────────────
-   FADE-IN SECTION  (scroll-driven)
+   FADE-IN SECTION (scroll-driven)
 ───────────────────────────────────────────────────────────── */
 const FadeInSection: React.FC<{
   children: React.ReactNode;
@@ -32,9 +125,46 @@ const FadeInSection: React.FC<{
 };
 
 /* ─────────────────────────────────────────────────────────────
-   BEFORE / AFTER SLIDER
+   PROCESS STEP IMAGE with SVG gradient fallback
 ───────────────────────────────────────────────────────────── */
-const BeforeAfterSlider: React.FC = () => {
+const ProcessImage: React.FC<{ src: string; alt: string; stepId: string }> = ({ src, alt, stepId }) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <div className="home-process-step-fallback">
+        <svg viewBox="0 0 400 280" className="home-process-step-fallback-svg" aria-label={alt}>
+          <defs>
+            <linearGradient id={`grad-${stepId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(197,168,128,0.15)" />
+              <stop offset="50%" stopColor="rgba(197,168,128,0.06)" />
+              <stop offset="100%" stopColor="rgba(10,10,10,0.95)" />
+            </linearGradient>
+          </defs>
+          <rect width="400" height="280" fill={`url(#grad-${stepId})`} />
+          <line x1="0" y1="0" x2="400" y2="280" stroke="rgba(197,168,128,0.08)" strokeWidth="0.5" />
+          <line x1="400" y1="0" x2="0" y2="280" stroke="rgba(197,168,128,0.08)" strokeWidth="0.5" />
+          <rect x="150" y="100" width="100" height="80" fill="none" stroke="rgba(197,168,128,0.12)" strokeWidth="1" />
+          <text x="200" y="148" textAnchor="middle" fill="rgba(197,168,128,0.35)" fontSize="28" fontWeight="900" fontFamily="sans-serif">{stepId}</text>
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="home-process-step-img"
+      onError={() => setHasError(true)}
+    />
+  );
+};
+
+/* ─────────────────────────────────────────────────────────────
+   RENDER vs REALITY COMPARISON SLIDER
+───────────────────────────────────────────────────────────── */
+const RenderRealitySlider: React.FC = () => {
   const [pos, setPos] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const handleMove = (clientX: number) => {
@@ -50,25 +180,25 @@ const BeforeAfterSlider: React.FC = () => {
       onTouchMove={e => handleMove(e.touches[0].clientX)}
       onMouseDown={e => handleMove(e.clientX)}
     >
-      {/* AFTER side */}
+      {/* RIGHT side — Reality photo (full background) */}
       <div
         className="home-ba-side home-ba-after"
-        style={{ backgroundImage: "url('/images/old_house_after.png')" }}
+        style={{ backgroundImage: `url('${compareReality}')` }}
       >
         <div className="home-ba-overlay" />
-        <span className="home-ba-label home-ba-label--right">完工後 AFTER</span>
+        <span className="home-ba-label home-ba-label--right">實景完工照 / REALITY</span>
       </div>
 
-      {/* BEFORE side (clips to slider position) */}
+      {/* LEFT side — 3D Render (clips to slider position) */}
       <div
         className="home-ba-side home-ba-before"
         style={{
-          backgroundImage: "url('/images/old_house_before.png')",
+          backgroundImage: `url('${compareRender}')`,
           clipPath: `polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`,
         }}
       >
         <div className="home-ba-overlay" />
-        <span className="home-ba-label home-ba-label--left">施工前 BEFORE</span>
+        <span className="home-ba-label home-ba-label--left">設計模擬圖 / RENDER</span>
       </div>
 
       {/* Divider handle */}
@@ -82,28 +212,8 @@ const BeforeAfterSlider: React.FC = () => {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   PORTFOLIO ITEMS
+   CORRIDOR RING — One rectangular frame ring
 ───────────────────────────────────────────────────────────── */
-const portfolioItems = [
-  { title: '天母森光', type: '頂級住宅', img: '/images/luxury_tianmu_home_1779301841564.png' },
-  { title: '侘寂茶韻', type: '日式空間', img: '/images/japanese_wabi_sabi_1779301881798.png' },
-  { title: '極簡廚境', type: '廚房改裝', img: '/images/minimal_wood_kitchen_1779301855424.png' },
-  { title: '曜石辦公', type: '企業總部', img: '/images/modern_office_1779301899552.png' },
-  { title: '沐光水域', type: '衛浴翻新', img: '/images/luxury_bathroom_1779301913582.png' },
-  { title: '琥珀香醇', type: '商業空間', img: '/images/high_end_cafe_1779301868615.png' },
-];
-
-/* ─────────────────────────────────────────────────────────────
-   CORRIDOR TUNNEL CONSTANTS
-───────────────────────────────────────────────────────────── */
-const RING_COUNT = 14;
-const RING_STEP  = 900;
-const TOTAL_Z    = RING_COUNT * RING_STEP;
-const GOLD       = '#C5A880';
-const GOLD_DIM   = 'rgba(197,168,128,0.18)';
-const GOLD_MID   = 'rgba(197,168,128,0.45)';
-
-/* One rectangular frame ring */
 const CorridorRing: React.FC<{ depth: number; index: number }> = ({ depth, index }) => {
   const w         = 62;
   const h         = 78;
@@ -139,7 +249,7 @@ const CorridorRing: React.FC<{ depth: number; index: number }> = ({ depth, index
         { top: -3, right: -3 },
         { bottom: -3, left: -3 },
         { bottom: -3, right: -3 },
-      ].map((pos, i) => (
+      ].map((dotPos, i) => (
         <div key={i} style={{
           position:        'absolute',
           width:           '5px',
@@ -147,14 +257,16 @@ const CorridorRing: React.FC<{ depth: number; index: number }> = ({ depth, index
           borderRadius:    '50%',
           backgroundColor: GOLD,
           opacity:         opacity * 1.6,
-          ...pos,
+          ...dotPos,
         }} />
       ))}
     </div>
   );
 };
 
-/* Vanishing-point perspective rails */
+/* ─────────────────────────────────────────────────────────────
+   PERSPECTIVE RAILS — Vanishing-point decorative lines
+───────────────────────────────────────────────────────────── */
 const PerspectiveRails: React.FC = () => {
   const railBase: React.CSSProperties = {
     position:        'absolute',
@@ -184,9 +296,9 @@ const PerspectiveRails: React.FC = () => {
   );
 };
 
-/* ─────────────────────────────────────────────────────────────
-   HOME PAGE
-───────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   HOME PAGE COMPONENT
+═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
@@ -196,7 +308,16 @@ const Home: React.FC = () => {
   const brandingRef    = useRef<HTMLDivElement>(null);
   const particlesRef   = useRef<HTMLDivElement>(null);
 
-  const [tunnelDone, setTunnelDone] = useState(false);
+  const [tunnelDone, setTunnelDone]       = useState(false);
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+
+  /* ── Compute which hero background to show based on scroll ── */
+  const updateHeroIndex = useCallback((progress: number) => {
+    /* Map scroll progress 0..0.8 into 4 zones (one per label) */
+    const normalised = Math.min(progress / 0.8, 1);
+    const idx = Math.min(3, Math.floor(normalised * 4));
+    setActiveHeroIndex(idx);
+  }, []);
 
   useEffect(() => {
     const tunnel   = tunnelRef.current;
@@ -213,8 +334,9 @@ const Home: React.FC = () => {
         start:   'top top',
         end:     'bottom bottom',
         scrub:   1.4,
-        onLeave:      () => setTunnelDone(true),
-        onEnterBack:  () => setTunnelDone(false),
+        onUpdate: (self) => updateHeroIndex(self.progress),
+        onLeave:     () => setTunnelDone(true),
+        onEnterBack: () => setTunnelDone(false),
       },
     });
 
@@ -270,7 +392,7 @@ const Home: React.FC = () => {
       window.removeEventListener('mousemove', onMouseMove);
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
-  }, []);
+  }, [updateHeroIndex]);
 
   const scrollToContent = () => {
     document.querySelector('.advantages-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -286,21 +408,23 @@ const Home: React.FC = () => {
     >
 
       {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 1: CORRIDOR TUNNEL INTRO + HERO BACKGROUND IMAGE
+          BLOCK 1: CORRIDOR TUNNEL + MULTI-IMAGE HERO BACKGROUND
       ══════════════════════════════════════════════════════════════════ */}
-      <div
-        ref={scrollTrackRef}
-        className="home-scroll-track"
-      >
-        {/* Fixed fullscreen viewport */}
+      <div ref={scrollTrackRef} className="home-scroll-track">
         <div
           ref={viewportRef}
           className={`home-tunnel-viewport ${tunnelDone ? 'home-tunnel-viewport--done' : ''}`}
         >
-          {/* ── Hero background image layer (bottom-most) ── */}
-          <div className="home-hero-bg" />
+          {/* ── 4 Hero background layers — cross-fade via activeHeroIndex ── */}
+          {HERO_BACKGROUNDS.map((bgSrc, i) => (
+            <div
+              key={`hero-bg-${i}`}
+              className={`home-hero-bg-layer ${i === activeHeroIndex ? 'home-hero-bg-layer--active' : ''}`}
+              style={{ backgroundImage: `url('${bgSrc}')` }}
+            />
+          ))}
 
-          {/* ── Dark overlay atop the hero image ── */}
+          {/* ── Dark overlay ── */}
           <div className="home-hero-bg-overlay" />
 
           {/* ── Radial vignette ── */}
@@ -315,10 +439,7 @@ const Home: React.FC = () => {
           </div>
 
           {/* ── 3D tunnel scene ── */}
-          <div
-            ref={tunnelRef}
-            className="home-tunnel-scene"
-          >
+          <div ref={tunnelRef} className="home-tunnel-scene">
             {Array.from({ length: RING_COUNT }).map((_, i) => (
               <CorridorRing key={i} index={i} depth={-i * RING_STEP} />
             ))}
@@ -361,20 +482,15 @@ const Home: React.FC = () => {
               />
             ))}
 
-            {/* Floating text labels inside corridor */}
-            {[
-              { z: -RING_STEP * 2,  text: '材料源頭', sub: 'MATERIAL ORIGIN'  },
-              { z: -RING_STEP * 5,  text: '工藝精準', sub: 'CRAFTSMANSHIP'     },
-              { z: -RING_STEP * 8,  text: '誠信透明', sub: 'TRANSPARENCY'      },
-              { z: -RING_STEP * 11, text: '空間落地', sub: 'SPACE REALIZATION' },
-            ].map((label, i) => (
+            {/* Floating text labels — synced to hero backgrounds */}
+            {TUNNEL_LABELS.map((label, i) => (
               <div
                 key={`lbl-${i}`}
                 style={{
                   position:       'absolute',
                   top:            '50%',
                   left:           '50%',
-                  transform:      `translate3d(-50%, -50%, ${label.z}px)`,
+                  transform:      `translate3d(-50%, -50%, ${-RING_STEP * label.zMultiplier}px)`,
                   transformStyle: 'preserve-3d',
                   textAlign:      'center',
                   pointerEvents:  'none',
@@ -420,18 +536,13 @@ const Home: React.FC = () => {
             </motion.div>
           </div>
 
-          {/* ── BRANDING REVEAL (GSAP animates opacity from 0) ── */}
+          {/* ── BRANDING REVEAL ── */}
           <div ref={brandingRef} className="home-branding-reveal">
             <div className="home-branding-ornament-line" />
-
             <h1 className="home-branding-title">南源木材</h1>
-
             <p className="home-branding-en">NANYUAN TIMBER DESIGN</p>
-
             <div className="home-branding-ornament-line home-branding-ornament-line--bottom" />
-
             <p className="home-branding-tagline">從材料源頭開始，打造安心落地的空間</p>
-
             <div className="home-branding-cta-row">
               <button
                 className="home-branding-btn home-branding-btn--outline"
@@ -449,7 +560,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* END scrollTrackRef */}
 
 
       {/* ══ BLOCK 2: THREE CORE ADVANTAGES ══ */}
@@ -496,6 +606,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+
       {/* ══ BLOCK 3: SIX PROCESS STEPS (Alternating Layout) ══ */}
       <section className="home-process-section">
         <div className="container">
@@ -508,64 +619,19 @@ const Home: React.FC = () => {
           </FadeInSection>
 
           <div className="home-process-steps">
-            {[
-              {
-                id: '01',
-                title: '初步諮詢',
-                en: 'BESPOKE CONSULTATION',
-                desc: '傾聽您對場域的無限想像，開展客製化空間設計藍圖。',
-                img: '/images/space_planning_1779728567334.png',
-              },
-              {
-                id: '02',
-                title: '現場勘測',
-                en: 'PRECISION SITE SURVEY',
-                desc: '職人團隊親赴現場，記錄尺度、採光、結構與管線細節。',
-                img: '/images/renovation_detail_1779463551246.png',
-              },
-              {
-                id: '03',
-                title: '設計提案',
-                en: 'CONCEPT & SPACE DESIGN',
-                desc: '將創意轉化為空間美學，提供格局、材質與視覺提案。',
-                img: '/images/ambiance_design_1779728584649.png',
-              },
-              {
-                id: '04',
-                title: '工程合約',
-                en: 'TRANSPARENT AGREEMENT',
-                desc: '條列式報價與施工節點，確保合作流程清楚透明。',
-                img: '/images/transparent_agreement_1779728622356.png',
-              },
-              {
-                id: '05',
-                title: '精湛施工',
-                en: 'MASTER CRAFTSMANSHIP',
-                desc: '由自有工班與現場總監執行，精準落實設計圖面。',
-                img: '/images/master_craftsmanship_1779728604535.png',
-              },
-              {
-                id: '06',
-                title: '完工驗收',
-                en: 'PERFECT HANDOVER',
-                desc: '高規格檢驗細節，交付安心、完整且具質感的空間。',
-                img: '/images/sustainable_selection_1779728638928.png',
-              },
-            ].map((step, i) => {
+            {PROCESS_STEPS.map((step, i) => {
               const isEven = i % 2 === 1;
               return (
                 <FadeInSection key={step.id} className={`home-process-step ${isEven ? 'home-process-step--reverse' : ''}`}>
-                  {/* Image side */}
                   <div className="home-process-step-img-wrap">
-                    <img
+                    <ProcessImage
                       src={step.img}
-                      alt={`南源木材 ${step.title} 服務實景 — 台北天母竹北高端住宅空間規劃`}
-                      className="home-process-step-img"
+                      alt={`南源木材 ${step.title} 服務流程`}
+                      stepId={step.id}
                     />
                     <span className="home-process-step-num-bg">{step.id}</span>
                   </div>
 
-                  {/* Text side */}
                   <div className="home-process-step-text">
                     <span className="home-process-step-num">{step.id}</span>
                     <h3 className="home-process-step-title">{step.title}</h3>
@@ -579,18 +645,20 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* ══ BLOCK 4: BEFORE / AFTER ══ */}
+
+      {/* ══ BLOCK 4: RENDER vs REALITY COMPARISON ══ */}
       <section className="home-ba-section">
         <div className="container">
           <FadeInSection>
             <h2 className="home-ba-title">設計與落地的真實對照</h2>
             <p className="home-ba-desc">
-              許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重控管，確保所見即所得。左右拖曳滑桿，親手見證老屋翻修前後的精準落地對照。
+              許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重控管，確保所見即所得。左右拖曳滑桿，親手見證 3D 設計模擬圖與實景完工照的精準對照。
             </p>
           </FadeInSection>
         </div>
-        <BeforeAfterSlider />
+        <RenderRealitySlider />
       </section>
+
 
       {/* ══ BLOCK 5: PORTFOLIO WALL ══ */}
       <section className="home-portfolio-section">
@@ -612,7 +680,7 @@ const Home: React.FC = () => {
                       <img
                         src={item.img}
                         className="home-portfolio-card-img"
-                        alt={`南源木材作品案例 ${item.title} — ${item.type} — 台北天母竹北高端住宅空間規劃`}
+                        alt={`南源木材作品案例 ${item.title} — ${item.type}`}
                       />
                       <div className="home-portfolio-card-gradient" />
                       <div className="home-portfolio-card-info">
@@ -628,7 +696,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* ══ BLOCK 6: UNIFIED CTA (唯一完全體預約引導區塊) ══ */}
+
+      {/* ══ BLOCK 6: UNIFIED CTA — 唯一完全體預約引導 ══ */}
       <section className="home-cta-section">
         <FadeInSection>
           <h2 className="home-cta-title">準備好開始您的空間改造了嗎？</h2>

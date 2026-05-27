@@ -11,7 +11,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 1 — CORRIDOR TUNNEL + HERO BACKGROUND
+   BLOCK 1 — CORRIDOR TUNNEL + MULTI-IMAGE HERO
 ═══════════════════════════════════════════════════════════════ */
 
 .home-scroll-track {
@@ -41,35 +41,21 @@
   opacity: 0;
 }
 
-/* ── Hero Background Image ──────────────────────────────────── */
-.home-hero-bg {
+/* ── Multi-image hero background layers ─────────────────────── */
+.home-hero-bg-layer {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url('/src/assets/hero-bg.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  /* Subtle Ken Burns movement */
-  animation: home-hero-ken-burns 18s ease-out infinite alternate;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  will-change: opacity;
 }
 
-@keyframes home-hero-ken-burns {
-  from { transform: scale(1.0); }
-  to   { transform: scale(1.06); }
-}
-
-/* Fallback gradient if image hasn't loaded */
-.home-hero-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(20, 14, 8, 0.3) 0%,
-    rgba(5, 5, 5, 0.1) 50%,
-    rgba(10, 8, 5, 0.3) 100%
-  );
+.home-hero-bg-layer--active {
+  opacity: 1;
 }
 
 /* Dark overlay atop the hero image */
@@ -80,7 +66,7 @@
   background: rgba(10, 10, 10, 0.65);
 }
 
-/* Radial vignette: darkens edges, brightens center */
+/* Radial vignette */
 .home-hero-vignette {
   position: absolute;
   inset: 0;
@@ -343,7 +329,6 @@
   padding: clamp(1.5rem, 3vw, 3rem);
   height: 100%;
   transition: all 0.4s ease;
-  -webkit-overflow-scrolling: touch;
   will-change: transform;
 }
 
@@ -442,8 +427,6 @@
   position: relative;
 }
 
-/* Odd steps: image left, text right */
-/* Even steps: text left, image right */
 .home-process-step--reverse {
   direction: rtl;
 }
@@ -470,6 +453,21 @@
 
 .home-process-step-img-wrap:hover .home-process-step-img {
   transform: scale(1.04);
+}
+
+/* SVG gradient fallback when image fails */
+.home-process-step-fallback {
+  width: 100%;
+  max-height: 280px;
+  aspect-ratio: 400 / 280;
+  display: block;
+  overflow: hidden;
+}
+
+.home-process-step-fallback-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Giant faded step number behind image */
@@ -530,7 +528,6 @@
   margin: 0;
 }
 
-/* Mobile: stack all steps vertically */
 @media (max-width: 768px) {
   .home-process-step {
     grid-template-columns: 1fr;
@@ -551,7 +548,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 4 — BEFORE / AFTER COMPARISON SLIDER
+   BLOCK 4 — RENDER vs REALITY COMPARISON SLIDER
 ═══════════════════════════════════════════════════════════════ */
 .home-ba-section {
   background-color: #050505;
@@ -580,7 +577,6 @@
   margin-bottom: 2.5rem;
 }
 
-/* The slider itself */
 .home-before-after-container {
   position: relative;
   width: 100%;
@@ -588,7 +584,6 @@
   cursor: ew-resize;
   user-select: none;
   overflow: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
 .home-ba-side {
@@ -864,14 +859,13 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SHARED / LEGACY CLASSES (kept for compatibility)
+   SHARED / LEGACY CLASSES
 ═══════════════════════════════════════════════════════════════ */
 .home-page-container {
   background-color: #050505;
   min-height: 100vh;
 }
 
-/* Fix Navbar Overlap — hero pages use margin-top: -var(--nav-h) */
 .page-main-container {
   padding-top: 120px;
 }
