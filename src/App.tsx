@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import Home from './pages/Home';
@@ -6,7 +6,6 @@ import Projects from './pages/Projects';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import Services from './pages/Services';
-import Process from './pages/Process';
 import Knowledge from './pages/Knowledge';
 import Quality from './pages/Quality';
 import Blog from './pages/Blog';
@@ -25,13 +24,12 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/process" element={<Process />} />
+            <Route path="/process" element={<Navigate to="/services" replace />} />
             <Route path="/knowledge" element={<Knowledge />} />
             <Route path="/quality" element={<Quality />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/portal" element={<ClientPortal />} />
-            {/* Catch-all route for missing pages */}
             <Route path="*" element={<Home />} />
           </Routes>
         </main>

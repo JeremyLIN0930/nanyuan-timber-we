@@ -1,124 +1,244 @@
-.navbar {
-  background-color: var(--off-white);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+/* ═══════════════════════════════════════════════════════════════
+   NAVBAR — Frosted Obsidian Glass
+   Semi-transparent backdrop-filter: blur(12px) luxury bar
+═══════════════════════════════════════════════════════════════ */
 
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 80px;
-}
-
-.navbar-logo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  z-index: 1001;
-}
-
-.navbar-logo-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.navbar-logo-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--wood-brown);
-  line-height: 1.2;
-}
-
-.navbar-logo-subtitle {
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: var(--dark-gray);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-top: 0.125rem;
-}
-
-.navbar-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--wood-brown);
-  z-index: 1001;
-  transition: transform 0.3s ease;
-}
-
-.navbar-toggle:hover {
-  transform: scale(1.1);
-}
-
-.fullscreen-menu {
+/* ── Top Bar ────────────────────────────────────────────────── */
+.nyn-navbar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(249, 249, 249, 0.96);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 999;
+  right: 0;
+  z-index: 9999;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  padding: clamp(12px, 1.8vh, 18px) clamp(16px, 4vw, 48px);
+  background-color: rgba(5, 5, 5, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background-color 0.4s ease;
 }
 
-.fullscreen-menu-content {
+.nyn-navbar--scrolled {
+  background-color: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Brand ──────────────────────────────────────────────────── */
+.nyn-navbar-brand {
+  text-decoration: none;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  width: 100%;
-  padding: 2rem;
-  margin-top: 80px; /* Offset for navbar */
-  max-height: calc(100vh - 80px);
-  overflow-y: auto;
+  line-height: 1;
 }
 
-.fullscreen-link {
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--text-main);
-  text-decoration: none;
-  transition: color 0.3s ease, transform 0.3s ease;
-  position: relative;
+.nyn-navbar-brand-zh {
+  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.nyn-navbar-brand-en {
+  font-size: 8.5px;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  color: #C5A880;
+  text-transform: uppercase;
+  margin-top: 4px;
   display: block;
-  line-height: 1.5;
-  letter-spacing: 0.05em;
 }
 
-.fullscreen-link:hover, .fullscreen-link.active {
-  color: var(--wood-brown);
-  transform: translateY(-5px);
+/* ── Desktop Links (≥992px) ─────────────────────────────────── */
+.nyn-navbar-links {
+  display: none;
+  align-items: center;
+  gap: clamp(18px, 2.5vw, 32px);
 }
 
-.fullscreen-link.active::after {
-  content: '';
+@media (min-width: 992px) {
+  .nyn-navbar-links {
+    display: flex;
+  }
+}
+
+.nyn-navbar-link {
+  font-size: 12.5px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.55);
+  text-shadow: none;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              text-shadow 0.35s;
+  white-space: nowrap;
+}
+
+.nyn-navbar-link:hover {
+  color: #C5A880;
+  text-shadow: 0 0 16px rgba(197, 168, 128, 0.7);
+}
+
+.nyn-navbar-link--active {
+  font-weight: 900;
+  color: #C5A880;
+  text-shadow: 0 0 20px rgba(197, 168, 128, 0.7);
+}
+
+/* Active underline wire (animated by framer-motion layoutId) */
+.nyn-navbar-underline {
   position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 3px;
-  background-color: var(--wood-brown);
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C5A880, transparent);
+  box-shadow: 0 0 8px rgba(197, 168, 128, 0.8);
   border-radius: 2px;
+  display: block;
 }
 
-/* Make link sizes slightly smaller on mobile to fit all options */
-@media (max-width: 768px) {
-  .fullscreen-menu-content {
-    gap: 1.5rem;
+/* ── CTA Button (desktop) ───────────────────────────────────── */
+.nyn-navbar-cta-wrapper {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .nyn-navbar-cta-wrapper {
+    display: flex;
   }
-  .fullscreen-link {
-    font-size: 1.5rem;
+}
+
+.nyn-navbar-cta {
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  padding: 9px 22px;
+  border: 1px solid #C5A880;
+  color: #050505;
+  background-color: #C5A880;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: box-shadow 0.3s;
+  text-transform: uppercase;
+}
+
+.nyn-navbar-cta:hover {
+  box-shadow: 0 0 22px rgba(197, 168, 128, 0.55);
+  color: #050505;
+}
+
+/* ── Hamburger Toggle (<992px) ──────────────────────────────── */
+.nyn-navbar-toggle {
+  display: flex;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: color 0.3s;
+  line-height: 0;
+}
+
+@media (min-width: 992px) {
+  .nyn-navbar-toggle {
+    display: none;
   }
+}
+
+.nyn-navbar-toggle-icon {
+  display: block;
+  line-height: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE FULLSCREEN OVERLAY
+═══════════════════════════════════════════════════════════════ */
+.nyn-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background-color: rgba(5, 5, 5, 0.98);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(80px, 12vh, 120px) clamp(24px, 8vw, 60px) clamp(40px, 8vh, 80px);
+}
+
+.nyn-mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.4rem, 3.5vh, 2rem);
+  width: 100%;
+}
+
+.nyn-mobile-link {
+  font-size: clamp(1.55rem, 5.5vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  text-shadow: none;
+  text-decoration: none;
+  display: inline-block;
+  transform: translateX(0);
+  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              text-shadow 0.4s,
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nyn-mobile-link:hover {
+  color: #C5A880;
+  text-shadow: 0 0 32px rgba(197, 168, 128, 0.7);
+  transform: translateX(18px);
+}
+
+.nyn-mobile-link--active {
+  color: #C5A880;
+  text-shadow: 0 0 32px rgba(197, 168, 128, 0.7);
+  transform: translateX(18px);
+}
+
+.nyn-mobile-cta-wrapper {
+  margin-top: clamp(2rem, 5vh, 3rem);
+}
+
+.nyn-mobile-cta {
+  display: inline-block;
+  font-size: clamp(0.8rem, 3vw, 0.95rem);
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  padding: 0.85em 2.4em;
+  border: 1px solid #C5A880;
+  color: #050505;
+  background-color: #C5A880;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: box-shadow 0.3s;
+}
+
+.nyn-mobile-cta:hover {
+  box-shadow: 0 0 28px rgba(197, 168, 128, 0.6);
+  color: #050505;
+}
+
+.nyn-mobile-footer {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  left: clamp(24px, 8vw, 60px);
+  font-size: 9.5px;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  color: rgba(255, 255, 255, 0.14);
+  text-transform: uppercase;
+  margin: 0;
 }

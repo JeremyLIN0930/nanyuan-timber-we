@@ -176,19 +176,16 @@ input[type='range']::-moz-range-thumb {
   box-shadow: 0 0 12px rgba(197, 168, 128, 0.6);
 }
 
-/* ═══════════════════════════════════════════════════════
-   GLOBAL NAVBAR OVERLAP FIX (Padding & Mobile Titles)
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL LAYOUT — No forced padding on .main-content.
+   Pages with full-bleed heroes use negative margin-top.
+   Pages without heroes add their own top padding.
+   ═══════════════════════════════════════════════════════════════ */
 .main-content {
-  padding-top: 120px;
-  scroll-margin-top: 120px;
+  /* No padding-top: pages manage their own spacing */
 }
 
 @media (max-width: 768px) {
-  .main-content {
-    padding-top: 95px !important;
-    scroll-margin-top: 95px !important;
-  }
   h1, .page-title, .section-title {
     font-size: 1.8rem !important;
     letter-spacing: 0.15em;
