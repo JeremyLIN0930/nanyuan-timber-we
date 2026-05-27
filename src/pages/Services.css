@@ -1,359 +1,127 @@
-/* ═══════════════════════════════════════════════════════════════
-   SERVICES & TIMELINE STYLESHEET
-   Bespoke Craftsmanship — Slow Mode Rewrite
-═══════════════════════════════════════════════════════════════ */
+/* ============================================
+   Services Page — Nanyuan Timber Design
+   ============================================ */
 
-/* ── Page Container ─────────────────────────────────────────── */
-.services-page {
-  background-color: var(--obsidian, #050505);
-  min-height: 100vh;
-  color: #ffffff;
-  position: relative;
-  overflow-x: hidden;
-  /* Mobile smooth scrolling performance */
-  -webkit-overflow-scrolling: touch;
-  will-change: transform;
-}
-
-/* ── Header ─────────────────────────────────────────────────── */
-.services-header-wrapper {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.services-header-content {
-  text-align: center;
-  padding-top: 2rem;
-  padding-bottom: 1rem;
-}
-
-.services-eyebrow {
-  font-size: 10px;
-  font-weight: 300;
-  letter-spacing: 0.35em;
-  color: var(--metal-brown, #C5A880);
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-
-.services-title {
-  font-size: clamp(2.2rem, 6vw, 4.2rem);
-  font-weight: 900 !important;
-  letter-spacing: -0.05em !important;
-  color: var(--metal-brown, #C5A880);
-  text-shadow: 0 0 40px rgba(197, 168, 128, 0.85);
-  margin-bottom: 1rem;
-}
-
-.services-subtitle {
-  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
-  font-weight: 300;
-  letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  max-width: 750px;
-  margin: 0 auto;
-  line-height: 1.8;
-}
-
-/* ── Before/After Slider Section ────────────────────────────── */
-.slider-section {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 3rem;
-}
-
-.slider-container {
+/* ----- Hero Banner ----- */
+.services-hero {
   position: relative;
   width: 100%;
-  height: 55vh;
-  cursor: ew-resize;
+  height: 80vh;
+  background-size: cover;
+  background-position: center;
+  margin-top: -120px;
   overflow: hidden;
 }
 
-.slider-reality-side {
+.services-hero-overlay {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(
+    to top,
+    #050505 0%,
+    rgba(5, 5, 5, 0.3) 50%,
+    rgba(5, 5, 5, 0.5) 100%
+  );
 }
 
-.slider-blueprint-side {
+.services-hero-content {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  filter: grayscale(100%) contrast(125%) brightness(70%);
-}
-
-.slider-reality-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-.slider-blueprint-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 40, 120, 0.15);
-}
-
-.slider-label-right {
-  position: absolute;
-  bottom: 40px;
-  right: 40px;
-  color: #ffffff;
-  font-size: 11px;
-  letter-spacing: 0.25em;
-  font-weight: 300;
-  background-color: rgba(5, 5, 5, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 12px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  z-index: 5;
-}
-
-.slider-label-left {
-  position: absolute;
-  bottom: 40px;
-  left: 40px;
-  color: #ffffff;
-  font-size: 11px;
-  letter-spacing: 0.25em;
-  font-weight: 300;
-  background-color: rgba(5, 5, 5, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 12px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  z-index: 5;
-}
-
-.slider-handle {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  cursor: ew-resize;
-  z-index: 10;
-}
-
-.slider-handle-area {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -24px;
-  width: 48px;
-  cursor: ew-resize;
-  background-color: transparent;
-}
-
-.slider-handle-circle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--metal-brown, #C5A880);
-  background-color: rgba(5, 5, 5, 0.9);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.slider-handle-arrows {
-  font-size: 11px;
-  color: var(--metal-brown, #C5A880);
-}
-
-/* ── Process Timeline Section ───────────────────────────────── */
-.process-section {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-  background: linear-gradient(180deg, #050505 0%, #080809 100%);
-}
-
-.process-heading {
   text-align: center;
-  margin-bottom: 3rem;
+  z-index: 5;
+  padding: 0 1.5rem;
 }
 
-.process-section-title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 900 !important;
-  color: #ffffff;
-  letter-spacing: -0.03em !important;
-  margin-bottom: 0.5rem;
+.services-hero-title {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #c5a880;
+  text-shadow: 0 0 50px rgba(197, 168, 128, 0.85);
+  margin: 0;
 }
 
-.process-section-subtitle {
-  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+.services-hero-subtitle {
+  font-size: clamp(0.75rem, 1.3vw, 0.95rem);
   font-weight: 300;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 1.5rem;
   text-transform: uppercase;
+  max-width: 650px;
 }
 
-/* ── Timeline Container (the parent that holds glow wire) ──── */
-.timeline-container {
-  position: relative;
+/* ----- Service Feature Cards ----- */
+.services-cards-section {
+  padding-top: 5rem;
+  padding-bottom: 3rem;
 }
 
-/* 
- * CRITICAL FIX: The vertical timeline wire must sit BEHIND cards.
- * z-index: 1 on the wire, z-index: 2 on each card.
- */
-
-/* Vertical wire for mobile (<992px) */
-@media (max-width: 991.98px) {
-  .timeline-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 20px;
-    width: 1px;
-    background: linear-gradient(
-      180deg,
-      transparent,
-      var(--metal-brown, #C5A880) 10%,
-      var(--metal-brown, #C5A880) 90%,
-      transparent
-    );
-    box-shadow: 0 0 8px rgba(197, 168, 128, 0.85);
-    z-index: 1;
-  }
+.services-section-heading {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
-/* ── Timeline Column (each step wrapper) ────────────────────── */
-.timeline-col {
-  position: relative;
-  z-index: 2;
-}
-
-/* ── Desktop Glow Dot (hidden on mobile) ────────────────────── */
-.glow-dot-desktop {
-  display: none;
-}
-
-@media (min-width: 992px) {
-  .glow-dot-desktop {
-    display: block;
-    position: absolute;
-    bottom: -16px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--metal-brown, #C5A880);
-    box-shadow: 0 0 12px rgba(197, 168, 128, 0.85);
-    z-index: 3;
-  }
-}
-
-/* ── Mobile Glow Dot (visible only on mobile) ───────────────── */
-.glow-dot-mobile {
-  display: none;
-}
-
-@media (max-width: 991.98px) {
-  .glow-dot-mobile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: -32px;
-    top: 8px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: var(--obsidian, #050505);
-    border: 2px solid var(--metal-brown, #C5A880);
-    box-shadow: 0 0 12px rgba(197, 168, 128, 0.85);
-    z-index: 5;
-  }
-
-  .glow-dot-mobile-number {
-    font-size: 9px;
-    font-weight: 900;
-    color: var(--metal-brown, #C5A880);
-    line-height: 1;
-  }
-}
-
-/* ── Process Card ───────────────────────────────────────────── */
-.process-card {
-  position: relative;
-  z-index: 2;
+.service-feature-card {
   background-color: rgba(13, 13, 14, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
   border-radius: 4px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 2;
 }
 
-.process-card:hover {
-  border-color: var(--metal-brown, #C5A880);
-  background: linear-gradient(135deg, rgba(197, 168, 128, 0.08) 0%, rgba(13, 13, 14, 0.7) 100%);
+.service-feature-card:hover {
+  border-color: #c5a880;
+  background: linear-gradient(
+    135deg,
+    rgba(197, 168, 128, 0.08) 0%,
+    rgba(13, 13, 14, 0.7) 100%
+  );
   box-shadow: 0 16px 40px rgba(197, 168, 128, 0.15);
   transform: translateY(-4px);
 }
 
-.process-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-}
-
-.process-num {
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  font-weight: 900 !important;
-  color: var(--metal-brown, #C5A880);
-  text-shadow: 0 0 20px rgba(197, 168, 128, 0.5);
+.service-feature-num {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  color: #c5a880;
+  text-shadow: 0 0 20px rgba(197, 168, 128, 0.4);
   line-height: 1;
-  letter-spacing: -0.02em !important;
+  display: block;
+  margin-bottom: 1rem;
 }
 
-.process-brand-label {
-  font-size: 8px;
-  font-weight: 300;
-  letter-spacing: 0.25em;
-  color: rgba(255, 255, 255, 0.15);
-  text-transform: uppercase;
+.service-feature-title {
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.25rem;
 }
 
-.process-card-title {
-  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
-  font-weight: 900 !important;
-  color: #ffffff;
-  margin-bottom: 0.35rem;
-  letter-spacing: -0.02em !important;
-}
-
-.process-card-en {
+.service-feature-en {
   font-size: 9px;
   font-weight: 300;
   letter-spacing: 0.18em;
-  color: var(--metal-brown, #C5A880);
+  color: #c5a880;
   display: block;
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
 
-.process-card-desc {
+.service-feature-desc {
   font-size: clamp(0.8rem, 1.1vw, 0.92rem);
   font-weight: 300;
   color: rgba(255, 255, 255, 0.6);
@@ -362,160 +130,167 @@
   text-align: justify;
 }
 
-/* ── CTA Section ────────────────────────────────────────────── */
-.cta-section {
+/* ----- Process Timeline ----- */
+.services-process-section {
   padding-top: 3rem;
   padding-bottom: 3rem;
+  background: linear-gradient(180deg, #050505 0%, #080809 100%);
+}
+
+.services-process-subtitle {
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   text-align: center;
-  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
-.cta-title {
+.services-timeline {
+  position: relative;
+  padding-left: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.services-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 15px;
+  width: 1.5px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(197, 168, 128, 0.4) 10%,
+    rgba(197, 168, 128, 0.4) 90%,
+    transparent
+  );
+  box-shadow: 0 0 8px rgba(197, 168, 128, 0.15);
+  z-index: 1;
+}
+
+.services-timeline-item {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 2.5rem;
+  background-color: rgba(13, 13, 14, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.5rem 1.5rem 1.5rem 2rem;
+  border-radius: 4px;
+  transition: all 0.5s;
+}
+
+.services-timeline-item:hover {
+  border-color: rgba(197, 168, 128, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(197, 168, 128, 0.1);
+}
+
+.services-timeline-dot {
+  position: absolute;
+  left: -36px;
+  top: 1.5rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #050505;
+  border: 2px solid #c5a880;
+  box-shadow: 0 0 12px rgba(197, 168, 128, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.services-timeline-dot-num {
+  font-size: 9px;
+  font-weight: 900;
+  color: #c5a880;
+}
+
+.services-timeline-title {
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.services-timeline-en {
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: #c5a880;
+  display: block;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.services-timeline-desc {
+  font-size: clamp(0.78rem, 1vw, 0.88rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ----- CTA Section ----- */
+.services-cta-section {
+  text-align: center;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.services-cta-title {
   font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: 900 !important;
-  color: #ffffff;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.02em !important;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 1rem;
 }
 
-.cta-desc {
+.services-cta-desc {
   font-size: clamp(0.85rem, 1.2vw, 1rem);
   font-weight: 300;
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.12em;
-  max-width: 650px;
+  max-width: 600px;
   margin: 0 auto 2.5rem;
 }
 
-.cta-btn {
+.services-cta-btn {
   font-size: clamp(0.85rem, 1.2vw, 0.95rem);
   letter-spacing: 0.15em;
   padding: 1em 3.2em;
-  border: 1px solid var(--metal-brown, #C5A880);
+  border: 1px solid #c5a880;
   color: #050505;
-  background-color: var(--metal-brown, #C5A880);
+  background-color: #c5a880;
   cursor: pointer;
   font-weight: 700;
   text-decoration: none;
   display: inline-block;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s;
 }
 
-.cta-btn:hover {
+.services-cta-btn:hover {
   box-shadow: 0 0 32px rgba(197, 168, 128, 0.85);
   transform: translateY(-3px);
   color: #050505;
 }
 
-/* ── Desktop Horizontal Timeline Rows ───────────────────────── */
-@media (min-width: 992px) {
-  .timeline-container {
-    position: relative;
-    padding-top: 2rem;
-  }
-
-  /* Horizontal gold wire connecting rows — BEHIND cards */
-  .timeline-row-1::before,
-  .timeline-row-2::before {
-    content: '';
-    position: absolute;
-    bottom: -16px;
-    left: 10%;
-    right: 10%;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(197, 168, 128, 0.4) 15%,
-      rgba(197, 168, 128, 0.4) 85%,
-      transparent
-    );
-    box-shadow: 0 0 10px rgba(197, 168, 128, 0.3);
-    z-index: 1;
-  }
-
-  .timeline-row-1,
-  .timeline-row-2 {
-    margin-bottom: 4rem;
-    position: relative;
-  }
-}
-
-/* ── Mobile Specific Layout Fixes ───────────────────────────── */
-@media (max-width: 991.98px) {
-  /* Eliminate black void from excessive heights */
-  .slider-container {
-    height: 40vh;
-    min-height: 200px;
-    max-height: 300px;
-  }
-
-  .slider-label-right,
-  .slider-label-left {
-    bottom: 12px;
-    padding: 6px 12px;
-    font-size: 9px;
-  }
-
-  .slider-label-right {
-    right: 12px;
-  }
-
-  .slider-label-left {
-    left: 12px;
-  }
-
-  /* Compact spacing for mobile */
-  .slider-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .process-section {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-  }
-
-  /* Mobile timeline needs left padding for the dot+wire */
-  .timeline-container {
-    padding-left: 20px;
-  }
-
-  .timeline-col {
-    padding-left: 20px;
-  }
-
-  /* Timeline rows have no bottom gap on mobile */
-  .timeline-row-1,
-  .timeline-row-2 {
-    margin-bottom: 0 !important;
-  }
-}
-
-/* ── Mobile Responsive Title Sizing ─────────────────────────── */
+/* ----- Mobile Responsive ----- */
 @media (max-width: 768px) {
-  .services-title {
-    font-size: 1.8rem !important;
-    letter-spacing: 0.02em;
+  .services-hero {
+    height: 60vh;
   }
 
-  .services-subtitle {
-    font-size: 0.78rem;
-    letter-spacing: 0.1em;
+  .services-hero-title {
+    font-size: 2rem;
   }
 
-  .process-section-title {
-    font-size: 1.5rem !important;
-  }
-}
-
-/* ── Page Layout Container (used by ServicesSection on Home) ── */
-.page-layout-container {
-  padding-top: 120px;
-  scroll-margin-top: 120px;
-}
-
-@media (max-width: 768px) {
-  .page-layout-container {
-    padding-top: 90px;
+  .services-timeline {
+    padding-left: 35px;
   }
 }
