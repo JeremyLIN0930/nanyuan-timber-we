@@ -31,23 +31,20 @@ const GOLD_DIM = 'rgba(197,168,128,0.18)';
 const GOLD_MID = 'rgba(197,168,128,0.45)';
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO BACKGROUND IMAGES — mapped to 4 tunnel labels
-   index 0 = 材料源頭, 1 = 工藝精準, 2 = 誠信透明, 3 = 空間落地
+   UNIFIED HERO STEPS — Single source of truth
+   Text + subtitle + background image bound to the SAME index.
+   The single interval timer drives BOTH text and bg changes
+   in the exact same React lifecycle frame. Zero desync.
 ═══════════════════════════════════════════════════════════════ */
-const HERO_BACKGROUNDS = [heroMaterial, heroCraft, heroTransparency, heroRealization];
-
-/* ═══════════════════════════════════════════════════════════════
-   TUNNEL LABELS — each with its own dedicated hero background
-═══════════════════════════════════════════════════════════════ */
-const TUNNEL_LABELS = [
-  { text: '材料源頭', sub: 'MATERIAL ORIGIN',  zMultiplier: 2  },
-  { text: '工藝精準', sub: 'CRAFTSMANSHIP',    zMultiplier: 5  },
-  { text: '誠信透明', sub: 'TRANSPARENCY',     zMultiplier: 8  },
-  { text: '空間落地', sub: 'SPACE REALIZATION', zMultiplier: 11 },
+const HERO_STEPS = [
+  { text: '材料源頭', sub: 'MATERIAL ORIGIN',  bg: heroMaterial,     zMultiplier: 2  },
+  { text: '工藝精準', sub: 'PRECISION CRAFT',  bg: heroCraft,        zMultiplier: 5  },
+  { text: '誠信透明', sub: 'TRANSPARENCY',     bg: heroTransparency, zMultiplier: 8  },
+  { text: '空間落地', sub: 'SPACE REALIZATION', bg: heroRealization,  zMultiplier: 11 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   PROCESS STEP DATA — using src/assets/ images with fallback
+   PROCESS STEP DATA
 ═══════════════════════════════════════════════════════════════ */
 const PROCESS_STEPS = [
   {
@@ -180,7 +177,6 @@ const RenderRealitySlider: React.FC = () => {
       onTouchMove={e => handleMove(e.touches[0].clientX)}
       onMouseDown={e => handleMove(e.clientX)}
     >
-      {/* RIGHT side — Reality photo (full background) */}
       <div
         className="home-ba-side home-ba-after"
         style={{ backgroundImage: `url('${compareReality}')` }}
@@ -188,8 +184,6 @@ const RenderRealitySlider: React.FC = () => {
         <div className="home-ba-overlay" />
         <span className="home-ba-label home-ba-label--right">實景完工照 / REALITY</span>
       </div>
-
-      {/* LEFT side — 3D Render (clips to slider position) */}
       <div
         className="home-ba-side home-ba-before"
         style={{
@@ -200,8 +194,6 @@ const RenderRealitySlider: React.FC = () => {
         <div className="home-ba-overlay" />
         <span className="home-ba-label home-ba-label--left">設計模擬圖 / RENDER</span>
       </div>
-
-      {/* Divider handle */}
       <div className="home-ba-divider" style={{ left: `${pos}%` }}>
         <div className="home-ba-handle">
           <span className="home-ba-handle-icon">⟨⟩</span>
@@ -308,12 +300,20 @@ const Home: React.FC = () => {
   const brandingRef    = useRef<HTMLDivElement>(null);
   const particlesRef   = useRef<HTMLDivElement>(null);
 
-  const [tunnelDone, setTunnelDone]       = useState(false);
-  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+  /* ── Intro overlay state (brand splash) ── */
+  const [isIntro, setIsIntro] = useState(true);
+
+  const [tunnelDone, setTunnelDone]           = useState(false);
+  const [activeHeroIndex, setActiveHeroIndex]  = useState(0);
+
+  /* ── Intro: auto-dismiss after 2.5s ── */
+  useEffect(() => {
+    const timer = setTimeout(() => setIsIntro(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   /* ── Compute which hero background to show based on scroll ── */
   const updateHeroIndex = useCallback((progress: number) => {
-    /* Map scroll progress 0..0.8 into 4 zones (one per label) */
     const normalised = Math.min(progress / 0.8, 1);
     const idx = Math.min(3, Math.floor(normalised * 4));
     setActiveHeroIndex(idx);
@@ -408,7 +408,20 @@ const Home: React.FC = () => {
     >
 
       {/* ══════════════════════════════════════════════════════════════════
+          INTRO OVERLAY — Brand splash (first 2.5 seconds)
+          Fades in "南源木材｜NANYUAN TIMBER DESIGN" then fades out.
+      ══════════════════════════════════════════════════════════════════ */}
+      <div className={`home-intro-overlay ${!isIntro ? 'home-intro-overlay--hidden' : ''}`}>
+        <div className="home-intro-line" />
+        <h1 className="home-intro-brand-zh">南源木材</h1>
+        <p className="home-intro-brand-en">NANYUAN TIMBER DESIGN</p>
+      </div>
+
+
+      {/* ══════════════════════════════════════════════════════════════════
           BLOCK 1: CORRIDOR TUNNEL + MULTI-IMAGE HERO BACKGROUND
+          Background images are driven by HERO_STEPS[activeHeroIndex].bg
+          — the SAME state variable controls both text and image.
       ══════════════════════════════════════════════════════════════════ */}
       <div ref={scrollTrackRef} className="home-scroll-track">
         <div
@@ -416,11 +429,11 @@ const Home: React.FC = () => {
           className={`home-tunnel-viewport ${tunnelDone ? 'home-tunnel-viewport--done' : ''}`}
         >
           {/* ── 4 Hero background layers — cross-fade via activeHeroIndex ── */}
-          {HERO_BACKGROUNDS.map((bgSrc, i) => (
+          {HERO_STEPS.map((step, i) => (
             <div
               key={`hero-bg-${i}`}
               className={`home-hero-bg-layer ${i === activeHeroIndex ? 'home-hero-bg-layer--active' : ''}`}
-              style={{ backgroundImage: `url('${bgSrc}')` }}
+              style={{ backgroundImage: `url('${step.bg}')` }}
             />
           ))}
 
@@ -482,23 +495,23 @@ const Home: React.FC = () => {
               />
             ))}
 
-            {/* Floating text labels — synced to hero backgrounds */}
-            {TUNNEL_LABELS.map((label, i) => (
+            {/* Floating text labels — synced to hero backgrounds via HERO_STEPS */}
+            {HERO_STEPS.map((step, i) => (
               <div
                 key={`lbl-${i}`}
                 style={{
                   position:       'absolute',
                   top:            '50%',
                   left:           '50%',
-                  transform:      `translate3d(-50%, -50%, ${-RING_STEP * label.zMultiplier}px)`,
+                  transform:      `translate3d(-50%, -50%, ${-RING_STEP * step.zMultiplier}px)`,
                   transformStyle: 'preserve-3d',
                   textAlign:      'center',
                   pointerEvents:  'none',
                   userSelect:     'none',
                 }}
               >
-                <div className="home-tunnel-label-zh">{label.text}</div>
-                <div className="home-tunnel-label-en">{label.sub}</div>
+                <div className="home-tunnel-label-zh">{step.text}</div>
+                <div className="home-tunnel-label-en">{step.sub}</div>
               </div>
             ))}
 

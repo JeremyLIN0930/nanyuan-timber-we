@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import CTA from '../CTA/CTA';
 
 /* ═══════════════════════════════════════════════════════════════
@@ -7,16 +7,21 @@ import CTA from '../CTA/CTA';
    ─────────────────────────────────────────────────────────────
    結構：
    1. <CTA /> 共用預約引導組件（唯一渲染點，禁止各分頁重複）
+      ⚠ 在 /contact（預約諮詢）頁面自動隱藏，
+        因為使用者已在表單填寫流程中，不需重複引導。
    2. 品牌資訊 + 快速連結 + 聯絡方式
    3. 版權聲明
 ═══════════════════════════════════════════════════════════════ */
 
 const Footer: React.FC = () => {
+  const location = useLocation();
+  const isContactPage = location.pathname === '/contact';
+
   return (
     <footer style={{ backgroundColor: '#050505', borderTop: '1px solid rgba(255,255,255,0.05)', paddingBottom: '32px' }}>
 
-      {/* ══ 唯一全站共用 CTA 組件 ══ */}
-      <CTA />
+      {/* ══ 全站共用 CTA — 在預約諮詢頁面自動隱藏 ══ */}
+      {!isContactPage && <CTA />}
 
       <div className="container px-3 px-md-4" style={{ paddingTop: '80px' }}>
 

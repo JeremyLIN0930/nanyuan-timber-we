@@ -118,23 +118,24 @@
 
 .nyn-navbar-cta {
   font-size: 0.85rem;
-  font-weight: 300;
-  letter-spacing: 0.15em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   padding: 8px 24px;
   border: 1px solid #C5A880;
-  color: #C5A880;
-  background: transparent;
+  color: #0a0a0a !important;
+  background: #C5A880 !important;
   text-decoration: none;
   white-space: nowrap;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: uppercase;
+  box-shadow: 0 4px 15px rgba(197, 168, 128, 0.3);
 }
 
 .nyn-navbar-cta:hover {
-  background: rgba(197, 168, 128, 0.08);
-  text-shadow: 0 0 12px rgba(197, 168, 128, 0.5);
-  transform: translateY(-1px);
-  color: #C5A880;
+  background: #e2c69f !important;
+  color: #0a0a0a !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 168, 128, 0.5);
 }
 
 /* ── Hamburger Toggle (<992px) ──────────────────────────────── */
@@ -217,22 +218,23 @@
 .nyn-mobile-cta {
   display: inline-block;
   font-size: clamp(0.8rem, 3vw, 0.95rem);
-  font-weight: 300;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   padding: 0.85em 2.4em;
   border: 1px solid #C5A880;
-  color: #C5A880;
-  background: transparent;
+  color: #0a0a0a !important;
+  background: #C5A880 !important;
   text-decoration: none;
   text-transform: uppercase;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(197, 168, 128, 0.3);
 }
 
 .nyn-mobile-cta:hover {
-  background: rgba(197, 168, 128, 0.08);
-  text-shadow: 0 0 12px rgba(197, 168, 128, 0.5);
-  transform: translateY(-1px);
-  color: #C5A880;
+  background: #e2c69f !important;
+  color: #0a0a0a !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 168, 128, 0.5);
 }
 
 .nyn-mobile-footer {
