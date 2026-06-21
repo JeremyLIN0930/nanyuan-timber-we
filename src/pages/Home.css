@@ -1,32 +1,57 @@
 /* ═══════════════════════════════════════════════════════════════
-   HOME.CSS — Original Proportions Restored + Brand Glow Preloader
-   南源木材 · NANYUAN TIMBER DESIGN
+   HOME.CSS — 南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
    ARCHITECTURE:
-   1. .global-brand-preloader: fixed full-screen, gold LOGO
-      visible on FIRST paint (0ms, zero delay). .preloader--exit
-      scale-fades it away at 2.5s. Fully removed from DOM at 3.5s.
-   2. Hero: simple 100vh full-viewport with auto-cycling slides
-      (setInterval in TSX). NO 400vh. NO sticky. NO scroll-lock.
-   3. Cinematic crossfade on background images (opacity 0.8s).
-   4. Left: giant glowing geometric number. Right: B2C text cards.
-   5. All clamp() responsive. GPU-accelerated mobile scrolling.
+   1. Preloader curtain (.intro-viewport) — fixed fullscreen,
+      gold logo glows on frame 0 via @keyframes (zero delay).
+      .intro-viewport--exit → CSS dissolve at 2.5s.
+   2. Hero — clean 100vh, crossfade slides, no 400vh.
+   3. Process steps — alternating image/text grid.
+   4. Comparison slider — structural rules only.
+   5. Portfolio grid — 3/2/1 responsive columns.
+   ZERO inline style props. ZERO <style> tags in TSX.
+   Every visual rule lives exclusively in this file.
 ═══════════════════════════════════════════════════════════════ */
 
 
 /* ──────────────────────────────────────────────────────────────
    KEYFRAMES
    ────────────────────────────────────────────────────────────── */
-@keyframes preloaderGlow {
-  0%   { opacity: 0;   transform: scale(0.96); }
-  15%  { opacity: 1;   transform: scale(1);    }
-  80%  { opacity: 1;   transform: scale(1);    }
-  100% { opacity: 0.6; transform: scale(1.01); }
+
+/*
+  Logo glow — animates from t=0 with NO animation-delay.
+  Phase 1 (0%→20%):  text fades in + glows gold
+  Phase 2 (20%→80%): holds at full glow
+  Phase 3 (80%→100%): very slight dim before the JS curtain exits
+*/
+@keyframes introLogoGlow {
+  0%   { opacity: 0;    text-shadow: none; }
+  18%  { opacity: 1;
+         text-shadow:
+           0 0 28px rgba(197, 168, 128, 0.70),
+           0 0 60px rgba(197, 168, 128, 0.45),
+           0 0 120px rgba(197, 168, 128, 0.25); }
+  80%  { opacity: 1;
+         text-shadow:
+           0 0 28px rgba(197, 168, 128, 0.70),
+           0 0 60px rgba(197, 168, 128, 0.45),
+           0 0 120px rgba(197, 168, 128, 0.25); }
+  100% { opacity: 0.75;
+         text-shadow:
+           0 0 22px rgba(197, 168, 128, 0.50),
+           0 0 45px rgba(197, 168, 128, 0.30); }
 }
 
+/* Scroll cue bounce */
 @keyframes scrollBounce {
   0%, 100% { transform: translateY(0);   }
-  50%      { transform: translateY(7px); }
+  50%       { transform: translateY(7px); }
+}
+
+/* FadeIn reveal */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(48px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
 
 
@@ -34,19 +59,28 @@
    PAGE SHELL
    ────────────────────────────────────────────────────────────── */
 .home-page {
-  background: #050505;
-  min-height: 100vh;
-  -webkit-overflow-scrolling: touch !important;
+  background:                 #050505;
+  min-height:                 100vh;
+  -webkit-overflow-scrolling: touch;
+  overflow-x:                 hidden;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   BRAND PRELOADER — 0ms INSTANT GOLDEN GLOW
-   Fixed full-screen. Text paints on first frame.
-   .preloader--exit: scale + fade dissolve.
-   Fully removed from DOM by TSX at 3.5s.
+   PRELOADER CURTAIN — .intro-viewport
+   ─────────────────────────────────────────────────────────────
+   Base state (.intro-viewport):
+     Fixed, full-screen, z-index 9999, solid black.
+     Transition is declared here so .intro-viewport--exit
+     triggers it cleanly.
+
+   Exit state (.intro-viewport--exit):
+     JS adds this class at 2500ms.
+     opacity: 0 + scale(1.06) dissolve.
+     pointer-events: none so page underneath is interactive.
+     After 1s CSS transition, JS removes from DOM at 3500ms.
 ═══════════════════════════════════════════════════════════════ */
-.global-brand-preloader {
+.intro-viewport {
   position:        fixed;
   inset:           0;
   z-index:         9999;
@@ -54,60 +88,68 @@
   display:         flex;
   justify-content: center;
   align-items:     center;
-  /* base state — visible */
-  opacity:         1;
-  transform:       scale(1);
-  transition:      opacity 1s cubic-bezier(0.85, 0, 0.15, 1),
-                   transform 1s cubic-bezier(0.85, 0, 0.15, 1);
-  will-change:     transform, opacity;
+  /* Transition declared on BASE so it activates when class is added */
+  transition:
+    opacity   1s cubic-bezier(0.85, 0, 0.15, 1),
+    transform 1s cubic-bezier(0.85, 0, 0.15, 1);
+  will-change: opacity, transform;
 }
 
-/* 2.5s: JS adds .preloader--exit → dissolve away */
-.global-brand-preloader.preloader--exit {
+/* Curtain exit — JS adds this class at 2500ms */
+.intro-viewport--exit {
   opacity:        0;
-  transform:      scale(1.05);
+  transform:      scale(1.06);
   pointer-events: none;
 }
 
-/* Logo content box */
-.preloader-content-box {
+/* Logo wrapper */
+.intro-logo {
   display:        flex;
   flex-direction: column;
   align-items:    center;
   gap:            clamp(10px, 1.6vh, 18px);
   pointer-events: none;
-  animation:      preloaderGlow 2.5s ease-out forwards;
 }
 
-/* ── Chinese brand name — white with intense golden glow ── */
-.preloader-content-box h1 {
+/*
+  ★ ZERO animation-delay ★
+  animation starts at 0ms — logo is glowing on first frame.
+*/
+.intro-logo-zh {
   font-size:      clamp(2.5rem, 6vw, 4.5rem);
   font-weight:    900;
   letter-spacing: 0.3em;
   color:          #ffffff;
   line-height:    1;
   margin:         0;
-  /* Golden glow — BASE property, visible on first paint */
-  text-shadow:
-    0 0 30px rgba(197, 168, 128, 0.6),
-    0 0 60px rgba(197, 168, 128, 0.4),
-    0 0 120px rgba(197, 168, 128, 0.2);
+  /* @keyframes begins immediately, no delay */
+  animation:      introLogoGlow 2.5s ease-out forwards;
+  animation-delay: 0ms;
 }
 
-/* ── English subtitle ── */
-.preloader-content-box p {
+.intro-logo-en {
   font-size:      clamp(0.5rem, 1.1vw, 0.84rem);
   font-weight:    200;
   letter-spacing: 0.52em;
-  color:          rgba(197, 168, 128, 0.5);
+  color:          rgba(197, 168, 128, 0.50);
   text-transform: uppercase;
   margin:         0;
+  /* Slightly delayed so it appears just after the kanji */
+  animation:      introLogoGlow 2.5s ease-out 0.18s forwards;
+  opacity:        0;
+}
+
+@media (max-width: 768px) {
+  .intro-logo-zh {
+    font-size:      clamp(1.8rem, 8vw, 2.6rem);
+    letter-spacing: 0.18em;
+  }
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO SECTION — 100vh FULLSCREEN, AUTO-CYCLING SLIDES
-   No sticky. No 400vh. No scroll-lock. Clean and elegant.
+   HERO SECTION — 100vh clean fullscreen
+   No 400vh. No sticky. No scroll-lock.
 ═══════════════════════════════════════════════════════════════ */
 .hero-section {
   position: relative;
@@ -116,17 +158,17 @@
   overflow: hidden;
 }
 
-/* ── Background images: crossfade via opacity ── */
+/* ── Background image layer — opacity crossfade ── */
 .hero-bg {
   position:    absolute;
   inset:       0;
   z-index:     0;
   opacity:     0;
-  transition:  opacity 0.8s ease-in-out;
+  transition:  opacity 0.85s ease-in-out;
   will-change: opacity;
 }
 
-.hero-bg.hero-bg--active {
+.hero-bg--active {
   opacity: 1;
 }
 
@@ -137,27 +179,31 @@
   display:    block;
 }
 
-/* ── Dark gradient overlays ── */
+/* ── Dark gradient overlay (top → bottom) ── */
 .hero-overlay {
   position:       absolute;
   inset:          0;
   z-index:        1;
-  background:     linear-gradient(180deg,
+  background:     linear-gradient(
+    180deg,
     rgba(5, 5, 5, 0.42) 0%,
     rgba(5, 5, 5, 0.52) 50%,
-    rgba(5, 5, 5, 0.82) 100%);
+    rgba(5, 5, 5, 0.84) 100%
+  );
   pointer-events: none;
 }
 
+/* ── Radial vignette ── */
 .hero-vignette {
   position:       absolute;
   inset:          0;
   z-index:        2;
   background:     radial-gradient(
     ellipse 55% 55% at 50% 50%,
-    transparent 0%,
-    rgba(5, 5, 5, 0.36) 58%,
-    rgba(5, 5, 5, 0.86) 100%);
+    transparent          0%,
+    rgba(5, 5, 5, 0.36)  58%,
+    rgba(5, 5, 5, 0.88)  100%
+  );
   pointer-events: none;
 }
 
@@ -175,27 +221,43 @@
   height:   clamp(14px, 2.5vw, 34px);
 }
 
-.hero-corner--tl { top: 0;    left: 0;   border-top:    1px solid rgba(197, 168, 128, 0.22); border-left:   1px solid rgba(197, 168, 128, 0.22); }
-.hero-corner--tr { top: 0;    right: 0;  border-top:    1px solid rgba(197, 168, 128, 0.22); border-right:  1px solid rgba(197, 168, 128, 0.22); }
-.hero-corner--bl { bottom: 0; left: 0;   border-bottom: 1px solid rgba(197, 168, 128, 0.22); border-left:   1px solid rgba(197, 168, 128, 0.22); }
-.hero-corner--br { bottom: 0; right: 0;  border-bottom: 1px solid rgba(197, 168, 128, 0.22); border-right:  1px solid rgba(197, 168, 128, 0.22); }
-
-
-/* ── Hero content: centred deck ── */
-.hero-content {
-  position:       relative;
-  z-index:        10;
-  display:        flex;
-  flex-direction: column;
-  align-items:    center;
-  justify-content: center;
-  height:         100%;
-  text-align:     center;
-  padding:        0 clamp(1rem, 5vw, 4rem);
-  max-width:      1080px;
-  margin:         0 auto;
+.hero-corner--tl {
+  top:  0; left:  0;
+  border-top:  1px solid rgba(197, 168, 128, 0.22);
+  border-left: 1px solid rgba(197, 168, 128, 0.22);
+}
+.hero-corner--tr {
+  top:  0; right: 0;
+  border-top:   1px solid rgba(197, 168, 128, 0.22);
+  border-right: 1px solid rgba(197, 168, 128, 0.22);
+}
+.hero-corner--bl {
+  bottom: 0; left: 0;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.22);
+  border-left:   1px solid rgba(197, 168, 128, 0.22);
+}
+.hero-corner--br {
+  bottom: 0; right: 0;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.22);
+  border-right:  1px solid rgba(197, 168, 128, 0.22);
 }
 
+/* ── Content deck — centred in hero ── */
+.hero-content {
+  position:        relative;
+  z-index:         10;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  height:          100%;
+  text-align:      center;
+  padding:         0 clamp(1rem, 5vw, 4rem);
+  max-width:       1080px;
+  margin:          0 auto;
+}
+
+/* ── Eyebrow ── */
 .hero-eyebrow {
   display:       flex;
   align-items:   center;
@@ -207,7 +269,12 @@
   display:    block;
   width:      30px;
   height:     1px;
-  background: linear-gradient(90deg, transparent, rgba(197, 168, 128, 0.26), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(197, 168, 128, 0.26),
+    transparent
+  );
 }
 
 .hero-eyebrow-text {
@@ -218,8 +285,7 @@
   text-transform: uppercase;
 }
 
-
-/* ── Number + text deck ── */
+/* ── Deck: number on left, text on right ── */
 .hero-deck {
   display:         flex;
   align-items:     center;
@@ -228,7 +294,7 @@
   justify-content: center;
 }
 
-/* Left: giant geometric number */
+/* Left: absolute-stacked giant numbers */
 .hero-numbox {
   position:    relative;
   flex-shrink: 0;
@@ -237,39 +303,41 @@
 }
 
 .hero-num {
-  position:        absolute;
-  inset:           0;
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  font-size:       clamp(3.2rem, 11vw, 10rem);
-  font-weight:     900;
-  letter-spacing:  -0.06em;
-  line-height:     1;
-  color:           transparent;
+  position:         absolute;
+  inset:            0;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        clamp(3.2rem, 11vw, 10rem);
+  font-weight:      900;
+  letter-spacing:   -0.06em;
+  line-height:      1;
+  color:            transparent;
   -webkit-text-stroke: 1px rgba(197, 168, 128, 0.06);
-  pointer-events:  none;
-  user-select:     none;
-  will-change:     opacity, transform;
-  /* Default: hidden */
-  opacity:         0;
-  transform:       translateX(40px) scale(0.85);
-  transition:      opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                   transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events:   none;
+  user-select:      none;
+  will-change:      opacity, transform;
+  /* Hidden state */
+  opacity:          0;
+  transform:        translateX(40px) scale(0.85);
+  transition:
+    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-num.hero-num--active {
-  opacity:    1;
-  transform:  translateX(0) scale(1);
-  background: linear-gradient(135deg, #C5A880, rgba(197, 168, 128, 0.26));
-  -webkit-background-clip: text;
-  background-clip:         text;
-  -webkit-text-stroke:     1px rgba(197, 168, 128, 0.16);
-  filter:     drop-shadow(0 0 36px rgba(197, 168, 128, 0.55))
-              drop-shadow(0 0 70px rgba(197, 168, 128, 0.20));
+.hero-num--active {
+  opacity:                  1;
+  transform:                translateX(0) scale(1);
+  background:               linear-gradient(135deg, #C5A880, rgba(197, 168, 128, 0.26));
+  -webkit-background-clip:  text;
+  background-clip:          text;
+  -webkit-text-stroke:      1px rgba(197, 168, 128, 0.16);
+  filter:
+    drop-shadow(0 0 36px rgba(197, 168, 128, 0.55))
+    drop-shadow(0 0 70px rgba(197, 168, 128, 0.20));
 }
 
-/* Right: text cards */
+/* Right: absolute-stacked text slides */
 .hero-textbox {
   position:   relative;
   flex:       1;
@@ -285,14 +353,15 @@
   justify-content: center;
   pointer-events:  none;
   will-change:     opacity, transform;
-  /* Default: hidden */
+  /* Hidden state */
   opacity:         0;
   transform:       translateX(60px);
-  transition:      opacity 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1),
-                   transform 0.85s 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity   0.70s 0.10s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s 0.10s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-slide.hero-slide--active {
+.hero-slide--active {
   opacity:        1;
   transform:      translateX(0);
   pointer-events: auto;
@@ -301,7 +370,7 @@
 .hero-slide-zh {
   font-size:   clamp(1.5rem, 3.6vw, 2.7rem) !important;
   font-weight: 900 !important;
-  color:       #fff;
+  color:       #ffffff;
   text-shadow: 0 0 26px rgba(255, 255, 255, 0.16);
   margin:      0 0 0.26rem;
   line-height: 1.15;
@@ -320,12 +389,12 @@
   width:         clamp(20px, 3.2vw, 40px);
   height:        1px;
   background:    linear-gradient(90deg, #C5A880, rgba(197, 168, 128, 0.08));
-  box-shadow:    0 0 8px rgba(197, 168, 128, 0.5);
+  box-shadow:    0 0 8px rgba(197, 168, 128, 0.50);
   margin-bottom: 0.62rem;
 }
 
 .hero-slide-desc {
-  font-size:      clamp(0.74rem, 1.02vw, 0.9rem);
+  font-size:      clamp(0.74rem, 1.02vw, 0.90rem);
   font-weight:    300;
   letter-spacing: 0.048em;
   color:          rgba(255, 255, 255, 0.42);
@@ -334,19 +403,18 @@
   margin:         0;
 }
 
-
-/* ── Scroll cue ── */
+/* ── Scroll cue — bottom centre ── */
 .hero-scroll-cue {
-  position:       absolute;
-  bottom:         clamp(0.9rem, 3.2vh, 2rem);
-  left:           50%;
-  transform:      translateX(-50%);
-  z-index:        10;
-  display:        flex;
-  flex-direction: column;
-  align-items:    center;
-  gap:            0.4rem;
-  pointer-events: none;
+  position:        absolute;
+  bottom:          clamp(0.9rem, 3.2vh, 2rem);
+  left:            50%;
+  transform:       translateX(-50%);
+  z-index:         10;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  gap:             0.4rem;
+  pointer-events:  none;
 }
 
 .hero-scroll-label {
@@ -384,7 +452,7 @@
   font-size:      clamp(1.75rem, 4.8vw, 3.1rem) !important;
   font-weight:    900 !important;
   color:          #C5A880;
-  text-shadow:    0 0 26px rgba(197, 168, 128, 0.5);
+  text-shadow:    0 0 26px rgba(197, 168, 128, 0.50);
   margin-bottom:  0.5rem;
   line-height:    1.1;
 }
@@ -400,12 +468,15 @@
 
 /* ═══════════════════════════════════════════════════════════════
    FADEIN (IntersectionObserver scroll reveal)
+   JS toggles .fadein--visible when element enters viewport.
+   data-delay attribute maps to transition-delay via CSS.
 ═══════════════════════════════════════════════════════════════ */
 .fadein {
   opacity:    0;
   transform:  translateY(48px);
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity   0.90s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.90s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fadein--visible {
@@ -430,6 +501,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+/* Two-column alternating grid row */
 .home-step {
   display:               grid;
   grid-template-columns: 1fr 1fr;
@@ -438,9 +510,11 @@
   margin-bottom:         clamp(2.8rem, 5.5vw, 4.6rem);
 }
 
+/* Odd steps: reverse column order via RTL trick */
 .home-step--rev     { direction: rtl; }
 .home-step--rev > * { direction: ltr; }
 
+/* Image block */
 .home-step-imgbox {
   position: relative;
   overflow: hidden;
@@ -452,13 +526,14 @@
   max-height: 275px;
   object-fit: cover;
   display:    block;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.80s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .home-step-imgbox:hover .home-step-img {
   transform: scale(1.04);
 }
 
+/* Ghost step number watermark behind image */
 .home-step-num-bg {
   position:       absolute;
   bottom:         -0.15em;
@@ -471,6 +546,7 @@
   user-select:    none;
 }
 
+/* Text block */
 .home-step-info {
   padding: clamp(0.6rem, 1.4vw, 1.4rem) 0;
 }
@@ -488,7 +564,7 @@
 .home-step-zh {
   font-size:     clamp(1.1rem, 2vw, 1.5rem) !important;
   font-weight:   900 !important;
-  color:         #fff !important;
+  color:         #ffffff !important;
   margin-bottom: 0.3rem;
   line-height:   1.1;
 }
@@ -507,14 +583,14 @@
   font-size:      clamp(0.78rem, 1.12vw, 0.91rem);
   font-weight:    300;
   color:          rgba(255, 255, 255, 0.40);
-  line-height:    1.9;
+  line-height:    1.90;
   letter-spacing: 0.04em;
   margin:         0;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   RENDER vs REALITY COMPARISON SLIDER
+   COMPARISON SLIDER
 ═══════════════════════════════════════════════════════════════ */
 .home-compare {
   background:  #050505;
@@ -557,9 +633,9 @@
   position:        absolute;
   bottom:          1rem;
   font-size:       clamp(8px, 0.95vw, 11px);
-  letter-spacing:  0.2em;
+  letter-spacing:  0.20em;
   font-weight:     300;
-  color:           #fff;
+  color:           #ffffff;
   background:      rgba(5, 5, 5, 0.58);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -569,20 +645,18 @@
 .cmp-badge--r { right: 1rem; }
 .cmp-badge--l { left:  1rem; }
 
-.cmp-layer--render {
-  z-index:   2;
-  clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
-}
+.cmp-layer--reality { z-index: 1; }
+.cmp-layer--render  { z-index: 2; }
 
 .cmp-divider {
   position:   absolute;
   top:        0;
   bottom:     0;
-  left:       50%;
+  left:       50%; /* JS overrides via .style.left */
   transform:  translateX(-50%);
   width:      2px;
   background: #C5A880;
-  box-shadow: 0 0 20px rgba(197, 168, 128, 0.8);
+  box-shadow: 0 0 20px rgba(197, 168, 128, 0.80);
   z-index:    10;
 }
 
@@ -622,12 +696,14 @@
   margin-bottom: clamp(1.8rem, 3.8vw, 2.8rem);
 }
 
+/* 3-column desktop */
 .home-folio-grid {
   display:               grid;
   grid-template-columns: repeat(3, 1fr);
   gap:                   clamp(0.75rem, 1.4vw, 1.4rem);
 }
 
+/* Card */
 .home-card {
   position:    relative;
   overflow:    hidden;
@@ -651,8 +727,9 @@
   object-fit: cover;
   opacity:    0.66;
   display:    block;
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .home-card:hover .home-card-img {
@@ -663,8 +740,13 @@
 .home-card-grad {
   position:   absolute;
   inset:      0;
-  background: linear-gradient(to top, #050505 0%, rgba(5, 5, 5, 0.26) 50%, transparent 100%);
-  opacity:    0.8;
+  background: linear-gradient(
+    to top,
+    #050505              0%,
+    rgba(5, 5, 5, 0.26)  50%,
+    transparent          100%
+  );
+  opacity: 0.80;
 }
 
 .home-card-meta {
@@ -687,68 +769,90 @@
 .home-card-name {
   font-size:   clamp(0.92rem, 1.65vw, 1.15rem) !important;
   font-weight: 900 !important;
-  color:       #fff;
+  color:       #ffffff;
   text-shadow: 0 0 12px rgba(255, 255, 255, 0.26);
   margin:      0;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE BREAKPOINTS
 ═══════════════════════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .preloader-content-box h1 {
-    font-size:      clamp(1.8rem, 8vw, 2.6rem);
-    letter-spacing: 0.18em;
-  }
 
+/* ── Tablet ── */
+@media (max-width: 992px) {
+  .home-folio-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  /* Hero */
   .hero-content { padding: 0 0.9rem; }
   .hero-frame   { inset: 11px; }
   .hero-corner  { width: 12px; height: 12px; }
 
-  .hero-deck    { flex-direction: column; gap: 0.35rem; }
-  .hero-numbox  { width: 54px; height: 54px; }
-  .hero-textbox { text-align: center; min-height: 138px; }
+  .hero-deck {
+    flex-direction: column;
+    gap:            0.35rem;
+  }
 
+  .hero-numbox {
+    width:  54px;
+    height: 54px;
+  }
+
+  .hero-textbox {
+    text-align: center;
+    min-height: 138px;
+  }
+
+  /* Centre the slide content on mobile */
   .hero-slide {
     align-items: center;
     transform:   translateX(30px);
   }
-  .hero-slide.hero-slide--active {
+
+  .hero-slide--active {
     align-items: center;
     transform:   translateX(0);
   }
 
-  .hero-slide-wire { margin-left: auto; margin-right: auto; }
+  .hero-slide-wire {
+    margin-left:  auto;
+    margin-right: auto;
+  }
+
   .hero-slide-desc { text-align: center; }
 
   .hero-num {
     transform: translateX(20px) scale(0.85);
   }
-  .hero-num.hero-num--active {
+
+  .hero-num--active {
     transform: translateX(0) scale(1);
   }
 
+  /* Process steps: single column */
   .home-step      { grid-template-columns: 1fr; gap: 1.1rem; }
   .home-step--rev { direction: ltr; }
   .home-step-img  { max-height: 220px; }
   .home-step-num-bg { display: none; }
 
-  .cmp-box         { height: 220px; }
-  .home-folio-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Comparison slider */
+  .cmp-box { height: 220px; }
 
-  .home-page {
-    -webkit-overflow-scrolling: touch !important;
-  }
-}
-
-@media (max-width: 480px) {
+  /* Portfolio: single column */
   .home-folio-grid { grid-template-columns: 1fr; }
-  .hero-slide-zh   { font-size: clamp(1.2rem, 5.8vw, 1.65rem) !important; }
-  .cmp-box         { height: 185px; }
-  .home-step-img   { max-height: 185px; }
 }
 
+/* ── Small mobile ── */
+@media (max-width: 480px) {
+  .hero-slide-zh { font-size: clamp(1.2rem, 5.8vw, 1.65rem) !important; }
+  .cmp-box       { height: 185px; }
+  .home-step-img { max-height: 185px; }
+}
+
+/* ── Large desktop ── */
 @media (min-width: 1400px) {
   .hero-content { max-width: 1200px; }
   .hero-numbox  { width: 240px; height: 240px; }
