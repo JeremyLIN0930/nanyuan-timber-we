@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import CTA from '../components/CTA/CTA';
 import './Home.css';
@@ -29,13 +28,13 @@ import portfolio06 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 
 
 /* ═══════════════════════════════════════════════════════════════
-   DATA — B2C Advantage Slides (4 slides × 4 seconds each)
+   DATA — B2C Advantage Matrix (NO auto-play — user-interaction only)
 ═══════════════════════════════════════════════════════════════ */
 const ADVANTAGES = [
-  { num: '01', zh: '嚴選頂級建材', en: 'PREMIUM ECO-MATERIALS', desc: '採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',       bg: heroSlide01 },
-  { num: '02', zh: '精細職人工藝', en: 'ARTISAN PRECISION',     desc: '三十年資深木作老師傅手工微調，接合收口精度嚴控於 ±1mm 誤差內。匠心鑄就每一個傳世細節。', bg: heroSlide02 },
-  { num: '03', zh: '透明報價零隱藏', en: 'TOTAL TRANSPARENCY',   desc: '報價單逐項逐料公開透明，白紙黑字簽約承諾——工程中絕不惡意追加任何費用，安心施工。',   bg: heroSlide03 },
-  { num: '04', zh: '一條龍完美成家', en: 'TURNKEY DREAM HOME',   desc: '從高精度 3D 設計模擬到自有工班落地，現場總監全程監督控管，讓您輕鬆入住夢想居所。',   bg: heroSlide04 },
+  { num: '01', zh: '嚴選頂級建材', en: 'PREMIUM ECO-MATERIALS', desc: '採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',       img: heroSlide01 },
+  { num: '02', zh: '精細職人工藝', en: 'ARTISAN PRECISION',     desc: '三十年資深木作老師傅手工微調，接合收口精度嚴控於 ±1mm 誤差內。匠心鑄就每一個傳世細節。', img: heroSlide02 },
+  { num: '03', zh: '透明報價零隱藏', en: 'TOTAL TRANSPARENCY',   desc: '報價單逐項逐料公開透明，白紙黑字簽約承諾——工程中絕不惡意追加任何費用，安心施工。',   img: heroSlide03 },
+  { num: '04', zh: '一條龍完美成家', en: 'TURNKEY DREAM HOME',   desc: '從高精度 3D 設計模擬到自有工班落地，現場總監全程監督控管，讓您輕鬆入住夢想居所。',   img: heroSlide04 },
 ] as const;
 
 const PROCESS_STEPS = [
@@ -58,23 +57,33 @@ const PORTFOLIO = [
 
 
 /* ═══════════════════════════════════════════════════════════════
-   SCROLL-REVEAL WRAPPER
+   SCROLL-REVEAL WRAPPER (IntersectionObserver, zero inline style)
 ═══════════════════════════════════════════════════════════════ */
-const FadeIn: React.FC<{ children: React.ReactNode; className?: string; delay?: number }> = ({
-  children, className = '', delay = 0,
+const FadeIn: React.FC<{ children: React.ReactNode; className?: string; delay?: string }> = ({
+  children, className = '', delay,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <motion.div
+    <div
       ref={ref}
-      className={className}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={`fadein ${visible ? 'fadein--visible' : ''} ${className}`}
+      data-delay={delay || undefined}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -135,173 +144,162 @@ const ComparisonSlider: React.FC = () => {
 /* ═══════════════════════════════════════════════════════════════
    HOME — MAIN COMPONENT
    ─────────────────────────────────────────────────────────────
-   STATE MACHINE (drives className toggles — CSS does all visuals)
+   STATE MACHINE:
+     curtainOpen=false  → Obsidian-black curtain covering 100vh
+     curtainOpen=true   → .curtain-stage--open triggers CSS
+                          translateY(-100vh) slide-up to dismiss
 
-   isOpening=false, isReady=false  →  STAGE 0: Preloader waiting
-   isOpening=true,  isReady=false  →  STAGE 1: Door animation running
-   isOpening=true,  isReady=true   →  STAGE 2: Main content visible
-
-   className cascades on the outermost .cinema div:
-     (nothing)          → doors closed, brand text visible
-     .cinema--opening   → CSS triggers rotateY + scale + burst
-
-   className on .home-hero:
-     (nothing)          → opacity 0, translateY(40px)
-     .home-hero--on     → opacity 1, translateY(0)
+   ADVANTAGE MATRIX:
+     NO setInterval / auto-play!
+     activeIndex changes ONLY via:
+       1. Clicking progress dots
+       2. Mouse-wheel delta inside the hero section
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  /* ── 3-state lifecycle ── */
-  const [isOpening, setIsOpening] = useState(false);
-  const [isReady,   setIsReady]   = useState(false);
-  const [showGate,  setShowGate]  = useState(true);
+  /* ── Curtain state ── */
+  const [curtainOpen, setCurtainOpen] = useState(false);
+  const [curtainGone, setCurtainGone] = useState(false);
 
-  /* ── Hero slide index ── */
+  /* ── Advantage slide index (NO auto-play) ── */
   const [activeIdx, setActiveIdx] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+  const wheelCooldown = useRef(false);
 
-  /* ── Ref for bg layers (background images applied via DOM) ── */
-  const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
+  /* ── Apply background images via ref (zero inline style) ── */
+  const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
 
   /* ══════════════════════════════════════════════════════════
-     STAGE 0 → 1: Fire opening sequence
-     One-shot: once triggered, clear all listeners.
+     CURTAIN OPEN — triggered by scroll / click / touch
+     Once only. Adds .curtain-stage--open to outermost div.
   ══════════════════════════════════════════════════════════ */
-  const openDoor = useCallback(() => {
-    if (isOpening || isReady) return;
+  const triggerCurtain = useCallback(() => {
+    if (curtainOpen) return;
+    setCurtainOpen(true);
+    /* After CSS transition completes (1.2s + buffer), remove curtain from DOM */
+    setTimeout(() => setCurtainGone(true), 1500);
+  }, [curtainOpen]);
 
-    /* Step A: Apply .cinema--opening → CSS takes over */
-    setIsOpening(true);
-
-    /* Step B: After 1600ms animation completes, unlock main content */
-    setTimeout(() => {
-      setIsReady(true);
-      /* Step C: Fade out gate 400ms after content appears */
-      setTimeout(() => setShowGate(false), 400);
-    }, 1600);
-  }, [isOpening, isReady]);
-
-  /* ── Attach wheel/click once ── */
+  /* ── Attach wheel/click/touch listeners (one-shot) ── */
   useEffect(() => {
-    if (isOpening) return;
-    const handler = () => openDoor();
-    window.addEventListener('wheel',     handler, { passive: true, once: true });
-    window.addEventListener('click',     handler, { once: true });
-    window.addEventListener('touchstart',handler, { passive: true, once: true });
+    if (curtainOpen) return;
+
+    const handler = () => triggerCurtain();
+
+    window.addEventListener('wheel',      handler, { passive: true, once: true });
+    window.addEventListener('click',      handler, { once: true });
+    window.addEventListener('touchstart', handler, { passive: true, once: true });
+
     return () => {
-      window.removeEventListener('wheel',     handler);
-      window.removeEventListener('click',     handler);
-      window.removeEventListener('touchstart',handler);
+      window.removeEventListener('wheel',      handler);
+      window.removeEventListener('click',      handler);
+      window.removeEventListener('touchstart', handler);
     };
-  }, [isOpening, openDoor]);
+  }, [curtainOpen, triggerCurtain]);
 
-  /* ── Lock body scroll while gate is showing ── */
+  /* ── Lock body scroll while curtain is up ── */
   useEffect(() => {
-    document.body.style.overflow = showGate ? 'hidden' : '';
+    document.body.style.overflow = curtainGone ? '' : 'hidden';
     return () => { document.body.style.overflow = ''; };
-  }, [showGate]);
+  }, [curtainGone]);
 
-  /* ── Advantage rotation — starts after gate is gone ── */
+  /* ══════════════════════════════════════════════════════════
+     WHEEL-DRIVEN SLIDE INDEX (replaces carousel setInterval)
+     Only fires when hero section is in viewport.
+  ══════════════════════════════════════════════════════════ */
   useEffect(() => {
-    if (!isReady) return;
-    const iv = setInterval(() => setActiveIdx(p => (p + 1) % ADVANTAGES.length), 4000);
-    return () => clearInterval(iv);
-  }, [isReady]);
+    if (!curtainGone) return;
 
-  /* ── Apply background images to hero bg layers via DOM (zero inline style) ── */
-  useEffect(() => {
-    bgRefs.current.forEach((el, i) => {
-      if (el) el.style.backgroundImage = `url('${ADVANTAGES[i].bg}')`;
-    });
-  }, []);
+    const onWheel = (e: WheelEvent) => {
+      if (wheelCooldown.current) return;
+      const heroEl = heroRef.current;
+      if (!heroEl) return;
+
+      const rect = heroEl.getBoundingClientRect();
+      /* Only respond when hero is mostly in viewport */
+      if (rect.bottom < 100 || rect.top > window.innerHeight - 100) return;
+
+      wheelCooldown.current = true;
+      setTimeout(() => { wheelCooldown.current = false; }, 900);
+
+      if (e.deltaY > 0) {
+        setActiveIdx(p => (p + 1) % ADVANTAGES.length);
+      } else if (e.deltaY < 0) {
+        setActiveIdx(p => (p - 1 + ADVANTAGES.length) % ADVANTAGES.length);
+      }
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: true });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [curtainGone]);
+
+
+  /* ── Stage class computation ── */
+  const stageClass = `curtain-stage${curtainOpen ? ' curtain-stage--open' : ''}`;
 
   return (
-    <div className="home-page">
+    <div className={`home-page ${stageClass}`}>
 
       {/* ══════════════════════════════════════════════════════════
-          STAGE 0/1 : CINEMATIC GATE PRELOADER
-          ─────────────────────────────────────────────────────────
-          .cinema               = gate closed (default)
-          .cinema--opening      = CSS animations fire (door swing + zoom)
-          showGate===false      = unmount from DOM entirely
+          CINEMA CURTAIN — Obsidian black, 100vh overlay
+          Slides UP via translateY(-100vh) when .curtain-stage--open
+          is applied on the parent. All transforms in CSS.
       ══════════════════════════════════════════════════════════ */}
-      {showGate && (
-        <div className={`cinema${isOpening ? ' cinema--opening' : ''}`}>
-
-          {/* ── Layer 1: Background room depth (receding dark) ── */}
-          <div className="cinema-room" />
-
-          {/* ── Layer 2: Gold light burst through door crack ── */}
-          <div className="cinema-burst" />
-
-          {/* ── Layer 3: Architectural gate + two door panels ──
-                The perspective-3d wrapper that zooms into nothing
-          ── */}
-          <div className="cinema-gate-wrap">
-            <div className="cinema-gate">
-
-              {/* Structural lintel (top beam) */}
-              <div className="cinema-lintel" />
-
-              {/* Left door panel */}
-              <div className="cinema-door cinema-door--left">
-                <div className="cinema-door-panel cinema-door-panel--top" />
-                <div className="cinema-door-panel cinema-door-panel--bot" />
-              </div>
-
-              {/* Door gap highlight */}
-              <div className="cinema-door-gap" />
-
-              {/* Right door panel */}
-              <div className="cinema-door cinema-door--right">
-                <div className="cinema-door-panel cinema-door-panel--top" />
-                <div className="cinema-door-panel cinema-door-panel--bot" />
-              </div>
-
-              {/* Floor sill */}
-              <div className="cinema-sill" />
-            </div>
+      {!curtainGone && (
+        <div className="cinema-curtain">
+          {/* Geometric house outline decoration */}
+          <div className="curtain-geometry">
+            <div className="curtain-geo-roof" />
+            <div className="curtain-geo-body" />
+            <div className="curtain-geo-door" />
+            <div className="curtain-geo-window curtain-geo-window--l" />
+            <div className="curtain-geo-window curtain-geo-window--r" />
           </div>
 
-          {/* ── Layer 4: Brand identity centered over the gate ── */}
-          <div className="cinema-brand">
-            <span className="cinema-brand-zh">南源木材</span>
-            <span className="cinema-brand-sep" />
-            <span className="cinema-brand-en">NANYUAN TIMBER DESIGN</span>
+          {/* Brand text — gold micro-glow */}
+          <div className="curtain-brand">
+            <span className="curtain-brand-zh">南源木材</span>
+            <span className="curtain-brand-sep" />
+            <span className="curtain-brand-en">NANYUAN TIMBER DESIGN</span>
           </div>
 
-          {/* ── Layer 5: Enter prompt (pulse until click) ── */}
-          <p className={`cinema-cue${isOpening ? ' cinema-cue--hidden' : ''}`}>
-            ◇ &nbsp; SCROLL OR CLICK TO ENTER &nbsp; ◇
+          {/* Enter prompt (pulses) */}
+          <p className="curtain-cue">
+            ◇&nbsp; SCROLL OR CLICK TO ENTER &nbsp;◇
           </p>
-
         </div>
       )}
 
 
       {/* ══════════════════════════════════════════════════════════
-          STAGE 2 : MAIN CONTENT
-          Slide up from translateY(40px) once isReady fires.
+          MAIN BODY — Fades in after curtain slides away
       ══════════════════════════════════════════════════════════ */}
-      <div className={`home-body${isReady ? ' home-body--on' : ''}`}>
+      <div className={`home-body${curtainGone ? ' home-body--on' : ''}`}>
 
-        {/* ── HERO ADVANTAGE THEATRE — 100vh ── */}
-        <section className="home-hero">
+        {/* ── HERO: ADVANTAGE SLIDE-IN MATRIX — 100vh ── */}
+        <section className="home-hero" ref={heroRef}>
 
-          {/* Fullscreen background layers — Ken Burns cross-fade */}
+          {/* Full-bleed images — slide-in transition driven by className */}
           {ADVANTAGES.map((adv, i) => (
             <div
               key={adv.num}
-              ref={el => { bgRefs.current[i] = el; }}
-              className={`home-bg${i === activeIdx ? ' home-bg--on' : ''}`}
-            />
+              className={`hero-img-wrap${i === activeIdx ? ' slide-active' : ''}`}
+            >
+              <img
+                ref={el => { imgRefs.current[i] = el; }}
+                src={adv.img}
+                alt={`南源木材 ${adv.zh}`}
+                className="hero-img"
+              />
+            </div>
           ))}
 
-          {/* Overlays */}
+          {/* Dark overlays */}
           <div className="home-overlay" />
           <div className="home-vignette" />
 
-          {/* Geometric bracket frame */}
+          {/* Geometric bracket frame — four corners */}
           <div className="home-frame">
             <div className="home-corner home-corner--tl" />
             <div className="home-corner home-corner--tr" />
@@ -309,14 +307,14 @@ const Home: React.FC = () => {
             <div className="home-corner home-corner--br" />
           </div>
 
-          {/* Center crosshair — breathes on each slide change */}
+          {/* Center crosshair — breathing animation on slide change */}
           <div className={`home-xhair home-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
             <span className="home-xhair-h" />
             <span className="home-xhair-v" />
             <span className="home-xhair-dot" />
           </div>
 
-          {/* Hero content block */}
+          {/* Hero content */}
           <div className="home-hero-inner">
 
             <div className="home-eyebrow">
@@ -325,7 +323,7 @@ const Home: React.FC = () => {
               <span className="home-eyebrow-line" />
             </div>
 
-            {/* Giant number + text deck */}
+            {/* Giant number + text deck — SLIDE-IN, not fade */}
             <div className="home-deck">
               {/* Left: huge slide number */}
               <div className="home-numbox">
@@ -336,10 +334,10 @@ const Home: React.FC = () => {
                 ))}
               </div>
 
-              {/* Right: text slides */}
+              {/* Right: text slides — slide-in from right */}
               <div className="home-textbox">
                 {ADVANTAGES.map((a, i) => (
-                  <div key={a.num} className={`home-slide${i === activeIdx ? ' home-slide--on' : ''}`}>
+                  <div key={a.num} className={`home-slide${i === activeIdx ? ' slide-active' : ''}`}>
                     <h2 className="home-slide-zh">{a.zh}</h2>
                     <p  className="home-slide-en">{a.en}</p>
                     <div className="home-slide-wire" />
@@ -355,7 +353,7 @@ const Home: React.FC = () => {
               <button className="home-btn home-btn--ghost" onClick={() => document.querySelector('.home-process')?.scrollIntoView({ behavior: 'smooth' })}>探索南源工藝</button>
             </div>
 
-            {/* Progress dots */}
+            {/* Progress dots — click-driven index change (NO auto-play) */}
             <div className="home-dots">
               {ADVANTAGES.map((a, i) => (
                 <button
@@ -372,7 +370,7 @@ const Home: React.FC = () => {
           {/* Scroll cue */}
           <div className="home-scroll-cue">
             <span className="home-scroll-text">SCROLL</span>
-            <motion.span className="home-scroll-arrow" animate={{ y: [0, 8, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}>↓</motion.span>
+            <span className="home-scroll-arrow">↓</span>
           </div>
 
         </section>
@@ -423,29 +421,27 @@ const Home: React.FC = () => {
               <h2 className="home-folio-h">極精選作品</h2>
               <p className="home-folio-sub">點擊探索每一個空間的完整故事。</p>
             </FadeIn>
-            <div className="row g-4">
+            <div className="home-folio-grid">
               {PORTFOLIO.map((it, i) => (
-                <div className="col-12 col-md-6 col-lg-4" key={i}>
-                  <FadeIn delay={i * 0.08}>
-                    <motion.div className="home-card" whileHover={{ y: -6 }} onClick={() => navigate('/projects')}>
-                      <div className="home-card-inner">
-                        <img src={it.img} alt={`南源木材作品 ${it.zh}`} className="home-card-img" />
-                        <div className="home-card-grad" />
-                        <div className="home-card-meta">
-                          <span className="home-card-type">{it.type}</span>
-                          <h3 className="home-card-name">{it.zh}</h3>
-                        </div>
+                <FadeIn key={i} delay={`${i * 80}ms`}>
+                  <div className="home-card" onClick={() => navigate('/projects')}>
+                    <div className="home-card-inner">
+                      <img src={it.img} alt={`南源木材作品 ${it.zh}`} className="home-card-img" />
+                      <div className="home-card-grad" />
+                      <div className="home-card-meta">
+                        <span className="home-card-type">{it.type}</span>
+                        <h3 className="home-card-name">{it.zh}</h3>
                       </div>
-                    </motion.div>
-                  </FadeIn>
-                </div>
+                    </div>
+                  </div>
+                </FadeIn>
               ))}
             </div>
           </div>
         </section>
 
 
-        {/* ── GLOBAL CTA — zero duplication ── */}
+        {/* ── GLOBAL CTA — single shared component, zero duplication ── */}
         <CTA />
 
       </div>{/* end .home-body */}
