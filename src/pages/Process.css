@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   PROCESS TIMELINE STYLESHEET
-   Bespoke Craftsmanship — Slow Mode Rewrite
+   PROCESS TIMELINE STYLESHEET (Complete CSS化)
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Page Container ─────────────────────────────────────────── */
@@ -37,6 +36,11 @@
   text-transform: uppercase;
   max-width: 600px;
   margin: 0 auto;
+}
+
+/* ── Icon gold color ────────────────────────────────────────── */
+.process-icon-gold {
+  color: #C5A880;
 }
 
 /* ── Timeline Section Container ─────────────────────────────── */

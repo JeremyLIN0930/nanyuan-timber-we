@@ -1,150 +1,209 @@
-.portal-container {
-  min-height: calc(100vh - 80px); /* 減去 navbar 高度 */
-  background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+/* ═══════════════════════════════════════════════════════════════
+   ClientPortal.css  —  南源木材 客戶專區樣式（全面 CSS 化）
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Page Container ── */
+.portal-page {
+  background-color: #050505;
+  min-height: 100vh;
+  padding-top: 120px;
+  padding-bottom: 80px;
 }
 
-.portal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(28, 40, 51, 0.7); /* dark-blue 帶透明度 */
-  backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+/* ── Login Panel ── */
+.portal-login-panel {
+  max-width: 450px;
 }
 
-.login-box {
-  background: white;
-  width: 100%;
-  max-width: 480px;
-  border-radius: 12px;
-  padding: 3rem;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+.portal-heading {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #C5A880;
+  text-shadow: 0 0 30px rgba(197, 168, 128, 0.6);
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
+.portal-heading-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 300;
 }
 
-.login-header h2 {
-  color: var(--dark-blue);
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+.portal-card {
+  background-color: #0D0D0E;
+  border: 1px solid rgba(197, 168, 128, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-.login-header p {
-  color: var(--text-muted);
-  font-size: 0.95rem;
+/* ── Form labels ── */
+.portal-label {
+  font-size: 11px;
+  color: #C5A880;
+  letter-spacing: 0.15em;
 }
 
-.input-group {
-  margin-bottom: 1.5rem;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--dark-gray);
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-
-.input-with-icon {
-  position: relative;
-}
-
-.input-icon {
-  position: absolute;
-  left: 12px;
+/* ── Input icon ── */
+.portal-input-icon {
+  left: 16px;
   top: 50%;
-  transform: translateY(-50%);
-  color: #aaa;
+  color: rgba(255, 255, 255, 0.3);
 }
 
-.input-with-icon input {
-  width: 100%;
-  padding: 0.8rem 1rem 0.8rem 2.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background-color: #fcfcfc;
-}
-
-.input-with-icon input:focus {
+/* ── Form inputs ── */
+.portal-input {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 16px 12px 42px;
+  color: #fff;
   outline: none;
-  border-color: var(--wood-brown);
-  background-color: white;
-  box-shadow: 0 0 0 2px rgba(139, 90, 43, 0.1);
+  transition: all 0.3s;
+  font-size: 14px;
 }
 
-.form-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
+.portal-input:focus {
+  border-color: #C5A880;
+  box-shadow: 0 0 16px rgba(197, 168, 128, 0.1);
 }
 
-.remember-me {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-muted);
+/* ── Login button ── */
+.portal-login-btn {
+  background-color: transparent;
   cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+  letter-spacing: 0.1em;
 }
 
-.forgot-password {
-  color: var(--wood-brown);
-  transition: color 0.3s ease;
+.portal-login-btn:hover {
+  background-color: rgba(197, 168, 128, 0.1);
 }
 
-.forgot-password:hover {
-  color: var(--dark-blue);
+/* ── Info box ── */
+.portal-info-box {
+  background-color: rgba(197, 168, 128, 0.05);
+  border: 1px solid rgba(197, 168, 128, 0.1);
 }
 
-.login-btn {
-  width: 100%;
-  padding: 1rem;
-  font-size: 1.1rem;
-  border-radius: 6px;
-}
-
-.portal-notice {
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: var(--earth-light);
-  border-radius: 6px;
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-}
-
-.portal-notice svg {
-  color: var(--wood-brown);
+.portal-info-icon {
+  color: #C5A880;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
-.portal-notice p {
-  font-size: 0.85rem;
-  color: var(--dark-gray);
-  line-height: 1.5;
+.portal-info-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.6;
 }
 
-@media (max-width: 576px) {
-  .login-box {
-    padding: 2rem;
-  }
+/* ═══════════════════════════════════════════════════════════════
+   DASHBOARD VIEW
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Dashboard heading ── */
+.portal-dash-heading {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #C5A880;
+  text-shadow: 0 0 30px rgba(197, 168, 128, 0.6);
+}
+
+.portal-dash-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 300;
+}
+
+/* ── Logout button ── */
+.portal-logout-btn {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 300;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.portal-logout-btn:hover {
+  color: #C5A880;
+}
+
+/* ── Status Banner ── */
+.portal-status-banner {
+  background-color: rgba(197, 168, 128, 0.05);
+  border: 1px solid rgba(197, 168, 128, 0.15);
+}
+
+.portal-status-icon-circle {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(197, 168, 128, 0.1);
+}
+
+.portal-status-icon {
+  color: #C5A880;
+}
+
+.portal-status-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.portal-status-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.portal-status-badge {
+  font-size: 11px;
+  color: #050505;
+  background-color: #C5A880;
+  font-weight: 500;
+}
+
+/* ── Feature Card ── */
+.portal-feature-card {
+  background-color: #0D0D0E;
+  border: 1px solid rgba(197, 168, 128, 0.15);
+  transition: all 0.3s ease;
+}
+
+.portal-feature-card:hover {
+  border-color: rgba(197, 168, 128, 0.4);
+  box-shadow: 0 4px 20px rgba(197, 168, 128, 0.1);
+}
+
+.portal-feature-icon-circle {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(197, 168, 128, 0.05);
+}
+
+.portal-feature-icon {
+  color: #C5A880;
+}
+
+.portal-feature-badge {
+  font-size: 9px;
+  color: #C5A880;
+  border: 1px solid rgba(197, 168, 128, 0.3);
+  background-color: rgba(197, 168, 128, 0.05);
+}
+
+.portal-feature-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.portal-feature-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.8;
+}
+
+/* ── Lock overlay ── */
+.portal-lock-overlay {
+  opacity: 0.15;
+}
+
+.portal-lock-icon {
+  color: #fff;
 }

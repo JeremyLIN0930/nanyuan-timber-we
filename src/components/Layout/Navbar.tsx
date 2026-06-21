@@ -24,6 +24,8 @@ const NAV_LINKS: NavLink[] = [
 
 /* ═══════════════════════════════════════════════════════════════
    NAVBAR COMPONENT
+   ─────────────────────────────────────────────────────────────
+   Zero inline styles. All visual properties in Navbar.css.
 ═══════════════════════════════════════════════════════════════ */
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen]     = useState(false);
@@ -108,7 +110,7 @@ const Navbar: React.FC = () => {
                 transition={{ duration: 0.22 }}
                 className="nyn-navbar-toggle-icon"
               >
-                <X size={26} strokeWidth={1.5} />
+                <X size={28} strokeWidth={1.5} />
               </motion.span>
             ) : (
               <motion.span
@@ -119,7 +121,7 @@ const Navbar: React.FC = () => {
                 transition={{ duration: 0.22 }}
                 className="nyn-navbar-toggle-icon"
               >
-                <Menu size={26} strokeWidth={1.5} />
+                <Menu size={28} strokeWidth={1.5} />
               </motion.span>
             )}
           </AnimatePresence>

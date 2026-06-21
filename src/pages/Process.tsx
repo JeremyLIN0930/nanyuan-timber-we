@@ -4,11 +4,6 @@ import { Ruler, FileText, HardHat, FileCheck, Trees } from 'lucide-react';
 import './Process.css';
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════════════════════════════ */
-const GOLD = '#C5A880';
-
-/* ═══════════════════════════════════════════════════════════════
    PROCESS STEPS DATA (5 Luxury Steps - SEO & GEO Optimized)
 ═══════════════════════════════════════════════════════════════ */
 interface ProcessStep {
@@ -27,7 +22,7 @@ const STEPS: ProcessStep[] = [
     title: '空間規劃',
     en:    'SPACE PLANNING',
     desc:  '精品工業風。精密格局配置與動線規劃。運用北美胡桃木實木地板與奢華暗灰石材，結合微水泥牆面交融的光影視覺，勾勒沉浸式空間深度。',
-    icon:  <Ruler size={24} style={{ color: GOLD }} />,
+    icon:  <Ruler size={24} className="process-icon-gold" />,
     img:   '/images/space_planning.png',
     alt:   '南源木材 空間規劃設計圖 精品工業風客廳 台北天母豪宅裝潢工程'
   },
@@ -36,7 +31,7 @@ const STEPS: ProcessStep[] = [
     title: '風格意境',
     en:    'AMBIANCE DESIGN',
     desc:  '精品工業風。將礦物特殊塗料、微水泥觸感牆面在曜石黑光影折射下，與原木家具進行質感碰撞，形塑侘寂與工業美學交融的私人場域。',
-    icon:  <FileText size={24} style={{ color: GOLD }} />,
+    icon:  <FileText size={24} className="process-icon-gold" />,
     img:   '/images/ambiance_design.png',
     alt:   '南源木材 風格意境原木臥室 義大利特殊礦物塗料 曜石黑光影折射'
   },
@@ -45,7 +40,7 @@ const STEPS: ProcessStep[] = [
     title: '職人手作',
     en:    'MASTER CRAFTSMANSHIP',
     desc:  '精品工業風。資深職人手工藝匠心傳承。現場工班精細榫卯工法拼接，將天然原木建材以極致精度裁切打磨，為空間注入手作溫度。',
-    icon:  <HardHat size={24} style={{ color: GOLD }} />,
+    icon:  <HardHat size={24} className="process-icon-gold" />,
     img:   '/images/master_craftsmanship.png',
     alt:   '南源木材 職人手作木工雕琢 榫卯精密拼接工法 台灣自有工班工程落地'
   },
@@ -54,7 +49,7 @@ const STEPS: ProcessStep[] = [
     title: '工程合約',
     en:    'TRANSPARENT AGREEMENT',
     desc:  '精品工業風。誠信透明的合約與報價。於胡桃木桌上簽署手工皮革工程合約書，條列化所有工料細節與進度查核點，建立最安心的保障。',
-    icon:  <FileCheck size={24} style={{ color: GOLD }} />,
+    icon:  <FileCheck size={24} className="process-icon-gold" />,
     img:   '/images/transparent_agreement.png',
     alt:   '南源木材 誠信透明工程合約 手工皮革合約書與鋼筆 竹北現代大宅合約簽約'
   },
@@ -63,7 +58,7 @@ const STEPS: ProcessStep[] = [
     title: '永續選材',
     en:    'SUSTAINABLE SELECTION',
     desc:  '精品工業風。嚴格挑選具備 FSC 永續認證的天然原木（胡桃木、橡木、楓木），在職人木材樣品藝廊中，為您的空間挑選最切合的傳世肌理。',
-    icon:  <Trees size={24} style={{ color: GOLD }} />,
+    icon:  <Trees size={24} className="process-icon-gold" />,
     img:   '/images/sustainable_selection.png',
     alt:   '南源木材 永續選材木材樣品藝廊 FSC認證天然原木 青埔老屋翻新選材'
   },

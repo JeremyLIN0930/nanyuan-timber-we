@@ -1,19 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import './Contact.css';
 
 /* ═══════════════════════════════════════════════════════════════
    DESIGN TOKENS
 ═══════════════════════════════════════════════════════════════ */
-const GOLD        = '#C5A880';
-const GOLD_GLOW   = 'rgba(197,168,128,0.85)';
-const GOLD_DIM    = 'rgba(197,168,128,0.1)';
-const GOLD_MID    = 'rgba(197,168,128,0.2)';
-const GOLD_BORDER = 'rgba(197,168,128,0.4)';
 const BG_DARK     = '#050505';
-const BG_CARD     = 'rgba(255,255,255,0.02)';
-const BORDER_SUB  = 'rgba(255,255,255,0.1)';
-const TEXT_DIM    = 'rgba(255,255,255,0.4)';
-const TEXT_MID    = 'rgba(255,255,255,0.6)';
 
 const slideTransition = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
@@ -28,7 +20,7 @@ interface ServiceDef {
   en:    string;
   img:   string;
   desc:  string;
-  accent: string; // short tagline shown on hover
+  accent: string;
 }
 
 const SERVICES: ServiceDef[] = [
@@ -67,8 +59,7 @@ const SERVICES: ServiceDef[] = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   CONDITIONAL DATA  — one lookup per service id
-   Each entry has: budgets[], scopes[], styles[]
+   CONDITIONAL DATA
 ═══════════════════════════════════════════════════════════════ */
 interface BudgetOption  { label: string; en: string; tier: string; }
 interface ScopeOption   { id: string; label: string; }
@@ -76,8 +67,8 @@ interface StyleOption   {
   id:         string;
   label:      string;
   img:        string;
-  isConsult?: boolean;   // marks the special "consult with master" card
-  desc?:      string;    // long-form copy shown inside the consult card
+  isConsult?: boolean;
+  desc?:      string;
 }
 
 interface ServiceConfig {
@@ -88,7 +79,6 @@ interface ServiceConfig {
 
 const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
 
-  /* ── A. 全屋改造統包 ── */
   full_remodel: {
     budgets: [
       { label: '150萬 — 300萬',  en: '高質感全屋規劃',  tier: 'PREMIUM'   },
@@ -118,7 +108,6 @@ const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
     ],
   },
 
-  /* ── B. 水電基礎工程 ── */
   utility_eng: {
     budgets: [
       { label: '10萬 — 50萬',  en: '單項管線更新',   tier: 'ENTRY'    },
@@ -148,7 +137,6 @@ const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
     ],
   },
 
-  /* ── C. 工藝油漆工程 ── */
   paint_craft: {
     budgets: [
       { label: '5萬 — 15萬',  en: '單空間油漆更新', tier: 'ENTRY'    },
@@ -178,7 +166,6 @@ const SERVICE_CONFIG: Record<ServiceId, ServiceConfig> = {
     ],
   },
 
-  /* ── D. 局部空間改造 ── */
   partial_remodel: {
     budgets: [
       { label: '15萬 — 50萬',  en: '單一空間精修', tier: 'ENTRY'    },
@@ -255,7 +242,7 @@ const GoldInput: React.FC<{
   required?: boolean;
 }> = ({ label, type = 'text', value, placeholder, onChange, required }) => (
   <div>
-    <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: GOLD, textShadow: `0 0 10px ${GOLD_DIM}` }}>
+    <label className="contact-gold-label">
       {label}{required && ' *'}
     </label>
     <input
@@ -263,28 +250,14 @@ const GoldInput: React.FC<{
       value={value}
       placeholder={placeholder}
       onChange={e => onChange(e.target.value)}
-      style={{
-        width:           '100%',
-        backgroundColor: 'transparent',
-        border:          `1px solid ${BORDER_SUB}`,
-        padding:         '13px 16px',
-        color:           '#fff',
-        letterSpacing:   '0.08em',
-        outline:         'none',
-        transition:      'border-color 0.3s, box-shadow 0.3s',
-        fontSize:        'clamp(0.85rem, 1.2vw, 1rem)',
-        fontWeight:      required ? 700 : 300,
-        boxSizing:       'border-box',
-      }}
-      onFocus={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.boxShadow = `0 0 16px ${GOLD_DIM}`; }}
-      onBlur={e => { e.currentTarget.style.borderColor = BORDER_SUB; e.currentTarget.style.boxShadow = 'none'; }}
+      className={`contact-gold-input ${required ? 'contact-gold-input--required' : 'contact-gold-input--optional'}`}
     />
   </div>
 );
 
 /* Section heading inside step */
-const StepSubtitle: React.FC<{ children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ children, className = '', style = {} }) => (
-  <h3 className={className} style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)', fontWeight: 900, letterSpacing: '-0.01em', color: '#fff', textShadow: `0 0 15px rgba(255,255,255,0.3)`, margin: '1.5rem 0 0.85rem', ...style }}>
+const StepSubtitle: React.FC<{ children: React.ReactNode; className?: string; noTopMargin?: boolean }> = ({ children, className = '', noTopMargin }) => (
+  <h3 className={`contact-step-subtitle${noTopMargin ? ' contact-step-subtitle--no-top' : ''} ${className}`}>
     {children}
   </h3>
 );
@@ -297,8 +270,8 @@ const Step1: React.FC<{
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 }> = ({ formData, setFormData }) => (
   <motion.div key="s1" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
-    <h2 style={{ fontSize: 'clamp(1.1rem,2.2vw,1.4rem)', fontWeight: 900, color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: `1px solid ${BORDER_SUB}`, paddingBottom: '1rem', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-      01 &nbsp;服務選配 &nbsp;<span style={{ fontWeight: 200, fontSize: '0.7em', letterSpacing: '0.2em', color: TEXT_DIM }}>SERVICE</span>
+    <h2 className="contact-step-heading">
+      01 &nbsp;服務選配 &nbsp;<span className="contact-step-heading-dim">SERVICE</span>
     </h2>
 
     <div className="row g-3">
@@ -309,34 +282,17 @@ const Step1: React.FC<{
             <motion.div
               whileHover={{ y: -4 }}
               onClick={() => setFormData({
-                ...INITIAL_FORM,        // ← reset downstream selections on service change
+                ...INITIAL_FORM,
                 serviceType: service.id,
               })}
-              style={{
-                cursor:          'pointer',
-                overflow:        'hidden',
-                height:          '100%',
-                display:         'flex',
-                flexDirection:   'column',
-                transition:      'all 0.45s',
-                border:          active ? `2px solid ${GOLD}` : `1px solid ${BORDER_SUB}`,
-                boxShadow:       active ? `0 0 30px rgba(197,168,128,0.35), inset 0 0 20px rgba(197,168,128,0.04)` : 'none',
-                backgroundColor: active ? GOLD_DIM : BG_CARD,
-              }}
+              className={`contact-svc-card ${active ? 'contact-svc-card--active' : 'contact-svc-card--inactive'}`}
             >
               {/* Image */}
-              <div style={{ aspectRatio: '16/9', overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+              <div className="contact-svc-img-wrap">
                 <img
                   src={service.img}
                   alt={service.label}
-                  style={{
-                    width:      '100%',
-                    height:     '100%',
-                    objectFit:  'cover',
-                    transition: 'transform 0.7s, filter 0.5s',
-                    transform:  active ? 'scale(1.06)' : 'scale(1)',
-                    filter:     active ? 'brightness(1.1)' : 'brightness(0.65)',
-                  }}
+                  className={`contact-svc-img ${active ? 'contact-svc-img--active' : 'contact-svc-img--inactive'}`}
                 />
                 {/* Active badge */}
                 <AnimatePresence>
@@ -345,34 +301,24 @@ const Step1: React.FC<{
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
-                      style={{
-                        position:        'absolute',
-                        top:             '10px',
-                        right:           '10px',
-                        backgroundColor: GOLD,
-                        color:           BG_DARK,
-                        fontSize:        '9px',
-                        fontWeight:      900,
-                        letterSpacing:   '0.15em',
-                        padding:         '4px 10px',
-                      }}
+                      className="contact-svc-active-badge"
                     >
                       ✓ SELECTED
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <div style={{ position: 'absolute', inset: 0, backgroundColor: active ? 'rgba(197,168,128,0.06)' : 'rgba(5,5,5,0.35)', transition: 'all 0.5s' }} />
+                <div className={`contact-svc-overlay ${active ? 'contact-svc-overlay--active' : 'contact-svc-overlay--inactive'}`} />
               </div>
 
               {/* Text body */}
-              <div style={{ padding: 'clamp(14px,2vw,20px)', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <span style={{ fontSize: 'clamp(0.95rem,1.6vw,1.15rem)', fontWeight: 900, letterSpacing: '-0.02em', color: active ? GOLD : '#fff', textShadow: active ? `0 0 22px ${GOLD_GLOW}` : 'none', transition: 'all 0.4s' }}>
+              <div className="contact-svc-body">
+                <span className={`contact-svc-label ${active ? 'contact-svc-label--active' : 'contact-svc-label--inactive'}`}>
                   {service.label}
                 </span>
-                <span style={{ fontSize: '9px', fontWeight: 300, letterSpacing: '0.22em', color: TEXT_DIM, textTransform: 'uppercase' }}>
+                <span className="contact-svc-en">
                   {service.en}
                 </span>
-                <p style={{ fontSize: 'clamp(0.78rem,1.1vw,0.85rem)', fontWeight: 300, lineHeight: 1.65, color: active ? 'rgba(255,255,255,0.82)' : TEXT_MID, margin: 0, marginTop: '4px' }}>
+                <p className={`contact-svc-desc ${active ? 'contact-svc-desc--active' : 'contact-svc-desc--inactive'}`}>
                   {service.desc}
                 </p>
               </div>
@@ -385,15 +331,13 @@ const Step1: React.FC<{
 );
 
 /* ═══════════════════════════════════════════════════════════════
-   STEP 2 — BUDGET + PING + SCOPE + STYLE  (service-driven)
+   STEP 2 — BUDGET + PING + SCOPE + STYLE
 ═══════════════════════════════════════════════════════════════ */
 const Step2: React.FC<{
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
 }> = ({ formData, setFormData }) => {
 
-  /* Guard: should never reach here without a selected service,
-     but TypeScript needs the cast */
   if (!formData.serviceType) return null;
   const cfg = SERVICE_CONFIG[formData.serviceType as ServiceId];
   const isBespoke = (b: BudgetOption) => b.tier === 'BESPOKE';
@@ -404,21 +348,25 @@ const Step2: React.FC<{
       scopes: prev.scopes.includes(id) ? prev.scopes.filter(s => s !== id) : [...prev.scopes, id],
     }));
 
-  /* Slider track fill % */
   const sliderPct = ((formData.ping - 5) / 195) * 100;
 
   return (
     <motion.div key="s2" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
-      <h2 style={{ fontSize: 'clamp(1.1rem,2.2vw,1.4rem)', fontWeight: 900, color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: `1px solid ${BORDER_SUB}`, paddingBottom: '1rem', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-        02 &nbsp;需求 · 預算 · 風格 &nbsp;<span style={{ fontWeight: 200, fontSize: '0.7em', letterSpacing: '0.2em', color: TEXT_DIM }}>SCOPE & STYLE</span>
+      <h2 className="contact-step-heading">
+        02 &nbsp;需求 · 預算 · 風格 &nbsp;<span className="contact-step-heading-dim">SCOPE & STYLE</span>
       </h2>
 
-      {/* ── A. BUDGET ────────────────────────────────────────── */}
+      {/* ── A. BUDGET ── */}
       <StepSubtitle>預算區間</StepSubtitle>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="contact-budget-list">
         {cfg.budgets.map(b => {
           const isBespOpt = isBespoke(b);
           const isActive  = isBespOpt ? formData.isBespoke : (formData.budget === b.label && !formData.isBespoke);
+          const btnClass = isActive
+            ? 'contact-budget-btn contact-budget-btn--active'
+            : isBespOpt
+              ? 'contact-budget-btn contact-budget-btn--bespoke'
+              : 'contact-budget-btn contact-budget-btn--default';
           return (
             <button
               key={b.label}
@@ -427,39 +375,19 @@ const Step2: React.FC<{
                 budget:    b.label,
                 isBespoke: isBespOpt,
               }))}
-              style={{
-                display:         'flex',
-                justifyContent:  'space-between',
-                alignItems:      'center',
-                width:           '100%',
-                textAlign:       'left',
-                padding:         isBespOpt ? '16px 18px' : '13px 18px',
-                border:          isActive
-                  ? `2px solid ${GOLD}`
-                  : isBespOpt
-                    ? `1px solid ${GOLD_BORDER}`
-                    : `1px solid ${BORDER_SUB}`,
-                backgroundColor: isActive ? GOLD_MID : 'transparent',
-                color:           isActive ? GOLD : isBespOpt ? `rgba(197,168,128,0.7)` : TEXT_DIM,
-                fontWeight:      isActive ? 900 : 300,
-                boxShadow:       isActive ? `0 0 22px rgba(197,168,128,0.28)` : 'none',
-                textShadow:      isActive ? `0 0 15px rgba(197,168,128,0.55)` : 'none',
-                transition:      'all 0.35s',
-                cursor:          'pointer',
-                outline:         'none',
-              }}
+              className={btnClass}
             >
               <div>
-                <span style={{ fontSize: 'clamp(0.82rem,1.3vw,0.92rem)', letterSpacing: '0.08em', display: 'block' }}>
+                <span className="contact-budget-label">
                   {b.label}
                 </span>
                 {isBespOpt && (
-                  <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.14em', color: isActive ? 'rgba(197,168,128,0.8)' : 'rgba(255,255,255,0.3)', display: 'block', marginTop: '3px' }}>
+                  <span className={`contact-budget-bespoke-sub ${isActive ? 'contact-budget-bespoke-sub--active' : 'contact-budget-bespoke-sub--inactive'}`}>
                     無預算上限的頂級私人工藝空間
                   </span>
                 )}
               </div>
-              <span style={{ fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: isActive ? 0.85 : 0.38, flexShrink: 0, marginLeft: '12px' }}>
+              <span className={`contact-budget-en ${isActive ? 'contact-budget-en--active' : 'contact-budget-en--inactive'}`}>
                 {b.en}
               </span>
             </button>
@@ -474,84 +402,43 @@ const Step2: React.FC<{
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            style={{ fontSize: '0.85rem', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(197,168,128,0.8)', borderLeft: `2px solid ${GOLD}`, paddingLeft: '1rem', lineHeight: 1.9, marginTop: '0.75rem', overflow: 'hidden' }}
+            className="contact-bespoke-note"
           >
             我們將安排資深職人與設計總監，為您量身訂製完全不受限的頂級私人工藝空間。
           </motion.p>
         )}
       </AnimatePresence>
 
-      {/* ── B. PING SLIDER ───────────────────────────────────── */}
+      {/* ── B. PING SLIDER ── */}
       <StepSubtitle>空間坪數</StepSubtitle>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        {/* Custom styled slider */}
-        <div style={{ flexGrow: 1, position: 'relative', height: '20px', display: 'flex', alignItems: 'center' }}>
-          {/* Track background */}
-          <div style={{
-            position:      'absolute',
-            left:          0,
-            right:         0,
-            height:        '2px',
-            backgroundColor: BORDER_SUB,
-            borderRadius:  '2px',
-          }} />
-          {/* Track fill */}
-          <div style={{
-            position:      'absolute',
-            left:          0,
-            width:         `${sliderPct}%`,
-            height:        '2px',
-            backgroundColor: GOLD,
-            borderRadius:  '2px',
-            boxShadow:     `0 0 8px rgba(197,168,128,0.6)`,
-            transition:    'width 0.05s',
-          }} />
-          {/* Native range (invisible but functional) */}
+      <div className="contact-slider-wrap">
+        <div className="contact-slider-track-wrap">
+          <div className="contact-slider-track-bg" />
+          <div className="contact-slider-track-fill" style={{ width: `${sliderPct}%` }} />
           <input
             type="range"
             min="5"
             max="200"
             value={formData.ping}
             onChange={e => setFormData(prev => ({ ...prev, ping: parseInt(e.target.value) }))}
-            style={{
-              position:    'absolute',
-              left:        0,
-              right:       0,
-              width:       '100%',
-              opacity:     0,
-              height:      '20px',
-              cursor:      'pointer',
-              margin:      0,
-            }}
+            className="contact-slider-native"
           />
-          {/* Custom thumb */}
-          <div style={{
-            position:        'absolute',
-            left:            `calc(${sliderPct}% - 9px)`,
-            width:           '18px',
-            height:          '18px',
-            borderRadius:    '50%',
-            backgroundColor: GOLD,
-            boxShadow:       `0 0 14px rgba(197,168,128,0.85), 0 0 0 3px rgba(197,168,128,0.2)`,
-            pointerEvents:   'none',
-            transition:      'left 0.05s',
-          }} />
+          <div className="contact-slider-thumb" style={{ left: `calc(${sliderPct}% - 9px)` }} />
         </div>
 
-        {/* Value display */}
-        <div style={{ textAlign: 'right', minWidth: '80px', flexShrink: 0 }}>
-          <span style={{ fontSize: 'clamp(1.6rem,3vw,2.2rem)', fontWeight: 900, color: GOLD, textShadow: `0 0 22px rgba(197,168,128,0.7)`, lineHeight: 1 }}>
+        <div className="contact-slider-value-wrap">
+          <span className="contact-slider-value">
             {formData.ping}
           </span>
-          <span style={{ fontSize: '11px', fontWeight: 300, color: TEXT_DIM, marginLeft: '4px' }}>坪</span>
+          <span className="contact-slider-unit">坪</span>
         </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
-        <span style={{ fontSize: '10px', color: TEXT_DIM, letterSpacing: '0.1em' }}>5 坪</span>
-        <span style={{ fontSize: '10px', color: TEXT_DIM, letterSpacing: '0.1em' }}>200 坪</span>
+      <div className="contact-slider-range">
+        <span className="contact-slider-range-label">5 坪</span>
+        <span className="contact-slider-range-label">200 坪</span>
       </div>
 
-      {/* ── C. RENOVATION SCOPE ──────────────────────────────── */}
+      {/* ── C. RENOVATION SCOPE ── */}
       <StepSubtitle>裝修範圍</StepSubtitle>
       <div className="row g-2">
         {cfg.scopes.map(scope => {
@@ -560,42 +447,16 @@ const Step2: React.FC<{
             <div className="col-12 col-sm-6" key={scope.id}>
               <button
                 onClick={() => toggleScope(scope.id)}
-                style={{
-                  display:         'flex',
-                  alignItems:      'center',
-                  gap:             '12px',
-                  width:           '100%',
-                  textAlign:       'left',
-                  padding:         '11px 15px',
-                  border:          checked ? `2px solid ${GOLD}` : `1px solid ${BORDER_SUB}`,
-                  backgroundColor: checked ? 'rgba(197,168,128,0.12)' : 'transparent',
-                  color:           checked ? GOLD : TEXT_MID,
-                  transition:      'all 0.3s',
-                  cursor:          'pointer',
-                  outline:         'none',
-                  boxShadow:       checked ? `0 0 16px rgba(197,168,128,0.2)` : 'none',
-                }}
+                className={`contact-scope-btn ${checked ? 'contact-scope-btn--checked' : 'contact-scope-btn--unchecked'}`}
               >
-                {/* Custom checkbox */}
-                <div style={{
-                  width:           '17px',
-                  height:          '17px',
-                  border:          `2px solid ${checked ? GOLD : 'rgba(255,255,255,0.28)'}`,
-                  backgroundColor: checked ? GOLD : 'transparent',
-                  boxShadow:       checked ? `0 0 10px rgba(197,168,128,0.55)` : 'none',
-                  display:         'flex',
-                  alignItems:      'center',
-                  justifyContent:  'center',
-                  flexShrink:      0,
-                  transition:      'all 0.3s',
-                }}>
+                <div className={`contact-scope-checkbox ${checked ? 'contact-scope-checkbox--checked' : 'contact-scope-checkbox--unchecked'}`}>
                   {checked && (
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={BG_DARK} strokeWidth="3.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   )}
                 </div>
-                <span style={{ fontSize: 'clamp(0.8rem,1.15vw,0.88rem)', fontWeight: checked ? 700 : 300, letterSpacing: '0.08em', transition: 'font-weight 0.3s' }}>
+                <span className={`contact-scope-label ${checked ? 'contact-scope-label--checked' : 'contact-scope-label--unchecked'}`}>
                   {scope.label}
                 </span>
               </button>
@@ -604,9 +465,9 @@ const Step2: React.FC<{
         })}
       </div>
 
-      {/* ── D. STYLE INTENT ──────────────────────────────────── */}
-      <div style={{ borderTop: `1px solid ${BORDER_SUB}`, marginTop: '1.75rem', paddingTop: '1.25rem' }}>
-        <StepSubtitle style={{ marginTop: 0 }}>視覺意境 STYLE</StepSubtitle>
+      {/* ── D. STYLE INTENT ── */}
+      <div className="contact-style-divider">
+        <StepSubtitle noTopMargin>視覺意境 STYLE</StepSubtitle>
       </div>
       <div className="row g-3">
         {cfg.styles.map(style => {
@@ -619,96 +480,31 @@ const Step2: React.FC<{
                 <motion.div
                   whileHover={{ y: -3 }}
                   onClick={() => setFormData(prev => ({ ...prev, style: style.id }))}
-                  style={{
-                    position:        'relative',
-                    overflow:        'hidden',
-                    cursor:          'pointer',
-                    display:         'flex',
-                    alignItems:      'stretch',
-                    /* Resting border: warm gold, slightly dimmer than active */
-                    border:          active
-                      ? `2px solid ${GOLD}`
-                      : `1px solid rgba(197,168,128,0.55)`,
-                    boxShadow:       active
-                      ? `0 0 35px rgba(197,168,128,0.5), inset 0 0 30px rgba(197,168,128,0.06)`
-                      : `0 0 18px rgba(197,168,128,0.15)`,
-                    backgroundColor: active ? 'rgba(197,168,128,0.08)' : 'rgba(197,168,128,0.03)',
-                    transition:      'all 0.45s',
-                    minHeight:       'clamp(90px,13vw,120px)',
-                  }}
+                  className={`contact-consult-card ${active ? 'contact-consult-card--active' : 'contact-consult-card--inactive'}`}
                 >
                   {/* Left: thumbnail strip */}
-                  <div style={{ width: 'clamp(90px,18vw,150px)', flexShrink: 0, position: 'relative', overflow: 'hidden' }}>
+                  <div className="contact-consult-img-wrap">
                     <img
                       src={style.img}
                       alt={style.label}
-                      style={{
-                        width:      '100%',
-                        height:     '100%',
-                        objectFit:  'cover',
-                        display:    'block',
-                        transition: 'transform 0.7s, filter 0.5s',
-                        transform:  active ? 'scale(1.08)' : 'scale(1)',
-                        filter:     active ? 'brightness(0.75) sepia(0.2)' : 'brightness(0.45) sepia(0.15)',
-                      }}
+                      className={`contact-consult-img ${active ? 'contact-consult-img--active' : 'contact-consult-img--inactive'}`}
                     />
-                    {/* Gold gradient overlay on image */}
-                    <div style={{
-                      position:   'absolute',
-                      inset:      0,
-                      background: 'linear-gradient(to right, transparent 40%, rgba(5,5,5,0.85) 100%)',
-                    }} />
+                    <div className="contact-consult-img-gradient" />
                   </div>
 
                   {/* Right: text block */}
-                  <div style={{
-                    flexGrow:    1,
-                    padding:     'clamp(14px,2vw,22px) clamp(16px,2.5vw,28px)',
-                    display:     'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    gap:         '6px',
-                  }}>
-                    {/* Crown badge */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
-                      <span style={{
-                        fontSize:        '9px',
-                        fontWeight:      700,
-                        letterSpacing:   '0.22em',
-                        color:           active ? GOLD : 'rgba(197,168,128,0.65)',
-                        textTransform:   'uppercase',
-                        border:          `1px solid ${active ? GOLD : 'rgba(197,168,128,0.4)'}`,
-                        padding:         '3px 8px',
-                        transition:      'all 0.4s',
-                        backgroundColor: active ? 'rgba(197,168,128,0.12)' : 'transparent',
-                      }}>
+                  <div className="contact-consult-body">
+                    <div className="contact-consult-badge-row">
+                      <span className={`contact-consult-badge ${active ? 'contact-consult-badge--active' : 'contact-consult-badge--inactive'}`}>
                         CONSULT WITH MASTER
                       </span>
                     </div>
 
-                    {/* Title */}
-                    <span style={{
-                      fontSize:      'clamp(0.92rem,1.5vw,1.05rem)',
-                      fontWeight:    900,
-                      letterSpacing: '-0.02em',
-                      color:         active ? GOLD : 'rgba(197,168,128,0.85)',
-                      textShadow:    active ? `0 0 20px rgba(197,168,128,0.7)` : 'none',
-                      transition:    'all 0.4s',
-                      lineHeight:    1.2,
-                    }}>
+                    <span className={`contact-consult-title ${active ? 'contact-consult-title--active' : 'contact-consult-title--inactive'}`}>
                       {style.label}
                     </span>
 
-                    {/* Description copy */}
-                    <p style={{
-                      fontSize:    'clamp(0.74rem,1.05vw,0.82rem)',
-                      fontWeight:  300,
-                      letterSpacing: '0.04em',
-                      color:       active ? 'rgba(255,255,255,0.72)' : 'rgba(255,255,255,0.38)',
-                      lineHeight:  1.75,
-                      margin:      0,
-                      transition:  'color 0.4s',
-                    }}>
+                    <p className={`contact-consult-desc ${active ? 'contact-consult-desc--active' : 'contact-consult-desc--inactive'}`}>
                       {style.desc}
                     </p>
                   </div>
@@ -720,19 +516,7 @@ const Step2: React.FC<{
                         initial={{ opacity: 0, scale: 0.7 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.7 }}
-                        style={{
-                          position:        'absolute',
-                          top:             '10px',
-                          right:           '12px',
-                          width:           '22px',
-                          height:          '22px',
-                          borderRadius:    '50%',
-                          backgroundColor: GOLD,
-                          display:         'flex',
-                          alignItems:      'center',
-                          justifyContent:  'center',
-                          boxShadow:       `0 0 12px rgba(197,168,128,0.7)`,
-                        }}
+                        className="contact-consult-check"
                       >
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={BG_DARK} strokeWidth="3.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -751,28 +535,20 @@ const Step2: React.FC<{
               <motion.div
                 whileHover={{ y: -4 }}
                 onClick={() => setFormData(prev => ({ ...prev, style: style.id }))}
-                style={{
-                  position:        'relative',
-                  height:          'clamp(80px,14vw,118px)',
-                  overflow:        'hidden',
-                  cursor:          'pointer',
-                  border:          active ? `2px solid ${GOLD}` : `1px solid ${BORDER_SUB}`,
-                  boxShadow:       active ? `0 0 22px rgba(197,168,128,0.35)` : 'none',
-                  transition:      'all 0.45s',
-                }}
+                className={`contact-style-card ${active ? 'contact-style-card--active' : 'contact-style-card--inactive'}`}
               >
                 <img
                   src={style.img}
                   alt={style.label}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s, filter 0.5s', transform: active ? 'scale(1.1)' : 'scale(1)', filter: active ? 'brightness(1.05)' : 'brightness(0.5)' }}
+                  className={`contact-style-img ${active ? 'contact-style-img--active' : 'contact-style-img--inactive'}`}
                 />
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-start', padding: '10px 12px', background: active ? 'linear-gradient(to top, rgba(5,5,5,0.7) 0%, transparent 100%)' : 'rgba(5,5,5,0.55)', transition: 'all 0.5s' }}>
-                  <span style={{ fontSize: 'clamp(0.78rem,1.3vw,0.9rem)', fontWeight: 900, letterSpacing: '-0.01em', color: active ? GOLD : '#fff', textShadow: active ? `0 0 20px ${GOLD_GLOW}` : 'none', transition: 'all 0.4s' }}>
+                <div className={`contact-style-overlay ${active ? 'contact-style-overlay--active' : 'contact-style-overlay--inactive'}`}>
+                  <span className={`contact-style-label ${active ? 'contact-style-label--active' : 'contact-style-label--inactive'}`}>
                     {style.label}
                   </span>
                 </div>
                 {active && (
-                  <div style={{ position: 'absolute', top: '8px', right: '8px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: GOLD, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="contact-style-check">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={BG_DARK} strokeWidth="3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                   </div>
                 )}
@@ -807,11 +583,11 @@ const Step3: React.FC<{
 
   return (
     <motion.div key="s3" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
-      <h2 style={{ fontSize: 'clamp(1.1rem,2.2vw,1.4rem)', fontWeight: 900, color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.4)', borderBottom: `1px solid ${BORDER_SUB}`, paddingBottom: '1rem', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-        03 &nbsp;聯繫資訊 · 上傳 &nbsp;<span style={{ fontWeight: 200, fontSize: '0.7em', letterSpacing: '0.2em', color: TEXT_DIM }}>CONTACT</span>
+      <h2 className="contact-step-heading">
+        03 &nbsp;聯繫資訊 · 上傳 &nbsp;<span className="contact-step-heading-dim">CONTACT</span>
       </h2>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div className="contact-fields-stack">
         <GoldInput label="姓名 / NAME" value={formData.name}  onChange={v => setFormData(p => ({ ...p, name: v }))}  placeholder="請輸入姓名" required />
         <GoldInput label="電話 / PHONE" type="tel" value={formData.phone} onChange={v => setFormData(p => ({ ...p, phone: v }))} placeholder="請輸入電話" required />
         <GoldInput label="信箱 / EMAIL" type="email" value={formData.email} onChange={v => setFormData(p => ({ ...p, email: v }))} placeholder="請輸入信箱（選填）" />
@@ -819,69 +595,54 @@ const Step3: React.FC<{
 
         {/* Preferred Time */}
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: GOLD, textShadow: `0 0 10px ${GOLD_DIM}` }}>希望聯絡時間 / CONTACT TIME</label>
+          <label className="contact-gold-label">希望聯絡時間 / CONTACT TIME</label>
           <select
             value={formData.preferredTime}
             onChange={e => setFormData(p => ({ ...p, preferredTime: e.target.value }))}
-            style={{ width: '100%', backgroundColor: '#0D0D0E', border: `1px solid ${BORDER_SUB}`, padding: '13px 16px', color: formData.preferredTime ? '#fff' : TEXT_DIM, outline: 'none', fontSize: 'clamp(0.85rem,1.2vw,1rem)', letterSpacing: '0.08em', transition: 'border-color 0.3s', cursor: 'pointer', boxSizing: 'border-box' }}
-            onFocus={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.boxShadow = `0 0 16px ${GOLD_DIM}`; }}
-            onBlur={e => { e.currentTarget.style.borderColor = BORDER_SUB; e.currentTarget.style.boxShadow = 'none'; }}
+            className={`contact-select ${formData.preferredTime ? 'contact-select--filled' : 'contact-select--empty'}`}
           >
-            <option value="" disabled style={{ backgroundColor: '#0D0D0E', color: TEXT_DIM }}>請選擇方便聯絡的時間</option>
+            <option value="" disabled>請選擇方便聯絡的時間</option>
             {['隨時皆可','平日上午 (09:00 - 12:00)','平日下午 (12:00 - 18:00)','平日晚上 (18:00 - 21:00)','假日上午 (09:00 - 12:00)','假日中午與下午 (12:00 - 18:00)','假日晚上 (18:00 - 21:00)'].map(t => (
-              <option key={t} value={t} style={{ backgroundColor: '#0D0D0E' }}>{t}</option>
+              <option key={t} value={t}>{t}</option>
             ))}
           </select>
         </div>
 
         {/* Description */}
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: GOLD, textShadow: `0 0 10px ${GOLD_DIM}` }}>裝修需求描述 / DESCRIPTION</label>
+          <label className="contact-gold-label">裝修需求描述 / DESCRIPTION</label>
           <textarea
             rows={4}
             value={formData.description}
             onChange={e => setFormData(p => ({ ...p, description: e.target.value }))}
             placeholder="請簡述您的裝修需求，例如：偏好建材、隔間變動、特殊收納需求或家庭成員組成等…"
-            style={{ width: '100%', backgroundColor: 'transparent', border: `1px solid ${BORDER_SUB}`, padding: '13px 16px', color: '#fff', fontWeight: 300, letterSpacing: '0.08em', outline: 'none', transition: 'border-color 0.3s, box-shadow 0.3s', fontSize: 'clamp(0.85rem,1.2vw,1rem)', resize: 'vertical', boxSizing: 'border-box', lineHeight: 1.75 }}
-            onFocus={e => { e.currentTarget.style.borderColor = GOLD; e.currentTarget.style.boxShadow = `0 0 16px ${GOLD_DIM}`; }}
-            onBlur={e => { e.currentTarget.style.borderColor = BORDER_SUB; e.currentTarget.style.boxShadow = 'none'; }}
+            className="contact-textarea"
           />
         </div>
 
         {/* Drag & Drop Upload */}
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '11px', fontWeight: 300, letterSpacing: '0.15em', color: GOLD, textShadow: `0 0 10px ${GOLD_DIM}` }}>平面圖 / 現況照片上傳</label>
-          <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*,.pdf" onChange={handleFileSelect} />
+          <label className="contact-gold-label">平面圖 / 現況照片上傳</label>
+          <input type="file" ref={fileInputRef} className="contact-file-input-hidden" accept="image/*,.pdf" onChange={handleFileSelect} />
           <motion.div
             whileHover={{ scale: 1.012 }}
             onClick={() => fileInputRef.current?.click()}
             onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleFileDrop}
-            style={{
-              width:           '100%',
-              height:          '130px',
-              border:          `2px dashed ${isDragOver ? GOLD : uploadedFile ? GOLD_BORDER : BORDER_SUB}`,
-              backgroundColor: isDragOver ? GOLD_DIM : uploadedFile ? 'rgba(197,168,128,0.04)' : BG_CARD,
-              display:         'flex',
-              flexDirection:   'column',
-              alignItems:      'center',
-              justifyContent:  'center',
-              cursor:          'pointer',
-              transition:      'all 0.4s',
-            }}
+            className={`contact-file-dropzone ${isDragOver ? 'contact-file-dropzone--dragover' : uploadedFile ? 'contact-file-dropzone--uploaded' : 'contact-file-dropzone--default'}`}
           >
             {uploadedFile ? (
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ display: 'block', fontWeight: 900, color: GOLD, fontSize: '0.85rem', letterSpacing: '0.1em', textShadow: `0 0 15px rgba(197,168,128,0.5)` }}>✓ 已上傳</span>
-                <span style={{ display: 'block', color: TEXT_MID, fontSize: '0.78rem', letterSpacing: '0.08em', marginTop: '4px' }}>{uploadedFile}</span>
-                <span style={{ display: 'block', color: TEXT_DIM, fontSize: '10px', marginTop: '6px', letterSpacing: '0.1em' }}>點擊重新選擇</span>
+              <div className="contact-file-upload-text">
+                <span className="contact-file-done">✓ 已上傳</span>
+                <span className="contact-file-name">{uploadedFile}</span>
+                <span className="contact-file-reselect">點擊重新選擇</span>
               </div>
             ) : (
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ display: 'block', fontSize: '1.6rem', color: TEXT_DIM, marginBottom: '8px' }}>⬆</span>
-                <span style={{ fontSize: '0.78rem', fontWeight: 300, letterSpacing: '0.12em', color: TEXT_DIM }}>拖拽檔案至此，或點擊上傳</span>
-                <span style={{ display: 'block', fontSize: '10px', color: 'rgba(255,255,255,0.2)', marginTop: '4px', letterSpacing: '0.1em' }}>支援 JPG、PNG、PDF</span>
+              <div className="contact-file-upload-text">
+                <span className="contact-file-arrow">⬆</span>
+                <span className="contact-file-hint">拖拽檔案至此，或點擊上傳</span>
+                <span className="contact-file-formats">支援 JPG、PNG、PDF</span>
               </div>
             )}
           </motion.div>
@@ -900,16 +661,16 @@ const Step4: React.FC<{ onReset: () => void }> = ({ onReset }) => (
     initial={{ opacity: 0, scale: 0.92 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.8, ease: 'easeOut' }}
-    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '3rem 1rem' }}
+    className="contact-success-wrap"
   >
     {/* Animated ring */}
     <motion.div
       initial={{ scale: 0, rotate: -90 }}
       animate={{ scale: 1, rotate: 0 }}
       transition={{ duration: 0.7, ease: 'easeOut' }}
-      style={{ width: '76px', height: '76px', borderRadius: '50%', border: `2px solid ${GOLD}`, boxShadow: `0 0 40px rgba(197,168,128,0.5), inset 0 0 20px rgba(197,168,128,0.1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}
+      className="contact-success-ring"
     >
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C5A880" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
       </svg>
     </motion.div>
@@ -918,7 +679,7 @@ const Step4: React.FC<{ onReset: () => void }> = ({ onReset }) => (
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
-      style={{ fontSize: 'clamp(1.5rem,4vw,2.4rem)', fontWeight: 900, color: GOLD, textShadow: `0 0 40px ${GOLD_GLOW}`, letterSpacing: '-0.03em', marginBottom: '1.25rem' }}
+      className="contact-success-title"
     >
       南源已收到您的服務預約
     </motion.h2>
@@ -927,7 +688,7 @@ const Step4: React.FC<{ onReset: () => void }> = ({ onReset }) => (
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.45 }}
-      style={{ fontSize: 'clamp(0.85rem,1.3vw,1rem)', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.65)', lineHeight: 2, maxWidth: '380px', marginBottom: '2.5rem' }}
+      className="contact-success-desc"
     >
       職人團隊正在檢閱您的需求，<br />專員將於 24 小時內與您聯繫。
     </motion.p>
@@ -937,9 +698,7 @@ const Step4: React.FC<{ onReset: () => void }> = ({ onReset }) => (
       animate={{ opacity: 1 }}
       transition={{ delay: 0.6 }}
       onClick={onReset}
-      style={{ fontSize: 'clamp(0.85rem,1.3vw,1rem)', letterSpacing: '0.12em', padding: '0.85em 2.5em', border: `1px solid ${GOLD}`, color: BG_DARK, backgroundColor: GOLD, cursor: 'pointer', fontWeight: 700, transition: 'box-shadow 0.3s' }}
-      onMouseEnter={e => (e.currentTarget.style.boxShadow = `0 0 28px rgba(197,168,128,0.6)`)}
-      onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}
+      className="contact-success-btn"
     >
       返回服務預約 ➔
     </motion.button>
@@ -961,7 +720,7 @@ const StepTrail: React.FC<{ step: number; serviceLabel: string }> = ({ step, ser
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      style={{ fontSize: 'clamp(2.2rem,5.5vw,3.2rem)', fontWeight: 900, letterSpacing: '-0.05em', color: GOLD, textShadow: `0 0 40px ${GOLD_GLOW}`, lineHeight: 1.05, marginBottom: '0.5rem' }}
+      className="contact-main-title"
     >
       預約服務
     </motion.h1>
@@ -973,50 +732,44 @@ const StepTrail: React.FC<{ step: number; serviceLabel: string }> = ({ step, ser
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '2rem', padding: '6px 14px', border: `1px solid ${GOLD_BORDER}`, backgroundColor: GOLD_DIM }}
+          className="contact-service-badge"
         >
-          <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: GOLD, boxShadow: `0 0 8px ${GOLD_GLOW}` }} />
-          <span style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.2em', color: GOLD, textTransform: 'uppercase' }}>{serviceLabel}</span>
+          <div className="contact-service-badge-dot" />
+          <span className="contact-service-badge-text">{serviceLabel}</span>
         </motion.div>
       )}
     </AnimatePresence>
 
     {/* Step trail */}
-    <div style={{ position: 'relative', paddingLeft: '1.5rem' }}>
-      {/* Rail background */}
-      <div style={{ position: 'absolute', top: 0, bottom: 0, left: '5px', width: '1px', backgroundColor: BORDER_SUB }} />
-      {/* Rail progress */}
+    <div className="contact-trail-wrap">
+      <div className="contact-trail-bg-rail" />
       <motion.div
-        style={{ position: 'absolute', top: 0, left: '5px', width: '1px', backgroundColor: GOLD, boxShadow: `0 0 12px rgba(197,168,128,0.7)`, originY: 0 }}
+        className="contact-trail-progress"
         initial={{ height: '0%' }}
         animate={{ height: `${(Math.min(step, 3) / 3) * 100}%` }}
         transition={{ duration: 0.9, ease: 'easeInOut' }}
       />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', zIndex: 5 }}>
+      <div className="contact-trail-items">
         {STEP_DEFS.map(item => {
           const done    = step > item.s;
           const current = step === item.s;
+          const dotClass = done
+            ? 'contact-trail-dot contact-trail-dot--done'
+            : current
+              ? 'contact-trail-dot contact-trail-dot--current'
+              : 'contact-trail-dot contact-trail-dot--future';
+          const titleClass = step >= item.s
+            ? 'contact-trail-step-title contact-trail-step-title--active'
+            : 'contact-trail-step-title contact-trail-step-title--inactive';
           return (
-            <div key={item.s} style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginLeft: '-22px' }}>
-              {/* Dot */}
-              <div style={{
-                width:           '12px',
-                height:          '12px',
-                borderRadius:    '50%',
-                marginTop:       '5px',
-                flexShrink:      0,
-                border:          '2px solid',
-                borderColor:     step >= item.s ? GOLD : 'rgba(255,255,255,0.18)',
-                backgroundColor: done ? GOLD : current ? 'transparent' : BG_DARK,
-                boxShadow:       step >= item.s ? `0 0 12px rgba(197,168,128,0.75)` : 'none',
-                transition:      'all 0.5s',
-              }} />
+            <div key={item.s} className="contact-trail-item">
+              <div className={dotClass} />
               <div>
-                <h3 style={{ fontSize: '0.98rem', fontWeight: 900, letterSpacing: '-0.01em', color: step >= item.s ? GOLD : 'rgba(255,255,255,0.25)', textShadow: step >= item.s ? `0 0 18px rgba(197,168,128,0.55)` : 'none', transition: 'color 0.5s', margin: 0 }}>
+                <h3 className={titleClass}>
                   {item.title}
                 </h3>
-                <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.14em', color: 'rgba(255,255,255,0.28)', marginTop: '3px', marginBottom: 0 }}>{item.desc}</p>
+                <p className="contact-trail-step-desc">{item.desc}</p>
               </div>
             </div>
           );
@@ -1025,12 +778,12 @@ const StepTrail: React.FC<{ step: number; serviceLabel: string }> = ({ step, ser
     </div>
 
     {/* Decorative company note at bottom of sidebar (desktop only) */}
-    <div className="d-none d-lg-block" style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: `1px solid ${BORDER_SUB}` }}>
-      <p style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.14em', color: 'rgba(255,255,255,0.25)', lineHeight: 1.9 }}>
+    <div className="d-none d-lg-block contact-trail-footer">
+      <p className="contact-trail-company">
         南源木材有限公司<br />
-        <span style={{ letterSpacing: '0.08em' }}>NANYUAN TIMBER DESIGN</span>
+        <span className="contact-trail-company-en">NANYUAN TIMBER DESIGN</span>
       </p>
-      <p style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.18)', lineHeight: 1.7, marginTop: '0.5rem' }}>
+      <p className="contact-trail-note">
         專員將於 24 小時內與您聯繫<br />
         填寫完整將加快服務配對速度
       </p>
@@ -1046,7 +799,6 @@ const Contact: React.FC = () => {
   const [formData,     setFormData]     = useState<FormData>(INITIAL_FORM);
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
 
-  /* Scroll to top of form panel on step change */
   const formPanelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     formPanelRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1061,7 +813,6 @@ const Contact: React.FC = () => {
     setUploadedFile(null);
   };
 
-  /* Validation per step */
   const canProceed = (): boolean => {
     if (step === 1) return !!formData.serviceType;
     if (step === 2) return !!formData.budget && !!formData.style;
@@ -1069,7 +820,6 @@ const Contact: React.FC = () => {
     return true;
   };
 
-  /* Service label for the badge */
   const activeServiceLabel = SERVICES.find(s => s.id === formData.serviceType)?.label ?? '';
 
   return (
@@ -1077,14 +827,14 @@ const Contact: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      style={{ backgroundColor: BG_DARK, minHeight: '100vh' }}
+      className="contact-page"
     >
-      <div className="container px-3 px-md-4" style={{ paddingTop: 'clamp(80px,10vh,120px)', paddingBottom: '80px' }}>
+      <div className="container px-3 px-md-4 contact-container">
         <div className="row g-4 g-lg-5 align-items-start">
 
           {/* ════ LEFT: STEP TRAIL ════ */}
           <div className="col-12 col-lg-4">
-            <div style={{ position: 'sticky', top: '100px' }}>
+            <div className="contact-trail-sticky">
               <StepTrail step={step} serviceLabel={activeServiceLabel} />
             </div>
           </div>
@@ -1092,8 +842,7 @@ const Contact: React.FC = () => {
           {/* ════ RIGHT: STEP CONTENT ════ */}
           <div
             ref={formPanelRef}
-            className="col-12 col-lg-8"
-            style={{ maxHeight: 'calc(100vh - 140px)', overflowY: 'auto', scrollbarWidth: 'none' }}
+            className="col-12 col-lg-8 contact-form-panel"
           >
             <AnimatePresence mode="wait">
 
@@ -1134,29 +883,12 @@ const Contact: React.FC = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: '2rem',
-                  paddingTop: '1.25rem',
-                  borderTop: `1px solid ${BORDER_SUB}`
-                }}
+                className="contact-nav-bar"
               >
                 {step > 1 ? (
                   <button
                     onClick={handlePrev}
-                    className="border-0 bg-transparent"
-                    style={{
-                      color: 'rgba(255,255,255,0.4)',
-                      fontWeight: 300,
-                      letterSpacing: '0.1em',
-                      fontSize: '0.85rem',
-                      transition: 'all 0.3s',
-                      cursor: 'pointer'
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+                    className="border-0 bg-transparent contact-nav-back"
                   >
                     ⬅ 返回上一步
                   </button>
@@ -1164,12 +896,7 @@ const Contact: React.FC = () => {
                 <button
                   onClick={handleNext}
                   disabled={!canProceed()}
-                  className="apple-btn"
-                  style={{
-                    fontSize: 'clamp(0.85rem, 1.3vw, 1rem)',
-                    opacity: canProceed() ? 1 : 0.15,
-                    cursor: canProceed() ? 'pointer' : 'not-allowed'
-                  }}
+                  className={`apple-btn contact-nav-next ${canProceed() ? 'contact-nav-next--enabled' : 'contact-nav-next--disabled'}`}
                 >
                   {step === 3 ? '送出預約 ➔' : '下一步 ➔'}
                 </button>

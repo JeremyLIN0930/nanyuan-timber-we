@@ -1,9 +1,25 @@
 /* ═══════════════════════════════════════════════════════════════
-   NAVBAR — Frosted Obsidian Glass
-   Semi-transparent backdrop-filter: blur(12px) luxury bar
+   NAVBAR — Grand Luxury Frosted Obsidian Glass
+   ─────────────────────────────────────────────────────────────
+   南源木材 · NANYUAN TIMBER DESIGN
+   
+   Visual Philosophy:
+   • Generous vertical breathing room via padding (NO fixed height)
+   • Brand logo scaled up for commanding presence
+   • Link font-size & gap widened for premium spacing
+   • CTA button enlarged with 3D gold glow
+   • High-end frosted glass backdrop with gold hairline border
+   • Mobile overlay: large thumb-friendly touch targets
 ═══════════════════════════════════════════════════════════════ */
 
-/* ── Top Bar ────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════
+   TOP BAR — Frosted Glass Foundation
+   ─────────────────────────────────────────────────────────────
+   Generous padding creates the "breathing room" instead of a
+   cramped fixed height. Desktop: ~24px 60px, scales down on
+   mobile via clamp().
+═══════════════════════════════════════════════════════════════ */
 .nyn-navbar {
   position: fixed;
   top: 0;
@@ -13,52 +29,86 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(12px, 1.8vh, 18px) clamp(16px, 4vw, 48px);
-  background-color: rgba(5, 5, 5, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background-color 0.4s ease;
+
+  /* ── Generous luxury padding — creates the grand scale ── */
+  padding: clamp(16px, 2.4vh, 26px) clamp(20px, 5vw, 64px);
+
+  /* ── Frosted obsidian glass ── */
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+
+  /* ── Delicate gold hairline border ── */
+  border-bottom: 1px solid rgba(197, 168, 128, 0.15);
+
+  transition:
+    background-color 0.45s ease,
+    backdrop-filter  0.45s ease,
+    border-color     0.45s ease,
+    padding          0.35s ease;
 }
 
+
+/* ── Scrolled state — denser glass, tighter padding ── */
 .nyn-navbar--scrolled {
-  background-color: rgba(5, 5, 5, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom-color: rgba(255, 255, 255, 0.06);
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+  border-bottom-color: rgba(197, 168, 128, 0.1);
+  padding-top: clamp(12px, 1.6vh, 18px);
+  padding-bottom: clamp(12px, 1.6vh, 18px);
 }
 
-/* ── Brand ──────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════
+   BRAND LOGO — Commanding Presence
+   ─────────────────────────────────────────────────────────────
+   Scaled-up Chinese title for authoritative brand identity.
+   English subtitle with widened letter-spacing for elegance.
+═══════════════════════════════════════════════════════════════ */
 .nyn-navbar-brand {
   text-decoration: none;
   display: flex;
   flex-direction: column;
   line-height: 1;
+  flex-shrink: 0;
+  transition: opacity 0.35s ease;
+}
+
+.nyn-navbar-brand:hover {
+  opacity: 0.85;
 }
 
 .nyn-navbar-brand-zh {
-  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.65rem);
   font-weight: 900;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.06em;
   color: #ffffff;
   line-height: 1;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
 }
 
 .nyn-navbar-brand-en {
-  font-size: 8.5px;
-  font-weight: 300;
-  letter-spacing: 0.28em;
-  color: #C5A880;
+  font-size: clamp(8px, 0.9vw, 10.5px);
+  font-weight: 200;
+  letter-spacing: 0.32em;
+  color: rgba(197, 168, 128, 0.55);
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: clamp(3px, 0.5vh, 6px);
   display: block;
 }
 
-/* ── Desktop Links (≥992px) ─────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════
+   DESKTOP LINKS — Expanded Spacing & Typography
+   ─────────────────────────────────────────────────────────────
+   Font-size 1.02rem (vs 12.5px before), gap expanded to 40px.
+   Wider padding-bottom for cleaner underline distance.
+═══════════════════════════════════════════════════════════════ */
 .nyn-navbar-links {
   display: none;
   align-items: center;
-  gap: clamp(18px, 2.5vw, 32px);
+  gap: clamp(22px, 3vw, 42px);
 }
 
 @media (min-width: 992px) {
@@ -68,46 +118,60 @@
 }
 
 .nyn-navbar-link {
-  font-size: 12.5px;
+  font-size: clamp(0.82rem, 1.05vw, 1.05rem);
   font-weight: 300;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.52);
   text-shadow: none;
   text-decoration: none;
   position: relative;
-  padding-bottom: 2px;
-  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              text-shadow 0.35s;
+  padding-bottom: 6px;
   white-space: nowrap;
+  transition:
+    color       0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    text-shadow 0.35s ease;
 }
 
 .nyn-navbar-link:hover {
   color: #C5A880;
-  text-shadow: 0 0 16px rgba(197, 168, 128, 0.7);
+  text-shadow: 0 0 18px rgba(197, 168, 128, 0.65);
 }
 
 .nyn-navbar-link--active {
-  font-weight: 900;
+  font-weight: 700;
   color: #C5A880;
-  text-shadow: 0 0 20px rgba(197, 168, 128, 0.7);
+  text-shadow:
+    0 0 22px rgba(197, 168, 128, 0.7),
+    0 0 48px rgba(197, 168, 128, 0.18);
 }
 
-/* Active underline wire (animated by framer-motion layoutId) */
+
+/* ── Active underline wire (framer-motion layoutId) ── */
 .nyn-navbar-underline {
   position: absolute;
-  bottom: -4px;
+  bottom: -2px;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #C5A880, transparent);
-  box-shadow: 0 0 8px rgba(197, 168, 128, 0.8);
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent 5%, #C5A880 50%, transparent 95%);
+  box-shadow:
+    0 0 8px  rgba(197, 168, 128, 0.9),
+    0 0 18px rgba(197, 168, 128, 0.4);
   border-radius: 2px;
   display: block;
 }
 
-/* ── CTA Button (desktop) ───────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════
+   CTA BUTTON — Solid Gold Metal Focal Point
+   ─────────────────────────────────────────────────────────────
+   Enlarged padding, bolder weight, 3D gold glow shadow.
+   The most eye-catching element on the navbar.
+═══════════════════════════════════════════════════════════════ */
 .nyn-navbar-cta-wrapper {
   display: none;
+  flex-shrink: 0;
+  margin-left: clamp(12px, 2vw, 24px);
 }
 
 @media (min-width: 992px) {
@@ -117,37 +181,63 @@
 }
 
 .nyn-navbar-cta {
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  padding: 8px 24px;
-  border: 1px solid #C5A880;
+  font-size: clamp(0.78rem, 1vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: clamp(10px, 1.2vh, 14px) clamp(22px, 2.8vw, 36px);
+  border: none;
   color: #0a0a0a !important;
   background: #C5A880 !important;
   text-decoration: none;
   white-space: nowrap;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: uppercase;
-  box-shadow: 0 4px 15px rgba(197, 168, 128, 0.3);
+  cursor: pointer;
+
+  /* ── 3D gold glow ── */
+  box-shadow:
+    0 2px 10px rgba(197, 168, 128, 0.35),
+    0 6px 24px rgba(197, 168, 128, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  transition:
+    all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nyn-navbar-cta:hover {
-  background: #e2c69f !important;
-  color: #0a0a0a !important;
+  background: #d6c09a !important;
+  color: #050505 !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(197, 168, 128, 0.5);
+  box-shadow:
+    0 4px 16px rgba(197, 168, 128, 0.5),
+    0 10px 40px rgba(197, 168, 128, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* ── Hamburger Toggle (<992px) ──────────────────────────────── */
+.nyn-navbar-cta:active {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 8px rgba(197, 168, 128, 0.3);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   HAMBURGER TOGGLE — Mobile Only (<992px)
+═══════════════════════════════════════════════════════════════ */
 .nyn-navbar-toggle {
   display: flex;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
-  padding: 4px;
+  padding: 6px;
   cursor: pointer;
   color: #ffffff;
-  transition: color 0.3s;
+  transition: color 0.3s ease;
   line-height: 0;
+}
+
+.nyn-navbar-toggle:hover {
+  color: #C5A880;
 }
 
 @media (min-width: 992px) {
@@ -161,90 +251,198 @@
   line-height: 0;
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
    MOBILE FULLSCREEN OVERLAY
+   ─────────────────────────────────────────────────────────────
+   Large touch targets, generous spacing, thumb-friendly
+   navigation with luxury gold accent highlights.
 ═══════════════════════════════════════════════════════════════ */
 .nyn-mobile-overlay {
   position: fixed;
   inset: 0;
   z-index: 9998;
-  background-color: rgba(5, 5, 5, 0.98);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
+  background: rgba(5, 5, 5, 0.97);
+  backdrop-filter: blur(48px) saturate(1.4);
+  -webkit-backdrop-filter: blur(48px) saturate(1.4);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: clamp(80px, 12vh, 120px) clamp(24px, 8vw, 60px) clamp(40px, 8vh, 80px);
+  padding: clamp(90px, 14vh, 140px) clamp(28px, 8vw, 64px) clamp(48px, 8vh, 90px);
 }
 
 .nyn-mobile-links {
   display: flex;
   flex-direction: column;
-  gap: clamp(1.4rem, 3.5vh, 2rem);
+  gap: clamp(1.6rem, 4vh, 2.4rem);
   width: 100%;
 }
 
 .nyn-mobile-link {
-  font-size: clamp(1.55rem, 5.5vw, 2rem);
+  font-size: clamp(1.7rem, 6vw, 2.3rem);
   font-weight: 900;
-  letter-spacing: -0.025em;
-  color: #ffffff;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.85);
   text-shadow: none;
   text-decoration: none;
   display: inline-block;
   transform: translateX(0);
-  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              text-shadow 0.4s,
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    color       0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    text-shadow 0.4s ease,
+    transform   0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .nyn-mobile-link:hover {
   color: #C5A880;
-  text-shadow: 0 0 32px rgba(197, 168, 128, 0.7);
-  transform: translateX(18px);
+  text-shadow: 0 0 36px rgba(197, 168, 128, 0.65);
+  transform: translateX(20px);
 }
 
 .nyn-mobile-link--active {
   color: #C5A880;
-  text-shadow: 0 0 32px rgba(197, 168, 128, 0.7);
-  transform: translateX(18px);
+  text-shadow: 0 0 36px rgba(197, 168, 128, 0.65);
+  transform: translateX(20px);
 }
 
+
+/* ── Mobile CTA ── */
 .nyn-mobile-cta-wrapper {
-  margin-top: clamp(2rem, 5vh, 3rem);
+  margin-top: clamp(2.2rem, 6vh, 3.5rem);
 }
 
 .nyn-mobile-cta {
   display: inline-block;
-  font-size: clamp(0.8rem, 3vw, 0.95rem);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  padding: 0.85em 2.4em;
-  border: 1px solid #C5A880;
+  font-size: clamp(0.85rem, 3.5vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 1em 2.8em;
+  border: none;
   color: #0a0a0a !important;
   background: #C5A880 !important;
   text-decoration: none;
   text-transform: uppercase;
+  box-shadow:
+    0 4px 18px rgba(197, 168, 128, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 15px rgba(197, 168, 128, 0.3);
 }
 
 .nyn-mobile-cta:hover {
-  background: #e2c69f !important;
-  color: #0a0a0a !important;
+  background: #d6c09a !important;
+  color: #050505 !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(197, 168, 128, 0.5);
+  box-shadow:
+    0 6px 24px rgba(197, 168, 128, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
+
+/* ── Footer credit ── */
 .nyn-mobile-footer {
   position: absolute;
   bottom: clamp(1.5rem, 4vh, 2.5rem);
-  left: clamp(24px, 8vw, 60px);
-  font-size: 9.5px;
-  font-weight: 300;
-  letter-spacing: 0.28em;
-  color: rgba(255, 255, 255, 0.14);
+  left: clamp(28px, 8vw, 64px);
+  font-size: clamp(9px, 1.2vw, 11px);
+  font-weight: 200;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.12);
   text-transform: uppercase;
   margin: 0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Tablet (768–991px) ── */
+@media (max-width: 991px) and (min-width: 768px) {
+  .nyn-navbar {
+    padding: clamp(14px, 2vh, 22px) clamp(20px, 4vw, 40px);
+  }
+
+  .nyn-navbar-brand-zh {
+    font-size: 1.3rem;
+  }
+
+  .nyn-navbar-brand-en {
+    font-size: 9px;
+  }
+}
+
+/* ── Mobile (≤767px) ── */
+@media (max-width: 767px) {
+  .nyn-navbar {
+    padding: clamp(14px, 2.2vh, 20px) clamp(16px, 4vw, 24px);
+  }
+
+  .nyn-navbar-brand-zh {
+    font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+  }
+
+  .nyn-navbar-brand-en {
+    font-size: clamp(7px, 2vw, 9px);
+    letter-spacing: 0.22em;
+    margin-top: 2px;
+  }
+
+  .nyn-navbar-toggle {
+    padding: 4px;
+  }
+
+  /* ── Mobile overlay fine-tuning ── */
+  .nyn-mobile-overlay {
+    padding: 100px 24px 60px;
+  }
+
+  .nyn-mobile-links {
+    gap: clamp(1.3rem, 3.5vh, 1.8rem);
+  }
+
+  .nyn-mobile-link {
+    font-size: clamp(1.5rem, 5.5vw, 1.9rem);
+  }
+
+  .nyn-mobile-link:hover,
+  .nyn-mobile-link--active {
+    transform: translateX(14px);
+  }
+
+  .nyn-mobile-cta {
+    font-size: clamp(0.8rem, 3.2vw, 0.95rem);
+    padding: 0.9em 2.4em;
+  }
+}
+
+/* ── Ultra-wide (≥1600px) ── */
+@media (min-width: 1600px) {
+  .nyn-navbar {
+    padding: 28px 80px;
+  }
+
+  .nyn-navbar-brand-zh {
+    font-size: 1.7rem;
+    letter-spacing: 0.08em;
+  }
+
+  .nyn-navbar-brand-en {
+    font-size: 11px;
+    letter-spacing: 0.36em;
+  }
+
+  .nyn-navbar-links {
+    gap: 48px;
+  }
+
+  .nyn-navbar-link {
+    font-size: 1.08rem;
+    letter-spacing: 0.14em;
+  }
+
+  .nyn-navbar-cta {
+    font-size: 0.95rem;
+    padding: 14px 40px;
+  }
 }

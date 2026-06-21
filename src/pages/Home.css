@@ -1,32 +1,34 @@
 /* ═══════════════════════════════════════════════════════════════
-   HOME PAGE — Apple-Level Cinematic Advantage Deck
+   HOME PAGE — Geometric Grid Crosshair Theatre
    南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
-   Architecture:
-   0. Intro Overlay        — 2.5s brand splash + micro-zoom
-   1. Cinematic Deck       — 100vh sticky theatre, 4 auto-rotating slides
+   Blocks:
+   0. Intro Overlay        — 2.5s brand splash with micro-zoom
+   1. Geometric Grid Hero  — 100vh theatre, bracket corners,
+                              center crosshair, Ken Burns bgs
    2. Six Process Steps    — alternating image-text
    3. Render vs Reality    — comparison slider
    4. Portfolio Wall       — 6-card grid
-   (CTA handled globally by Footer — zero duplication)
+   5. CTA                  — global footer CTA
 ═══════════════════════════════════════════════════════════════ */
 
-/* ── Page Wrapper ───────────────────────────────────────────── */
-.home-page-wrapper {
+/* ── Page wrapper ──────────────────────────────────────────── */
+.home-page {
   background-color: #050505;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch !important;
+  will-change: transform;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 0: INTRO OVERLAY — Brand splash (first 2.5s)
+   BLOCK 0: INTRO OVERLAY
    ─────────────────────────────────────────────────────────────
-   Fades in 南源木材｜NANYUAN TIMBER DESIGN at screen center
-   with scale(1.02) → scale(1) sinking micro-zoom.
-   CSS transition fades out when isIntro flips to false.
+   Pure black → glowing 南源木材 + NANYUAN TIMBER DESIGN
+   Scale 1.03 → 1 sinking micro-zoom on dismiss
 ═══════════════════════════════════════════════════════════════ */
-.home-intro-overlay {
+.home-intro {
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -36,18 +38,25 @@
   justify-content: center;
   background-color: #050505;
   pointer-events: none;
-  transform: scale(1.02);
-  transition:
-    opacity 0.8s ease-out,
-    transform 1s ease-out;
+  transform: scale(1.03);
+  transition: opacity 0.9s ease-out, transform 1.1s ease-out;
 }
 
-.home-intro-overlay--hidden {
+.home-intro--hidden {
   opacity: 0;
   transform: scale(1);
 }
 
-.home-intro-brand-zh {
+.home-intro-wire {
+  width: clamp(30px, 5vw, 50px);
+  height: 1px;
+  background: rgba(197, 168, 128, 0.35);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+  opacity: 0;
+  animation: introReveal 1.4s 0.15s ease-out forwards;
+}
+
+.home-intro-zh {
   font-size: clamp(2.5rem, 8vw, 5.5rem);
   font-weight: 900;
   letter-spacing: 0.15em;
@@ -59,51 +68,30 @@
   line-height: 1;
   margin: 0;
   opacity: 0;
-  animation: introFadeIn 1.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: introReveal 1.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.home-intro-brand-en {
-  font-size: clamp(0.65rem, 1.5vw, 1rem);
+.home-intro-en {
+  font-size: clamp(0.6rem, 1.4vw, 0.95rem);
   font-weight: 200;
   letter-spacing: 0.5em;
-  color: rgba(197, 168, 128, 0.55);
+  color: rgba(197, 168, 128, 0.5);
   text-transform: uppercase;
   margin-top: clamp(0.8rem, 2vw, 1.4rem);
   opacity: 0;
-  animation: introFadeIn 1.6s 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: introReveal 1.6s 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.home-intro-line {
-  width: clamp(30px, 5vw, 50px);
-  height: 1px;
-  background-color: rgba(197, 168, 128, 0.35);
-  margin-bottom: clamp(1rem, 2vw, 1.5rem);
-  opacity: 0;
-  animation: introFadeIn 1.4s 0.15s ease-out forwards;
-}
-
-@keyframes introFadeIn {
-  0% {
-    opacity: 0;
-    letter-spacing: 0.35em;
-    transform: translateY(8px);
-  }
-  100% {
-    opacity: 1;
-    letter-spacing: 0.15em;
-    transform: translateY(0);
-  }
+@keyframes introReveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 1: CINEMATIC ADVANTAGE DECK — 100vh Sticky Theatre
-   ─────────────────────────────────────────────────────────────
-   Full-viewport hero. Background layers cross-fade via
-   activeIndex (setInterval 4s). Left: giant geometric number.
-   Right: advantage text. Zero delay sync.
+   BLOCK 1: GEOMETRIC GRID THEATRE — 100vh Hero
 ═══════════════════════════════════════════════════════════════ */
-.home-hero-section {
+.home-hero {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -114,11 +102,9 @@
   justify-content: center;
 }
 
-/* ── Background image layers — dual-layer cross-fade ─────────
-   All 4 layers stacked; only --active has opacity 1.
-   transition: opacity 0.6s + scale(1.05→1) cinematic zoom.
-─────────────────────────────────────────────────────────────── */
-.home-hero-bg-layer {
+
+/* ── Background layers — Ken Burns cross-fade ────────────── */
+.home-hero-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -126,30 +112,32 @@
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
-  transform: scale(1.05);
+  transform: scale(1.04);
   transition:
-    opacity 0.6s ease-in-out,
-    transform 4s ease-out;
+    opacity 0.85s ease-in-out,
+    transform 4.5s ease-out;
   will-change: opacity, transform;
 }
 
-.home-hero-bg-layer--active {
+.home-hero-bg--active {
   opacity: 1;
   transform: scale(1);
 }
 
-/* ── Dark overlay ──────────────────────────────────────────── */
-.home-hero-bg-overlay {
+
+/* ── Dark cinematic overlay ─────────────────────────────── */
+.home-hero-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   background: linear-gradient(
     180deg,
-    rgba(5, 5, 5, 0.50) 0%,
-    rgba(5, 5, 5, 0.60) 50%,
-    rgba(5, 5, 5, 0.80) 100%
+    rgba(5, 5, 5, 0.48) 0%,
+    rgba(5, 5, 5, 0.58) 50%,
+    rgba(5, 5, 5, 0.82) 100%
   );
 }
+
 
 /* ── Radial vignette ─────────────────────────────────────── */
 .home-hero-vignette {
@@ -157,15 +145,188 @@
   inset: 0;
   z-index: 2;
   background: radial-gradient(
-    ellipse 55% 55% at 50% 50%,
+    ellipse 52% 52% at 50% 50%,
     transparent 0%,
     rgba(5, 5, 5, 0.40) 60%,
-    rgba(5, 5, 5, 0.85) 100%
+    rgba(5, 5, 5, 0.88) 100%
   );
   pointer-events: none;
 }
 
-/* ── Hero center content ─────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════
+   GEOMETRIC GRID FRAME — Bracket corners + fine guide lines
+   ─────────────────────────────────────────────────────────────
+   Pure CSS decorative layer providing precision craftsmanship
+   aesthetics. Four [ ] corners + horizontal / vertical hairlines.
+═══════════════════════════════════════════════════════════════ */
+.home-grid-frame {
+  position: absolute;
+  inset: clamp(20px, 4vw, 60px);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ── Corner brackets [ ] ── */
+.home-grid-corner {
+  position: absolute;
+  width: clamp(20px, 3.5vw, 42px);
+  height: clamp(20px, 3.5vw, 42px);
+}
+
+.home-grid-corner--tl {
+  top: 0; left: 0;
+  border-top:  1px solid rgba(197, 168, 128, 0.25);
+  border-left: 1px solid rgba(197, 168, 128, 0.25);
+}
+
+.home-grid-corner--tr {
+  top: 0; right: 0;
+  border-top:   1px solid rgba(197, 168, 128, 0.25);
+  border-right: 1px solid rgba(197, 168, 128, 0.25);
+}
+
+.home-grid-corner--bl {
+  bottom: 0; left: 0;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.25);
+  border-left:   1px solid rgba(197, 168, 128, 0.25);
+}
+
+.home-grid-corner--br {
+  bottom: 0; right: 0;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.25);
+  border-right:  1px solid rgba(197, 168, 128, 0.25);
+}
+
+/* ── Horizontal center guide line ── */
+.home-grid-line--h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(197, 168, 128, 0.08) 20%,
+    rgba(197, 168, 128, 0.08) 80%,
+    transparent 100%
+  );
+}
+
+/* ── Vertical center guide line ── */
+.home-grid-line--v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(197, 168, 128, 0.08) 20%,
+    rgba(197, 168, 128, 0.08) 80%,
+    transparent 100%
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CENTER CROSSHAIR — Breathing micro-animation
+   ─────────────────────────────────────────────────────────────
+   Synced to activeIndex (alternating --pulse-a / --pulse-b)
+   for a micro-scale breathing glow on every slide transition.
+═══════════════════════════════════════════════════════════════ */
+.home-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  pointer-events: none;
+  width: clamp(28px, 4vw, 48px);
+  height: clamp(28px, 4vw, 48px);
+}
+
+/* Horizontal crosshair bar */
+.home-crosshair-h {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(197, 168, 128, 0.3);
+  transform: translateY(-0.5px);
+}
+
+/* Vertical crosshair bar */
+.home-crosshair-v {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(197, 168, 128, 0.3);
+  transform: translateX(-0.5px);
+}
+
+/* Center dot */
+.home-crosshair-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #C5A880;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(197, 168, 128, 0.8);
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+}
+
+/* Breathing pulse A (even slides) */
+.home-crosshair--pulse-a .home-crosshair-dot {
+  animation: crosshairBreathA 1.2s ease-in-out;
+}
+
+/* Breathing pulse B (odd slides) */
+.home-crosshair--pulse-b .home-crosshair-dot {
+  animation: crosshairBreathB 1.2s ease-in-out;
+}
+
+@keyframes crosshairBreathA {
+  0%   { transform: translate(-50%, -50%) scale(1);   box-shadow: 0 0 8px  rgba(197, 168, 128, 0.8); }
+  40%  { transform: translate(-50%, -50%) scale(1.8); box-shadow: 0 0 22px rgba(197, 168, 128, 1); }
+  100% { transform: translate(-50%, -50%) scale(1);   box-shadow: 0 0 8px  rgba(197, 168, 128, 0.8); }
+}
+
+@keyframes crosshairBreathB {
+  0%   { transform: translate(-50%, -50%) scale(1);   box-shadow: 0 0 8px  rgba(197, 168, 128, 0.8); }
+  40%  { transform: translate(-50%, -50%) scale(1.6); box-shadow: 0 0 18px rgba(197, 168, 128, 1); }
+  100% { transform: translate(-50%, -50%) scale(1);   box-shadow: 0 0 8px  rgba(197, 168, 128, 0.8); }
+}
+
+/* Crosshair bars also breathe */
+.home-crosshair--pulse-a .home-crosshair-h,
+.home-crosshair--pulse-a .home-crosshair-v {
+  animation: crosshairBarPulse 1.2s ease-in-out;
+}
+
+.home-crosshair--pulse-b .home-crosshair-h,
+.home-crosshair--pulse-b .home-crosshair-v {
+  animation: crosshairBarPulse 1.2s ease-in-out;
+}
+
+@keyframes crosshairBarPulse {
+  0%   { background: rgba(197, 168, 128, 0.3); }
+  40%  { background: rgba(197, 168, 128, 0.6); }
+  100% { background: rgba(197, 168, 128, 0.3); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO CONTENT — Eyebrow + Deck + CTAs + Dots
+═══════════════════════════════════════════════════════════════ */
 .home-hero-content {
   position: relative;
   z-index: 10;
@@ -173,29 +334,24 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  padding: 0 clamp(1.2rem, 5vw, 4rem);
   max-width: 1100px;
   width: 100%;
 }
 
-/* ── Eyebrow ornament ────────────────────────────────────── */
+/* ── Eyebrow ── */
 .home-hero-eyebrow {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 18px;
+  gap: 16px;
   margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .home-hero-eyebrow-line {
-  width: 44px;
+  display: block;
+  width: 40px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(197, 168, 128, 0.35),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(197, 168, 128, 0.35), transparent);
 }
 
 .home-hero-eyebrow-text {
@@ -208,10 +364,7 @@
 
 
 /* ═══════════════════════════════════════════════════════════════
-   CINEMATIC DECK — Split Layout (Number Left + Text Right)
-   ─────────────────────────────────────────────────────────────
-   Desktop: flex-row — giant number on left, text on right.
-   Mobile:  flex-column — number on top, text below.
+   CINEMATIC DECK — Giant Number Left + Text Right
 ═══════════════════════════════════════════════════════════════ */
 .home-hero-deck {
   display: flex;
@@ -222,79 +375,62 @@
   margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-/* ── Left column: Giant geometric gold number ──────────── */
-.home-hero-number-col {
+/* ── Giant geometric gold number ── */
+.home-hero-num-col {
   position: relative;
   flex-shrink: 0;
-  width: clamp(100px, 20vw, 260px);
-  height: clamp(100px, 20vw, 260px);
+  width: clamp(90px, 18vw, 240px);
+  height: clamp(90px, 18vw, 240px);
 }
 
-.luxury-number {
+.home-hero-num {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(5rem, 15vw, 14rem);
+  font-size: clamp(4.5rem, 14vw, 13rem);
   font-weight: 900;
   letter-spacing: -0.06em;
   line-height: 1;
   color: transparent;
-  background: linear-gradient(
-    135deg,
-    rgba(197, 168, 128, 0.06) 0%,
-    rgba(197, 168, 128, 0.03) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-stroke: 1px rgba(197, 168, 128, 0.10);
+  -webkit-text-stroke: 1px rgba(197, 168, 128, 0.08);
   opacity: 0;
   transform: scale(0.85);
-  transition:
-    opacity 0.6s ease-in-out,
-    transform 0.6s ease-in-out,
-    color 0.6s ease-in-out;
+  transition: opacity 0.65s ease, transform 0.65s ease;
   pointer-events: none;
   user-select: none;
 }
 
-.luxury-number--active {
+.home-hero-num--active {
   opacity: 1;
   transform: scale(1);
-  color: transparent;
-  background: linear-gradient(
-    135deg,
-    #C5A880 0%,
-    rgba(197, 168, 128, 0.30) 100%
-  );
+  background: linear-gradient(135deg, #C5A880 0%, rgba(197, 168, 128, 0.3) 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-stroke: 1px rgba(197, 168, 128, 0.25);
-  filter: drop-shadow(0 0 40px rgba(197, 168, 128, 0.60))
-          drop-shadow(0 0 80px rgba(197, 168, 128, 0.25));
+  -webkit-text-stroke: 1px rgba(197, 168, 128, 0.22);
+  filter:
+    drop-shadow(0 0 40px rgba(197, 168, 128, 0.55))
+    drop-shadow(0 0 80px rgba(197, 168, 128, 0.22));
 }
 
-/* ── Right column: Advantage text ─────────────────────── */
+/* ── Right column: Advantage text ── */
 .home-hero-text-col {
   position: relative;
   flex: 1;
-  min-height: clamp(120px, 18vw, 200px);
+  min-height: clamp(120px, 16vw, 190px);
   text-align: left;
 }
 
 .home-hero-slide {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 0.6s ease-in-out,
-    transform 0.6s ease-in-out;
+  transform: translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
   pointer-events: none;
 }
 
@@ -304,61 +440,57 @@
   pointer-events: auto;
 }
 
-.home-hero-title-zh {
-  font-size: clamp(1.8rem, 5vw, 3.2rem) !important;
+.home-hero-title {
+  font-size: clamp(1.8rem, 4.5vw, 3rem) !important;
   font-weight: 900 !important;
-  letter-spacing: 0.05em !important;
+  letter-spacing: 0.04em !important;
   color: #ffffff;
   text-shadow:
-    0 0 30px rgba(255, 255, 255, 0.25),
-    0 0 60px rgba(197, 168, 128, 0.15);
-  margin: 0 0 0.4rem;
+    0 0 30px rgba(255, 255, 255, 0.22),
+    0 0 60px rgba(197, 168, 128, 0.12);
+  margin: 0 0 0.35rem;
   line-height: 1.15;
 }
 
-.home-hero-title-en {
-  font-size: clamp(0.55rem, 1.1vw, 0.8rem);
+.home-hero-subtitle {
+  font-size: clamp(0.5rem, 1vw, 0.78rem);
   font-weight: 200;
   letter-spacing: 0.35em;
-  color: rgba(197, 168, 128, 0.55);
+  color: rgba(197, 168, 128, 0.5);
   text-transform: uppercase;
-  margin: 0 0 0.8rem;
+  margin: 0 0 0.75rem;
 }
 
-.home-hero-title-wire {
-  width: clamp(30px, 5vw, 50px);
+.home-hero-wire {
+  width: clamp(28px, 4.5vw, 48px);
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    #C5A880,
-    rgba(197, 168, 128, 0.20)
-  );
+  background: linear-gradient(90deg, #C5A880, rgba(197, 168, 128, 0.15));
   box-shadow: 0 0 8px rgba(197, 168, 128, 0.5);
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.75rem;
 }
 
 .home-hero-desc {
-  font-size: clamp(0.82rem, 1.3vw, 1.02rem);
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
   font-weight: 300;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.52);
   line-height: 1.85;
-  max-width: 480px;
+  max-width: 460px;
   margin: 0;
 }
 
 
-/* ── Hero CTA button row ─────────────────────────────────── */
-.home-hero-cta-row {
+/* ── CTA Buttons ── */
+.home-hero-btns {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: clamp(1.5rem, 3vw, 2rem);
+  margin-bottom: clamp(1.2rem, 2.5vw, 1.8rem);
 }
 
 .home-hero-btn {
-  font-size: clamp(0.72rem, 1.1vw, 0.88rem);
+  font-size: clamp(0.7rem, 1.05vw, 0.85rem);
   letter-spacing: 0.14em;
   padding: 0.85em 2.4em;
   cursor: pointer;
@@ -368,49 +500,38 @@
   white-space: nowrap;
 }
 
-.home-hero-btn--primary {
+.home-hero-btn--gold {
   font-weight: 600;
   color: #050505;
-  background-color: #C5A880;
+  background: #C5A880;
   border: 1px solid #C5A880;
 }
 
-.home-hero-btn--primary:hover {
-  background-color: #d4ba95;
+.home-hero-btn--gold:hover {
+  background: #d4ba95;
   border-color: #d4ba95;
-  box-shadow:
-    0 4px 24px rgba(197, 168, 128, 0.45),
-    0 0 48px rgba(197, 168, 128, 0.15);
+  box-shadow: 0 4px 24px rgba(197, 168, 128, 0.45), 0 0 48px rgba(197, 168, 128, 0.15);
   transform: translateY(-3px);
 }
 
-.home-hero-btn--primary:active {
-  transform: translateY(-1px);
-}
-
-.home-hero-btn--outline {
+.home-hero-btn--ghost {
   font-weight: 300;
-  color: rgba(255, 255, 255, 0.75);
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.20);
+  color: rgba(255, 255, 255, 0.72);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.home-hero-btn--outline:hover {
-  border-color: rgba(197, 168, 128, 0.55);
+.home-hero-btn--ghost:hover {
+  border-color: rgba(197, 168, 128, 0.5);
   color: #C5A880;
-  background-color: rgba(197, 168, 128, 0.05);
+  background: rgba(197, 168, 128, 0.04);
   transform: translateY(-3px);
 }
 
-.home-hero-btn--outline:active {
-  transform: translateY(-1px);
-}
 
-/* ── Progress indicator dots ─────────────────────────────── */
+/* ── Progress dots ── */
 .home-hero-dots {
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 12px;
 }
 
@@ -419,14 +540,10 @@
   height: 8px;
   border-radius: 50%;
   border: 1px solid rgba(197, 168, 128, 0.35);
-  background-color: transparent;
+  background: transparent;
   cursor: pointer;
   padding: 0;
-  transition:
-    background-color 0.4s ease,
-    border-color 0.4s ease,
-    box-shadow 0.4s ease,
-    transform 0.4s ease;
+  transition: all 0.4s ease;
 }
 
 .home-hero-dot:hover {
@@ -435,16 +552,17 @@
 }
 
 .home-hero-dot--active {
-  background-color: #C5A880;
+  background: #C5A880;
   border-color: #C5A880;
   box-shadow: 0 0 10px rgba(197, 168, 128, 0.5);
   transform: scale(1.2);
 }
 
-/* ── Scroll hint ─────────────────────────────────────────── */
-.scroll-hint {
+
+/* ── Scroll hint ── */
+.home-scroll-hint {
   position: absolute;
-  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  bottom: clamp(1.2rem, 4vh, 2.5rem);
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -455,27 +573,26 @@
   pointer-events: none;
 }
 
-.home-scroll-hint-text {
-  font-size: clamp(9px, 1.1vw, 11px);
+.home-scroll-hint-label {
+  font-size: clamp(8px, 1vw, 10px);
   letter-spacing: 0.28em;
-  color: rgba(197, 168, 128, 0.5);
+  color: rgba(197, 168, 128, 0.45);
   font-weight: 200;
   text-transform: uppercase;
 }
 
 .home-scroll-hint-arrow {
-  color: rgba(197, 168, 128, 0.45);
+  color: rgba(197, 168, 128, 0.4);
   font-size: 1rem;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 2: SIX PROCESS STEPS (Alternating Layout)
+   BLOCK 2: SIX PROCESS STEPS
 ═══════════════════════════════════════════════════════════════ */
 .home-process-section {
-  background-color: #050505;
-  padding-top: clamp(3.5rem, 8vw, 5rem);
-  padding-bottom: clamp(3.5rem, 8vw, 5rem);
+  background: #050505;
+  padding: clamp(3.5rem, 8vw, 5rem) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -502,42 +619,39 @@
   margin-bottom: 0.75rem;
 }
 
-.home-process-subtitle {
-  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+.home-process-sub {
+  font-size: clamp(0.75rem, 1.1vw, 0.9rem);
   font-weight: 300;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.28);
 }
 
-/* ── Alternating step rows ── */
-.home-process-steps {
+.home-process-list {
   display: flex;
   flex-direction: column;
   gap: clamp(3rem, 6vw, 5rem);
 }
 
-.home-process-step {
+.home-process-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(2rem, 4vw, 4rem);
   align-items: center;
-  position: relative;
 }
 
-.home-process-step--reverse {
+.home-process-row--rev {
   direction: rtl;
 }
 
-.home-process-step--reverse > * {
+.home-process-row--rev > * {
   direction: ltr;
 }
 
 /* ── Image side ── */
-.home-process-step-img-wrap {
+.home-process-img-wrap {
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(197, 168, 128, 0.12);
-  will-change: transform;
 }
 
 .home-process-step-img {
@@ -548,17 +662,14 @@
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.home-process-step-img-wrap:hover .home-process-step-img {
+.home-process-img-wrap:hover .home-process-step-img {
   transform: scale(1.04);
 }
 
-/* ── SVG gradient fallback when image fails ── */
 .home-process-step-fallback {
   width: 100%;
   max-height: 280px;
   aspect-ratio: 400 / 280;
-  display: block;
-  overflow: hidden;
 }
 
 .home-process-step-fallback-svg {
@@ -567,8 +678,7 @@
   display: block;
 }
 
-/* ── Giant faded step number behind image ── */
-.home-process-step-num-bg {
+.home-process-img-num {
   position: absolute;
   bottom: -0.2em;
   right: -0.05em;
@@ -578,22 +688,20 @@
   line-height: 1;
   pointer-events: none;
   user-select: none;
-  z-index: 0;
-  letter-spacing: -0.05em;
 }
 
 /* ── Text side ── */
-.home-process-step-text {
+.home-process-text {
   padding: clamp(1rem, 2vw, 2rem) 0;
 }
 
-.home-process-step-num {
-  display: inline-block;
+.home-process-num {
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 900;
-  color: rgba(197, 168, 128, 0.18);
+  color: rgba(197, 168, 128, 0.16);
   letter-spacing: -0.05em;
   line-height: 1;
+  display: block;
   margin-bottom: 0.75rem;
 }
 
@@ -606,7 +714,7 @@
   line-height: 1.1;
 }
 
-.home-process-step-en {
+.home-process-en {
   font-size: 10px;
   font-weight: 300;
   letter-spacing: 0.25em;
@@ -616,10 +724,10 @@
   opacity: 0.75;
 }
 
-.home-process-step-desc {
+.home-process-desc {
   font-size: clamp(0.85rem, 1.3vw, 1rem);
   font-weight: 300;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.48);
   line-height: 1.9;
   letter-spacing: 0.05em;
   margin: 0;
@@ -627,15 +735,11 @@
 
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 3: RENDER vs REALITY COMPARISON SLIDER
-   ─────────────────────────────────────────────────────────────
-   Left:  設計模擬圖 / RENDER
-   Right: 實景完工照 / REALITY
+   BLOCK 3: RENDER vs REALITY
 ═══════════════════════════════════════════════════════════════ */
 .home-ba-section {
-  background-color: #050505;
+  background: #050505;
   padding-top: clamp(3.5rem, 8vw, 5rem);
-  padding-bottom: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -645,73 +749,69 @@
   letter-spacing: -0.05em !important;
   color: #C5A880;
   text-shadow: 0 0 30px rgba(197, 168, 128, 0.85);
-  line-height: 1.1;
   margin-bottom: 1rem;
 }
 
 .home-ba-desc {
-  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+  font-size: clamp(0.85rem, 1.4vw, 1.02rem);
   font-weight: 300;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.5);
-  max-width: 750px;
+  color: rgba(255, 255, 255, 0.48);
+  max-width: 720px;
   line-height: 1.8;
   margin-bottom: 2.5rem;
 }
 
-.home-before-after-container {
+.home-ba-container {
   position: relative;
   width: 100%;
-  height: clamp(300px, 60vh, 80vh);
+  height: clamp(280px, 55vh, 75vh);
   cursor: ew-resize;
   user-select: none;
   overflow: hidden;
 }
 
-.home-ba-side {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-}
-
-.home-ba-overlay {
+.home-ba-layer {
   position: absolute;
   inset: 0;
-  background: rgba(5, 5, 5, 0.15);
 }
 
-.home-ba-label {
+.home-ba-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.home-ba-tag {
   position: absolute;
   bottom: 1rem;
-  font-size: clamp(9px, 1.2vw, 11px);
+  font-size: clamp(8px, 1.1vw, 11px);
   letter-spacing: 0.2em;
   font-weight: 300;
-  color: #ffffff;
+  color: #fff;
   background: rgba(5, 5, 5, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 5px 14px;
 }
 
-.home-ba-label--right {
-  right: 1rem;
-}
+.home-ba-tag--right { right: 1rem; }
+.home-ba-tag--left  { left: 1rem; }
 
-.home-ba-label--left {
-  left: 1rem;
+.home-ba-render {
+  z-index: 2;
+  clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
 }
 
 .home-ba-divider {
   position: absolute;
   top: 0;
   bottom: 0;
+  left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  background-color: #C5A880;
+  background: #C5A880;
   box-shadow: 0 0 25px rgba(197, 168, 128, 0.8);
   z-index: 10;
 }
@@ -743,9 +843,8 @@
    BLOCK 4: PORTFOLIO WALL
 ═══════════════════════════════════════════════════════════════ */
 .home-portfolio-section {
-  background-color: #0d0d0e;
-  padding-top: clamp(3.5rem, 8vw, 5rem);
-  padding-bottom: clamp(3.5rem, 8vw, 5rem);
+  background: #0d0d0e;
+  padding: clamp(3.5rem, 8vw, 5rem) 0;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
@@ -759,15 +858,14 @@
   letter-spacing: -0.05em !important;
   color: #C5A880;
   text-shadow: 0 0 30px rgba(197, 168, 128, 0.85);
-  line-height: 1.1;
   margin-bottom: 0.75rem;
 }
 
-.home-portfolio-subtitle {
-  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+.home-portfolio-sub {
+  font-size: clamp(0.85rem, 1.4vw, 1.02rem);
   font-weight: 300;
   letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.38);
   margin: 0;
 }
 
@@ -778,12 +876,12 @@
   will-change: transform;
 }
 
-.home-portfolio-card-inner {
+.home-portfolio-inner {
   position: relative;
   aspect-ratio: 4 / 3;
 }
 
-.home-portfolio-card-img {
+.home-portfolio-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -792,34 +890,26 @@
   display: block;
 }
 
-.home-portfolio-card:hover .home-portfolio-card-img {
+.home-portfolio-card:hover .home-portfolio-img {
   opacity: 1;
   transform: scale(1.05);
 }
 
-.home-portfolio-card-gradient {
+.home-portfolio-gradient {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    to top,
-    #050505 0%,
-    rgba(5, 5, 5, 0.3) 50%,
-    transparent 100%
-  );
+  inset: 0;
+  background: linear-gradient(to top, #050505 0%, rgba(5, 5, 5, 0.3) 50%, transparent 100%);
   opacity: 0.8;
 }
 
-.home-portfolio-card-info {
+.home-portfolio-info {
   position: absolute;
   bottom: 0;
   left: 0;
   padding: clamp(0.75rem, 1.5vw, 1.5rem);
 }
 
-.home-portfolio-card-type {
+.home-portfolio-type {
   display: block;
   font-size: 10px;
   font-weight: 300;
@@ -829,7 +919,7 @@
   margin-bottom: 0.35rem;
 }
 
-.home-portfolio-card-name {
+.home-portfolio-name {
   font-size: clamp(1rem, 2vw, 1.25rem) !important;
   font-weight: 900 !important;
   letter-spacing: -0.02em !important;
@@ -840,130 +930,92 @@
 
 
 /* ═══════════════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — 768px breakpoint
-   ─────────────────────────────────────────────────────────────
-   • Hero: cinematic deck stacks vertically
-   • Process: single column, hide background number
-   • Slider & process images: max-height 240px + object-fit cover
-   • Portfolio: constrain card height
-   • Touch acceleration: -webkit-overflow-scrolling + will-change
+   MOBILE RESPONSIVE — 768px
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* ── Hero mobile ── */
-  .home-hero-section {
+  .home-hero {
     min-height: 100vh;
     min-height: 100dvh;
   }
 
   .home-hero-content {
-    padding: 0 1.2rem;
+    padding: 0 1rem;
   }
 
-  .home-hero-eyebrow {
-    gap: 10px;
-  }
+  .home-hero-eyebrow-line { width: 22px; }
+  .home-hero-eyebrow-text { font-size: 8px; letter-spacing: 0.22em; }
 
-  .home-hero-eyebrow-line {
-    width: 24px;
-  }
+  /* Grid frame tighter on mobile */
+  .home-grid-frame { inset: 14px; }
+  .home-grid-corner { width: 16px; height: 16px; }
 
-  .home-hero-eyebrow-text {
-    font-size: 8px;
-    letter-spacing: 0.25em;
-  }
+  /* Crosshair smaller */
+  .home-crosshair { width: 22px; height: 22px; }
 
-  /* ── Cinematic deck: stack vertically on mobile ── */
+  /* Deck stacks vertically */
   .home-hero-deck {
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .home-hero-number-col {
-    width: 80px;
-    height: 80px;
+  .home-hero-num-col {
+    width: 70px;
+    height: 70px;
   }
 
   .home-hero-text-col {
     text-align: center;
-    min-height: 140px;
+    min-height: 150px;
   }
 
   .home-hero-slide {
     align-items: center;
   }
 
-  .home-hero-title-wire {
+  .home-hero-wire {
     margin-left: auto;
     margin-right: auto;
   }
 
-  .home-hero-desc {
-    text-align: center;
-  }
+  .home-hero-desc { text-align: center; }
 
-  .home-hero-cta-row {
+  .home-hero-btns {
     flex-direction: column;
     width: 100%;
-    max-width: 320px;
+    max-width: 300px;
     gap: 0.75rem;
   }
 
   .home-hero-btn {
     width: 100%;
     text-align: center;
-    padding: 0.95em 2em;
   }
 
-  .home-hero-dots {
-    gap: 10px;
-  }
+  .home-hero-dots { gap: 10px; }
+  .home-hero-dot  { width: 7px; height: 7px; }
 
-  .home-hero-dot {
-    width: 7px;
-    height: 7px;
-  }
+  .home-scroll-hint { bottom: 12vh; }
 
-  .scroll-hint {
-    bottom: 12vh;
-  }
-
-  /* ── Process mobile: single column ── */
-  .home-process-step {
+  /* Process: single col */
+  .home-process-row {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
 
-  .home-process-step--reverse {
-    direction: ltr;
-  }
+  .home-process-row--rev { direction: ltr; }
+  .home-process-step-img { max-height: 240px; }
+  .home-process-step-fallback { max-height: 240px; }
+  .home-process-img-num { display: none; }
 
-  .home-process-step-img {
-    max-height: 240px;
-    object-fit: cover;
-  }
+  /* Slider mobile */
+  .home-ba-container { height: 240px; }
 
-  .home-process-step-fallback {
-    max-height: 240px;
-  }
+  /* Portfolio mobile */
+  .home-portfolio-img { max-height: 240px; }
 
-  .home-process-step-num-bg {
-    display: none;
-  }
-
-  /* ── Comparison slider mobile ── */
-  .home-before-after-container {
-    height: 240px;
-  }
-
-  /* ── Portfolio card mobile ── */
-  .home-portfolio-card-img {
-    max-height: 240px;
-    object-fit: cover;
-  }
-
-  /* ── Touch acceleration ── */
-  .home-page-wrapper,
+  /* GPU touch acceleration */
+  .home-page,
   .home-process-section,
   .home-ba-section,
   .home-portfolio-section {
@@ -974,65 +1026,28 @@
 
 
 /* ═══════════════════════════════════════════════════════════════
-   SMALL MOBILE — 400px breakpoint
-   ─────────────────────────────────────────────────────────────
-   Extra-tight spacing for narrow devices.
+   SMALL MOBILE — 400px
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
 
-  .luxury-number {
-    font-size: clamp(3.5rem, 20vw, 5rem) !important;
-  }
-
-  .home-hero-title-zh {
-    font-size: clamp(1.4rem, 6vw, 2rem) !important;
-  }
-
-  .home-hero-title-en {
-    font-size: 0.5rem;
-    letter-spacing: 0.18em;
-  }
-
-  .home-hero-desc {
-    font-size: 0.8rem;
-  }
-
-  .home-hero-btn {
-    font-size: 0.75rem;
-    padding: 0.85em 1.5em;
-  }
-
-  .home-before-after-container {
-    height: 200px;
-  }
-
-  .home-process-step-img {
-    max-height: 200px;
-  }
+  .home-hero-title  { font-size: clamp(1.4rem, 6vw, 2rem) !important; }
+  .home-hero-subtitle { font-size: 0.5rem; }
+  .home-hero-desc   { font-size: 0.78rem; }
+  .home-hero-btn    { font-size: 0.72rem; padding: 0.8em 1.5em; }
+  .home-ba-container { height: 200px; }
+  .home-process-step-img { max-height: 200px; }
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   LARGE DESKTOP — 1400px+ refinements
-   ─────────────────────────────────────────────────────────────
-   Increase hero breathing room and process image height.
+   LARGE DESKTOP — 1400px+
 ═══════════════════════════════════════════════════════════════ */
 @media (min-width: 1400px) {
 
-  .home-hero-content {
-    max-width: 1200px;
-  }
-
-  .home-hero-number-col {
-    width: 300px;
-    height: 300px;
-  }
-
-  .home-process-step-img {
-    max-height: 340px;
-  }
-
-  .home-before-after-container {
-    height: 75vh;
-  }
+  .home-hero-content { max-width: 1200px; }
+  .home-hero-num-col { width: 280px; height: 280px; }
+  .home-process-step-img { max-height: 340px; }
+  .home-ba-container { height: 75vh; }
+  .home-grid-frame   { inset: 80px; }
+  .home-grid-corner  { width: 52px; height: 52px; }
 }
