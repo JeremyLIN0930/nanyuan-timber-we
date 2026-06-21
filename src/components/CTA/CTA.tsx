@@ -8,6 +8,11 @@ import './CTA.css';
    此組件僅由 Footer.tsx 引入渲染一次，
    所有分頁（Home, About, Services, Quality, Knowledge…）
    不得再手動寫入或 import 任何重複的 CTA 區塊。
+
+   按鈕組成：
+   1. 暖棕金實心按鈕 — 「立即預約諮詢 ➜」 → /contact
+   2. 細線條鏤空按鈕 — 「查看作品案例」     → /projects
+   3. 低調細線條綠框按鈕 — 「加入 LINE 詢問」 → LINE 外連
 ═══════════════════════════════════════════════════════════════ */
 
 const CTA: React.FC = () => {
@@ -19,7 +24,9 @@ const CTA: React.FC = () => {
           {/* ── Eyebrow ornament ── */}
           <div className="global-cta-eyebrow">
             <div className="global-cta-eyebrow-line" />
+            <div className="global-cta-eyebrow-diamond" />
             <span className="global-cta-eyebrow-text">START YOUR JOURNEY</span>
+            <div className="global-cta-eyebrow-diamond" />
             <div className="global-cta-eyebrow-line" />
           </div>
 
@@ -36,7 +43,7 @@ const CTA: React.FC = () => {
           {/* ── Three CTA buttons ── */}
           <nav className="global-cta-buttons" aria-label="預約服務快速連結">
 
-            {/* Primary — gold fill */}
+            {/* Primary — 暖棕金實心按鈕 */}
             <Link
               to="/contact"
               className="global-cta-btn global-cta-btn--primary"
@@ -44,7 +51,7 @@ const CTA: React.FC = () => {
               立即預約諮詢 ➜
             </Link>
 
-            {/* Secondary — outline */}
+            {/* Secondary — 細線條鏤空按鈕 */}
             <Link
               to="/projects"
               className="global-cta-btn global-cta-btn--secondary"
@@ -52,7 +59,7 @@ const CTA: React.FC = () => {
               查看作品案例
             </Link>
 
-            {/* LINE — green accent on hover */}
+            {/* LINE — 低調細線條綠框按鈕 */}
             <a
               href="https://line.me"
               target="_blank"

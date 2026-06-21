@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import './Services.css';
+import CTA from '../components/CTA/CTA';
 
 import servicesHeroBg from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
 
@@ -158,6 +159,10 @@ const Services: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* ══ 全站統一公共預約引導組件 ══ */}
+      <CTA />
+
     </motion.main>
   );
 };

@@ -1,6 +1,15 @@
 /* ═══════════════════════════════════════════════════════════════
    HOME PAGE — Bespoke Luxury Design System
    南源木材 · NANYUAN TIMBER DESIGN
+   ─────────────────────────────────────────────────────────────
+   Architecture:
+   1. Intro Overlay    — 2.5s brand splash
+   2. Fullscreen Hero  — 4s auto-rotating bg + text
+   3. Three Advantages — icon cards
+   4. Six Processes    — alternating image-text
+   5. Render vs Reality— comparison slider
+   6. Portfolio Wall   — 6-card grid
+   7. Shared CTA       — imported from components/CTA
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Page Wrapper ───────────────────────────────────────────── */
@@ -12,6 +21,9 @@
 
 /* ═══════════════════════════════════════════════════════════════
    INTRO OVERLAY — Brand splash (first 2.5s)
+   ─────────────────────────────────────────────────────────────
+   Fades in 南源木材｜NANYUAN TIMBER DESIGN at screen center,
+   then CSS transition fades out when isIntro flips to false.
 ═══════════════════════════════════════════════════════════════ */
 .home-intro-overlay {
   position: fixed;
@@ -79,37 +91,27 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 1 — CORRIDOR TUNNEL + MULTI-IMAGE HERO
+   BLOCK 1 — FULLSCREEN HERO with auto-rotating backgrounds
+   ─────────────────────────────────────────────────────────────
+   100vh viewport-fill hero. Background layers cross-fade via
+   activeHeroIndex state (setInterval 4s). Text cross-fades
+   simultaneously — zero delay sync.
 ═══════════════════════════════════════════════════════════════ */
-
-.home-scroll-track {
+.home-hero-section {
   position: relative;
-  height: 500vh;
-  z-index: 1;
-}
-
-/* Fixed fullscreen viewport */
-.home-tunnel-viewport {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
+  min-height: 600px;
   overflow: hidden;
-  perspective: 900px;
-  perspective-origin: 50% 50%;
-  z-index: 2;
-  pointer-events: auto;
-  opacity: 1;
-  transition: opacity 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.home-tunnel-viewport--done {
-  pointer-events: none;
-  opacity: 0;
-}
-
-/* ── Dual-layer hero background crossfade ───────────────────── */
+/* ── Background image layers — cross-fade ────────────────────
+   All 4 layers are stacked; only the --active one has opacity 1.
+   transition: opacity 0.6s handles the silky cross-fade.
+─────────────────────────────────────────────────────────────── */
 .home-hero-bg-layer {
   position: absolute;
   inset: 0;
@@ -120,112 +122,254 @@
   opacity: 0;
   transition: opacity 0.6s ease-in-out;
   will-change: opacity;
+  transform: scale(1.03);
 }
 
 .home-hero-bg-layer--active {
   opacity: 1;
 }
 
-/* Dark overlay atop the hero image */
+/* ── Dark overlay atop the hero image ────────────────────────── */
 .home-hero-bg-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: rgba(10, 10, 10, 0.65);
+  background: linear-gradient(
+    180deg,
+    rgba(5, 5, 5, 0.50) 0%,
+    rgba(5, 5, 5, 0.65) 50%,
+    rgba(5, 5, 5, 0.80) 100%
+  );
 }
 
-/* Radial vignette */
+/* ── Radial vignette ─────────────────────────────────────────── */
 .home-hero-vignette {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 2;
   background: radial-gradient(
     ellipse 55% 55% at 50% 50%,
     transparent 0%,
-    rgba(5, 5, 5, 0.45) 60%,
-    rgba(5, 5, 5, 0.88) 100%
+    rgba(5, 5, 5, 0.40) 60%,
+    rgba(5, 5, 5, 0.85) 100%
   );
   pointer-events: none;
 }
 
-/* Rails layer */
-.home-rails-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
+/* ── Hero center content ─────────────────────────────────────── */
+.home-hero-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  max-width: 900px;
 }
 
-/* 3D tunnel scene */
-.home-tunnel-scene {
+/* ── Eyebrow ornament ────────────────────────────────────────── */
+.home-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: clamp(1.2rem, 3vw, 2rem);
+}
+
+.home-hero-eyebrow-line {
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(197, 168, 128, 0.35),
+    transparent
+  );
+}
+
+.home-hero-eyebrow-text {
+  font-size: 9.5px;
+  font-weight: 200;
+  letter-spacing: 0.35em;
+  color: rgba(197, 168, 128, 0.5);
+  text-transform: uppercase;
+}
+
+/* ── Brand title ─────────────────────────────────────────────── */
+.home-hero-brand {
+  font-size: clamp(3rem, 10vw, 7.5rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.05em !important;
+  line-height: 1 !important;
+  color: #C5A880;
+  text-shadow:
+    0 0 80px rgba(197, 168, 128, 0.90),
+    0 0 160px rgba(197, 168, 128, 0.40),
+    0 0 300px rgba(197, 168, 128, 0.20);
+  margin: 0 0 clamp(1rem, 2.5vw, 1.8rem);
+}
+
+/* ── Rotating step text container ────────────────────────────── */
+.home-hero-step-container {
+  position: relative;
+  width: 100%;
+  height: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+/* ── Each step text group — fade via opacity ────────────────── */
+.home-hero-step-group {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transform: translateZ(0px);
-  z-index: 10;
-}
-
-/* Corridor ring edges */
-.corridor-ring-edge {
-  position: absolute;
-  transition: none;
-}
-
-@media (max-width: 768px) {
-  .corridor-ring-edge {
-    opacity: 0.15 !important;
-  }
-}
-
-/* Ambient glow at vanishing point */
-.ambient-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(200px, 40vw, 500px);
-  height: clamp(120px, 25vh, 300px);
-  background: radial-gradient(ellipse at center, rgba(197, 168, 128, 0.12) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 5;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.6rem, 1.5vw, 1rem);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.6s ease-in-out,
+    transform 0.6s ease-in-out;
   pointer-events: none;
-  filter: blur(20px);
 }
 
-@media (max-width: 768px) {
-  .ambient-glow {
-    background: radial-gradient(ellipse at center, rgba(197, 168, 128, 0.45) 0%, transparent 70%);
-    width: clamp(250px, 70vw, 400px);
-    height: clamp(180px, 35vh, 300px);
-  }
+.home-hero-step-group--active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
-/* Tunnel floating labels */
-.home-tunnel-label-zh {
-  font-size: clamp(1.1rem, 3.5vw, 2.8rem);
+.home-hero-step-zh {
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
   font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #C5A880;
-  text-shadow: 0 0 40px rgba(197, 168, 128, 0.9), 0 0 80px rgba(197, 168, 128, 0.4);
-  opacity: 0.85;
-  line-height: 1.1;
-  text-align: center;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
 }
 
-.home-tunnel-label-en {
-  font-size: clamp(0.5rem, 1.2vw, 0.85rem);
+.home-hero-step-divider {
+  font-size: clamp(0.8rem, 1.5vw, 1.1rem);
   font-weight: 200;
-  letter-spacing: 0.35em;
-  color: rgba(197, 168, 128, 0.55);
-  margin-top: 0.4em;
-  text-transform: uppercase;
-  text-align: center;
+  color: rgba(197, 168, 128, 0.4);
 }
 
-/* Scroll hint */
+.home-hero-step-en {
+  font-size: clamp(0.55rem, 1.1vw, 0.8rem);
+  font-weight: 200;
+  letter-spacing: 0.30em;
+  color: rgba(197, 168, 128, 0.6);
+  text-transform: uppercase;
+}
+
+/* ── Tagline ─────────────────────────────────────────────────── */
+.home-hero-tagline {
+  font-size: clamp(0.82rem, 1.3vw, 1.02rem);
+  font-weight: 300;
+  letter-spacing: 0.10em;
+  color: rgba(255, 255, 255, 0.50);
+  line-height: 1.8;
+  max-width: 520px;
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+}
+
+/* ── Hero CTA button row ─────────────────────────────────────── */
+.home-hero-cta-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.home-hero-btn {
+  font-size: clamp(0.72rem, 1.1vw, 0.88rem);
+  letter-spacing: 0.14em;
+  padding: 0.85em 2.4em;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 1px;
+  transition:
+    all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.home-hero-btn--primary {
+  font-weight: 600;
+  color: #050505;
+  background-color: #C5A880;
+  border: 1px solid #C5A880;
+}
+
+.home-hero-btn--primary:hover {
+  background-color: #d4ba95;
+  border-color: #d4ba95;
+  box-shadow:
+    0 4px 24px rgba(197, 168, 128, 0.45),
+    0 0 48px rgba(197, 168, 128, 0.15);
+  transform: translateY(-3px);
+}
+
+.home-hero-btn--primary:active {
+  transform: translateY(-1px);
+}
+
+.home-hero-btn--outline {
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.75);
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+}
+
+.home-hero-btn--outline:hover {
+  border-color: rgba(197, 168, 128, 0.55);
+  color: #C5A880;
+  background-color: rgba(197, 168, 128, 0.05);
+  transform: translateY(-3px);
+}
+
+.home-hero-btn--outline:active {
+  transform: translateY(-1px);
+}
+
+/* ── Progress indicator dots ─────────────────────────────────── */
+.home-hero-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.home-hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(197, 168, 128, 0.35);
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    transform 0.4s ease;
+}
+
+.home-hero-dot:hover {
+  border-color: rgba(197, 168, 128, 0.7);
+  transform: scale(1.3);
+}
+
+.home-hero-dot--active {
+  background-color: #C5A880;
+  border-color: #C5A880;
+  box-shadow: 0 0 10px rgba(197, 168, 128, 0.5);
+  transform: scale(1.2);
+}
+
+/* ── Scroll hint ─────────────────────────────────────────────── */
 .scroll-hint {
   position: absolute;
   bottom: clamp(1.5rem, 4vh, 2.5rem);
@@ -237,12 +381,6 @@
   align-items: center;
   gap: 0.5rem;
   pointer-events: none;
-}
-
-@media (max-width: 768px) {
-  .scroll-hint {
-    bottom: 12vh;
-  }
 }
 
 .home-scroll-hint-text {
@@ -258,123 +396,23 @@
   font-size: 1rem;
 }
 
-/* ── Branding Reveal ────────────────────────────────────────── */
-.home-branding-reveal {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: clamp(1.5rem, 5vw, 4rem);
-  background: radial-gradient(ellipse at center, rgba(5, 5, 5, 0.6) 0%, rgba(5, 5, 5, 0.97) 100%);
-  opacity: 0;
-  z-index: 50;
-  pointer-events: none;
-}
-
-.home-branding-ornament-line {
-  width: clamp(30px, 6vw, 60px);
-  height: 1px;
-  background-color: #C5A880;
-  margin-bottom: clamp(1.2rem, 3vw, 2rem);
-}
-
-.home-branding-ornament-line--bottom {
-  background-color: rgba(197, 168, 128, 0.35);
-  margin-bottom: clamp(1.5rem, 3.5vw, 2.5rem);
-}
-
-.home-branding-title {
-  font-size: clamp(2.5rem, 9vw, 7rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 0.95;
-  color: #C5A880;
-  text-shadow:
-    0 0 80px rgba(197, 168, 128, 0.95),
-    0 0 160px rgba(197, 168, 128, 0.45),
-    0 0 300px rgba(197, 168, 128, 0.25);
-  margin: 0;
-}
-
-.home-branding-en {
-  font-size: clamp(0.6rem, 1.6vw, 1rem);
-  font-weight: 200;
-  letter-spacing: 0.45em;
-  color: rgba(197, 168, 128, 0.65);
-  margin: clamp(0.8rem, 2vw, 1.4rem) 0;
-  text-transform: uppercase;
-}
-
-.home-branding-tagline {
-  font-size: clamp(0.8rem, 1.3vw, 1rem);
-  font-weight: 300;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.5);
-  max-width: 520px;
-  line-height: 1.9;
-  margin: 0 0 clamp(2rem, 4vw, 3rem);
-}
-
-.home-branding-cta-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  pointer-events: auto;
-}
-
-.home-branding-btn {
-  font-size: clamp(0.7rem, 1.1vw, 0.85rem);
-  letter-spacing: 0.14em;
-  padding: 0.8em 2.2em;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  text-transform: uppercase;
-  border: 1px solid #C5A880;
-}
-
-.home-branding-btn--outline {
-  color: #C5A880;
-  background: transparent;
-}
-
-.home-branding-btn--outline:hover {
-  background: rgba(197, 168, 128, 0.1);
-  text-shadow: 0 0 12px rgba(197, 168, 128, 0.5);
-  transform: translateY(-1px);
-}
-
-.home-branding-btn--ghost {
-  color: #050505;
-  background: #C5A880;
-  font-weight: 700;
-}
-
-.home-branding-btn--ghost:hover {
-  box-shadow: 0 0 30px rgba(197, 168, 128, 0.6);
-  transform: translateY(-1px);
-}
-
 /* ═══════════════════════════════════════════════════════════════
    BLOCK 2 — THREE CORE ADVANTAGES
 ═══════════════════════════════════════════════════════════════ */
 .advantages-section {
   background-color: #0d0d0e;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: clamp(3.5rem, 8vw, 5rem);
+  padding-bottom: clamp(3.5rem, 8vw, 5rem);
 }
 
 .home-advantages-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
 }
 
 .home-advantages-title {
-  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-size: clamp(1.8rem, 5vw, 3.2rem) !important;
   font-weight: 900 !important;
   letter-spacing: -0.02em !important;
   color: #C5A880;
@@ -392,7 +430,7 @@
 
 .home-advantage-card {
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(197, 168, 128, 0.1);
+  border: 1px solid rgba(197, 168, 128, 0.10);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
   padding: clamp(1.5rem, 3vw, 3rem);
   height: 100%;
@@ -410,7 +448,7 @@
 .home-advantage-icon-wrap {
   width: 70px;
   height: 70px;
-  background: rgba(197, 168, 128, 0.1);
+  background: rgba(197, 168, 128, 0.10);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -423,7 +461,7 @@
 }
 
 .home-advantage-card-title {
-  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-size: clamp(1.2rem, 2vw, 1.5rem) !important;
   font-weight: 600 !important;
   color: #C5A880 !important;
   text-align: center;
@@ -445,14 +483,14 @@
 ═══════════════════════════════════════════════════════════════ */
 .home-process-section {
   background-color: #050505;
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: clamp(3.5rem, 8vw, 5rem);
+  padding-bottom: clamp(3.5rem, 8vw, 5rem);
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .home-process-header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: clamp(3rem, 6vw, 4rem);
 }
 
 .home-process-eyebrow {
@@ -465,7 +503,7 @@
 }
 
 .home-process-title {
-  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-size: clamp(1.8rem, 5vw, 3.2rem) !important;
   font-weight: 900 !important;
   letter-spacing: -0.03em !important;
   color: #C5A880;
@@ -480,7 +518,7 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
-/* Alternating step rows */
+/* ── Alternating step rows ── */
 .home-process-steps {
   display: flex;
   flex-direction: column;
@@ -503,7 +541,7 @@
   direction: ltr;
 }
 
-/* Image side */
+/* ── Image side ── */
 .home-process-step-img-wrap {
   position: relative;
   overflow: hidden;
@@ -523,7 +561,7 @@
   transform: scale(1.04);
 }
 
-/* SVG gradient fallback when image fails */
+/* ── SVG gradient fallback when image fails ── */
 .home-process-step-fallback {
   width: 100%;
   max-height: 280px;
@@ -538,12 +576,12 @@
   display: block;
 }
 
-/* Giant faded step number behind image */
+/* ── Giant faded step number behind image ── */
 .home-process-step-num-bg {
   position: absolute;
   bottom: -0.2em;
   right: -0.05em;
-  font-size: 5rem;
+  font-size: clamp(3.5rem, 8vw, 5rem);
   font-weight: 900;
   color: rgba(197, 168, 128, 0.03);
   line-height: 1;
@@ -553,7 +591,7 @@
   letter-spacing: -0.05em;
 }
 
-/* Text side */
+/* ── Text side ── */
 .home-process-step-text {
   padding: clamp(1rem, 2vw, 2rem) 0;
 }
@@ -569,7 +607,7 @@
 }
 
 .home-process-step-title {
-  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem) !important;
   font-weight: 900 !important;
   color: #ffffff !important;
   letter-spacing: -0.02em !important;
@@ -596,37 +634,21 @@
   margin: 0;
 }
 
-@media (max-width: 768px) {
-  .home-process-step {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .home-process-step--reverse {
-    direction: ltr;
-  }
-
-  .home-process-step-img {
-    max-height: 220px;
-  }
-
-  .home-process-step-num-bg {
-    display: none;
-  }
-}
-
 /* ═══════════════════════════════════════════════════════════════
    BLOCK 4 — RENDER vs REALITY COMPARISON SLIDER
+   ─────────────────────────────────────────────────────────────
+   Left:  設計模擬圖 / RENDER
+   Right: 實景完工照 / REALITY
 ═══════════════════════════════════════════════════════════════ */
 .home-ba-section {
   background-color: #050505;
-  padding-top: 5rem;
+  padding-top: clamp(3.5rem, 8vw, 5rem);
   padding-bottom: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .home-ba-title {
-  font-size: clamp(1.8rem, 5vw, 3.5rem);
+  font-size: clamp(1.8rem, 5vw, 3.2rem) !important;
   font-weight: 900 !important;
   letter-spacing: -0.05em !important;
   color: #C5A880;
@@ -636,7 +658,7 @@
 }
 
 .home-ba-desc {
-  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
   font-weight: 300;
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.5);
@@ -673,7 +695,7 @@
 .home-ba-label {
   position: absolute;
   bottom: 1rem;
-  font-size: 11px;
+  font-size: clamp(9px, 1.2vw, 11px);
   letter-spacing: 0.2em;
   font-weight: 300;
   color: #ffffff;
@@ -729,17 +751,17 @@
 ═══════════════════════════════════════════════════════════════ */
 .home-portfolio-section {
   background-color: #0d0d0e;
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: clamp(3.5rem, 8vw, 5rem);
+  padding-bottom: clamp(3.5rem, 8vw, 5rem);
   border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .home-portfolio-header {
-  margin-bottom: 3rem;
+  margin-bottom: clamp(2rem, 5vw, 3rem);
 }
 
 .home-portfolio-title {
-  font-size: clamp(1.8rem, 5vw, 3.5rem);
+  font-size: clamp(1.8rem, 5vw, 3.2rem) !important;
   font-weight: 900 !important;
   letter-spacing: -0.05em !important;
   color: #C5A880;
@@ -749,7 +771,7 @@
 }
 
 .home-portfolio-subtitle {
-  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
   font-weight: 300;
   letter-spacing: 0.15em;
   color: rgba(255, 255, 255, 0.4);
@@ -788,7 +810,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, #050505 0%, rgba(5, 5, 5, 0.3) 50%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    #050505 0%,
+    rgba(5, 5, 5, 0.3) 50%,
+    transparent 100%
+  );
   opacity: 0.8;
 }
 
@@ -810,7 +837,7 @@
 }
 
 .home-portfolio-card-name {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(1rem, 2vw, 1.25rem) !important;
   font-weight: 900 !important;
   letter-spacing: -0.02em !important;
   color: #ffffff;
@@ -818,26 +845,154 @@
   margin: 0;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — 768px breakpoint
+   ─────────────────────────────────────────────────────────────
+   • Hero: reduce brand size, compress CTA row
+   • Process: single column, hide background number
+   • Slider & process images: max-height 240px + object-fit cover
+   • Portfolio: constrain card height
+═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
+
+  /* ── Hero mobile adjustments ── */
+  .home-hero-section {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .home-hero-content {
+    padding: 0 1.2rem;
+  }
+
+  .home-hero-eyebrow {
+    gap: 10px;
+  }
+
+  .home-hero-eyebrow-line {
+    width: 24px;
+  }
+
+  .home-hero-eyebrow-text {
+    font-size: 8px;
+    letter-spacing: 0.25em;
+  }
+
+  .home-hero-cta-row {
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    gap: 0.75rem;
+  }
+
+  .home-hero-btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.95em 2em;
+  }
+
+  .home-hero-dots {
+    gap: 10px;
+  }
+
+  .home-hero-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .scroll-hint {
+    bottom: 12vh;
+  }
+
+  /* ── Process mobile: single column ── */
+  .home-process-step {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .home-process-step--reverse {
+    direction: ltr;
+  }
+
+  .home-process-step-img {
+    max-height: 240px;
+    object-fit: cover;
+  }
+
+  .home-process-step-fallback {
+    max-height: 240px;
+  }
+
+  .home-process-step-num-bg {
+    display: none;
+  }
+
+  /* ── Comparison slider mobile ── */
+  .home-before-after-container {
+    height: 240px;
+  }
+
+  /* ── Portfolio card mobile ── */
   .home-portfolio-card-img {
-    max-height: 220px;
+    max-height: 240px;
+    object-fit: cover;
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SHARED / LEGACY CLASSES
+   SMALL MOBILE — 400px breakpoint
+   ─────────────────────────────────────────────────────────────
+   Extra-tight spacing for narrow devices.
 ═══════════════════════════════════════════════════════════════ */
-.home-page-container {
-  background-color: #050505;
-  min-height: 100vh;
+@media (max-width: 400px) {
+
+  .home-hero-brand {
+    font-size: clamp(2.2rem, 14vw, 3.5rem) !important;
+  }
+
+  .home-hero-step-zh {
+    font-size: 1rem;
+  }
+
+  .home-hero-step-en {
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+  }
+
+  .home-hero-tagline {
+    font-size: 0.8rem;
+  }
+
+  .home-hero-btn {
+    font-size: 0.75rem;
+    padding: 0.85em 1.5em;
+  }
+
+  .home-before-after-container {
+    height: 200px;
+  }
+
+  .home-process-step-img {
+    max-height: 200px;
+  }
 }
 
-.page-main-container {
-  padding-top: 120px;
-}
+/* ═══════════════════════════════════════════════════════════════
+   LARGE DESKTOP — 1400px+ refinements
+   ─────────────────────────────────────────────────────────────
+   Slightly increase hero breathing room and process image height.
+═══════════════════════════════════════════════════════════════ */
+@media (min-width: 1400px) {
 
-@media (max-width: 768px) {
-  .page-main-container {
-    padding-top: 95px !important;
+  .home-hero-content {
+    max-width: 1000px;
+  }
+
+  .home-process-step-img {
+    max-height: 340px;
+  }
+
+  .home-before-after-container {
+    height: 75vh;
   }
 }

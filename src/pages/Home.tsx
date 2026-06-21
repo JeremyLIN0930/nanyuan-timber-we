@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Trees, ShieldCheck, ClipboardCheck } from 'lucide-react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './Home.css';
+import CTA from '../components/CTA/CTA';
 
+/* ── Asset Imports: Hero backgrounds ─────────────────────────── */
 import heroMaterial     from '../assets/home-hero-material.jpg';
 import heroCraft        from '../assets/home-hero-craft.jpg';
 import heroTransparency from '../assets/home-hero-transparency.jpg';
 import heroRealization  from '../assets/home-hero-realization.jpg';
 
+/* ── Asset Imports: Comparison slider ────────────────────────── */
 import compareRender  from '../assets/compare-render.jpg';
 import compareReality from '../assets/compare-reality.jpg';
 
+/* ── Asset Imports: Process steps ────────────────────────────── */
 import process01 from '../assets/process-01.jpg';
 import process02 from '../assets/process-02.jpg';
 import process03 from '../assets/process-03.jpg';
@@ -21,7 +23,7 @@ import process04 from '../assets/process-04.jpg';
 import process05 from '../assets/process-05.jpg';
 import process06 from '../assets/process-06.jpg';
 
-/* ── Real project photos for portfolio ── */
+/* ── Asset Imports: Portfolio real project photos ────────────── */
 import realPhoto01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
 import realPhoto02 from '../assets/LINE_ALBUM_2026.6.17_260621_70.jpg';
 import realPhoto03 from '../assets/LINE_ALBUM_2026.6.17_260621_30.jpg';
@@ -29,26 +31,19 @@ import realPhoto04 from '../assets/LINE_ALBUM_2026.6.17_260621_10.jpg';
 import realPhoto05 from '../assets/LINE_ALBUM_2026.6.17_260621_1.jpg';
 import realPhoto06 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 
-gsap.registerPlugin(ScrollTrigger);
-
-/* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════════════════════════════ */
-const GOLD     = '#C5A880';
-const GOLD_DIM = 'rgba(197,168,128,0.18)';
-const GOLD_MID = 'rgba(197,168,128,0.45)';
-
 /* ═══════════════════════════════════════════════════════════════
    UNIFIED HERO STEPS — Single source of truth
-   Text + subtitle + background image bound to the SAME index.
-   The single interval timer drives BOTH text and bg changes
-   in the exact same React lifecycle frame. Zero desync.
+   ─────────────────────────────────────────────────────────────
+   Text + background image bound to the SAME array index.
+   A single setInterval timer (4 seconds) drives BOTH text
+   and background changes in the exact same React setState call.
+   Zero desync guaranteed.
 ═══════════════════════════════════════════════════════════════ */
 const HERO_STEPS = [
-  { text: '材料源頭', sub: 'MATERIAL ORIGIN',  bg: heroMaterial,     zMultiplier: 2  },
-  { text: '工藝精準', sub: 'PRECISION CRAFT',  bg: heroCraft,        zMultiplier: 5  },
-  { text: '誠信透明', sub: 'TRANSPARENCY',     bg: heroTransparency, zMultiplier: 8  },
-  { text: '空間落地', sub: 'SPACE REALIZATION', bg: heroRealization,  zMultiplier: 11 },
+  { text: '材料源頭', sub: 'MATERIAL ORIGIN',  bg: heroMaterial     },
+  { text: '工藝精準', sub: 'PRECISION CRAFT',  bg: heroCraft        },
+  { text: '誠信透明', sub: 'TRANSPARENCY',     bg: heroTransparency },
+  { text: '空間落地', sub: 'SPACE REALIZATION', bg: heroRealization  },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -56,32 +51,44 @@ const HERO_STEPS = [
 ═══════════════════════════════════════════════════════════════ */
 const PROCESS_STEPS = [
   {
-    id: '01', title: '初步諮詢', en: 'BESPOKE CONSULTATION',
+    id: '01',
+    title: '初步諮詢',
+    en: 'BESPOKE CONSULTATION',
     desc: '傾聽您對場域的無限想像，開展客製化空間設計藍圖。',
     img: process01,
   },
   {
-    id: '02', title: '現場勘測', en: 'PRECISION SITE SURVEY',
+    id: '02',
+    title: '現場勘測',
+    en: 'PRECISION SITE SURVEY',
     desc: '職人團隊親赴現場，記錄尺度、採光、結構與管線細節。',
     img: process02,
   },
   {
-    id: '03', title: '設計提案', en: 'CONCEPT & SPACE DESIGN',
+    id: '03',
+    title: '設計提案',
+    en: 'CONCEPT & SPACE DESIGN',
     desc: '將創意轉化為空間美學，提供格局、材質與視覺提案。',
     img: process03,
   },
   {
-    id: '04', title: '工程合約', en: 'TRANSPARENT AGREEMENT',
+    id: '04',
+    title: '工程合約',
+    en: 'TRANSPARENT AGREEMENT',
     desc: '條列式報價與施工節點，確保合作流程清楚透明。',
     img: process04,
   },
   {
-    id: '05', title: '精湛施工', en: 'MASTER CRAFTSMANSHIP',
+    id: '05',
+    title: '精湛施工',
+    en: 'MASTER CRAFTSMANSHIP',
     desc: '由自有工班與現場總監執行，精準落實設計圖面。',
     img: process05,
   },
   {
-    id: '06', title: '完工驗收', en: 'PERFECT HANDOVER',
+    id: '06',
+    title: '完工驗收',
+    en: 'PERFECT HANDOVER',
     desc: '高規格檢驗細節，交付安心、完整且具質感的空間。',
     img: process06,
   },
@@ -99,15 +106,8 @@ const portfolioItems = [
   { title: '織錦牆面', type: '繃布壁飾', img: realPhoto06 },
 ];
 
-/* ═══════════════════════════════════════════════════════════════
-   CORRIDOR TUNNEL CONSTANTS
-═══════════════════════════════════════════════════════════════ */
-const RING_COUNT = 14;
-const RING_STEP  = 900;
-const TOTAL_Z    = RING_COUNT * RING_STEP;
-
 /* ─────────────────────────────────────────────────────────────
-   FADE-IN SECTION (scroll-driven)
+   FADE-IN SECTION (scroll-driven reveal via Intersection Observer)
 ───────────────────────────────────────────────────────────── */
 const FadeInSection: React.FC<{
   children: React.ReactNode;
@@ -131,6 +131,11 @@ const FadeInSection: React.FC<{
 
 /* ─────────────────────────────────────────────────────────────
    PROCESS STEP IMAGE with SVG gradient fallback
+   ─────────────────────────────────────────────────────────────
+   If the image file fails to load (onError), automatically
+   renders an inline SVG warm brown gradient placeholder with
+   the step number. Ensures zero broken images across all
+   environments.
 ───────────────────────────────────────────────────────────── */
 const ProcessImage: React.FC<{ src: string; alt: string; stepId: string }> = ({ src, alt, stepId }) => {
   const [hasError, setHasError] = useState(false);
@@ -168,15 +173,20 @@ const ProcessImage: React.FC<{ src: string; alt: string; stepId: string }> = ({ 
 
 /* ─────────────────────────────────────────────────────────────
    RENDER vs REALITY COMPARISON SLIDER
+   ─────────────────────────────────────────────────────────────
+   Left:  設計模擬圖 / RENDER  (compare-render.jpg)
+   Right: 實景完工照 / REALITY (compare-reality.jpg)
 ───────────────────────────────────────────────────────────── */
 const RenderRealitySlider: React.FC = () => {
   const [pos, setPos] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
+
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     setPos(Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100)));
   };
+
   return (
     <div
       ref={containerRef}
@@ -211,197 +221,55 @@ const RenderRealitySlider: React.FC = () => {
   );
 };
 
-/* ─────────────────────────────────────────────────────────────
-   CORRIDOR RING — One rectangular frame ring
-───────────────────────────────────────────────────────────── */
-const CorridorRing: React.FC<{ depth: number; index: number }> = ({ depth, index }) => {
-  const w         = 62;
-  const h         = 78;
-  const thickness = 1.5;
-  const opacity   = index === 0 ? 0.9 : Math.max(0.08, 0.55 - index * 0.03);
-  const color     = index < 2 ? GOLD_MID : GOLD_DIM;
-
-  const edgeBase: React.CSSProperties = {
-    position:        'absolute',
-    backgroundColor: color,
-    opacity,
-    transition:      'none',
-  };
-
-  return (
-    <div style={{
-      position:       'absolute',
-      top:            '50%',
-      left:           '50%',
-      width:          `${w}vw`,
-      height:         `${h}vh`,
-      transform:      `translate3d(-50%, -50%, ${depth}px)`,
-      transformStyle: 'preserve-3d',
-      pointerEvents:  'none',
-    }}>
-      <div className="corridor-ring-edge" style={{ ...edgeBase, top: 0, left: 0, right: 0, height: `${thickness}px` }} />
-      <div className="corridor-ring-edge" style={{ ...edgeBase, bottom: 0, left: 0, right: 0, height: `${thickness}px` }} />
-      <div className="corridor-ring-edge" style={{ ...edgeBase, top: 0, left: 0, bottom: 0, width: `${thickness}px` }} />
-      <div className="corridor-ring-edge" style={{ ...edgeBase, top: 0, right: 0, bottom: 0, width: `${thickness}px` }} />
-
-      {[
-        { top: -3, left: -3 },
-        { top: -3, right: -3 },
-        { bottom: -3, left: -3 },
-        { bottom: -3, right: -3 },
-      ].map((dotPos, i) => (
-        <div key={i} style={{
-          position:        'absolute',
-          width:           '5px',
-          height:          '5px',
-          borderRadius:    '50%',
-          backgroundColor: GOLD,
-          opacity:         opacity * 1.6,
-          ...dotPos,
-        }} />
-      ))}
-    </div>
-  );
-};
-
-/* ─────────────────────────────────────────────────────────────
-   PERSPECTIVE RAILS — Vanishing-point decorative lines
-───────────────────────────────────────────────────────────── */
-const PerspectiveRails: React.FC = () => {
-  const railBase: React.CSSProperties = {
-    position:        'absolute',
-    transformOrigin: 'center center',
-    backgroundColor: GOLD_DIM,
-    pointerEvents:   'none',
-  };
-  return (
-    <>
-      <div style={{ ...railBase, top: '50%', left: 0, right: 0, height: '1px', opacity: 0.12 }} />
-      <div style={{ ...railBase, left: '50%', top: 0, bottom: 0, width: '1px', opacity: 0.12 }} />
-      <svg
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-      >
-        <line x1="0"   y1="0"   x2="50" y2="50" stroke={GOLD} strokeWidth="0.06" opacity="0.25" />
-        <line x1="100" y1="0"   x2="50" y2="50" stroke={GOLD} strokeWidth="0.06" opacity="0.25" />
-        <line x1="0"   y1="100" x2="50" y2="50" stroke={GOLD} strokeWidth="0.06" opacity="0.25" />
-        <line x1="100" y1="100" x2="50" y2="50" stroke={GOLD} strokeWidth="0.06" opacity="0.25" />
-        <line x1="0"   y1="50"  x2="50" y2="50" stroke={GOLD} strokeWidth="0.04" opacity="0.15" />
-        <line x1="100" y1="50"  x2="50" y2="50" stroke={GOLD} strokeWidth="0.04" opacity="0.15" />
-        <line x1="50"  y1="0"   x2="50" y2="50" stroke={GOLD} strokeWidth="0.04" opacity="0.15" />
-        <line x1="50"  y1="100" x2="50" y2="50" stroke={GOLD} strokeWidth="0.04" opacity="0.15" />
-      </svg>
-    </>
-  );
-};
-
 /* ═══════════════════════════════════════════════════════════════
    HOME PAGE COMPONENT
+   ─────────────────────────────────────────────────────────────
+   Architecture:
+   1. Intro Overlay    — 2.5s brand splash → fade out
+   2. Fullscreen Hero  — 4s setInterval rotating bg + text
+   3. Three Advantages — 源頭理解 / 細節品質 / 誠信透明
+   4. Six Processes    — Alternating image-text layout
+   5. Render vs Reality— Interactive comparison slider
+   6. Portfolio Wall   — 6-card grid → /projects
+   7. Shared CTA       — 全站唯一公共預約引導組件
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  const scrollTrackRef = useRef<HTMLDivElement>(null);
-  const viewportRef    = useRef<HTMLDivElement>(null);
-  const tunnelRef      = useRef<HTMLDivElement>(null);
-  const brandingRef    = useRef<HTMLDivElement>(null);
-  const particlesRef   = useRef<HTMLDivElement>(null);
-
   /* ── Intro overlay state (brand splash) ── */
   const [isIntro, setIsIntro] = useState(true);
 
-  const [tunnelDone, setTunnelDone]           = useState(false);
-  const [activeHeroIndex, setActiveHeroIndex]  = useState(0);
+  /* ── Hero rotation index — drives BOTH text and background ── */
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
 
-  /* ── Intro: auto-dismiss after 2.5s ── */
+  /* ══════════════════════════════════════════════════════════
+     INTRO: auto-dismiss after 2.5 seconds
+     The overlay fades out via CSS transition, then the main
+     content beneath becomes visible and interactive.
+  ══════════════════════════════════════════════════════════ */
   useEffect(() => {
     const timer = setTimeout(() => setIsIntro(false), 2500);
     return () => clearTimeout(timer);
   }, []);
 
-  /* ── Compute which hero background to show based on scroll ── */
-  const updateHeroIndex = useCallback((progress: number) => {
-    const normalised = Math.min(progress / 0.8, 1);
-    const idx = Math.min(3, Math.floor(normalised * 4));
-    setActiveHeroIndex(idx);
+  /* ══════════════════════════════════════════════════════════
+     HERO ROTATION — Single setInterval, 4-second cycle
+     ──────────────────────────────────────────────────────
+     Both text and background image are driven by the SAME
+     activeHeroIndex state variable, updated in a single
+     setState call. Zero desync guaranteed.
+
+     Fix: replaces the old scroll-driven GSAP approach which
+     caused severe text-to-background delay on certain devices.
+  ══════════════════════════════════════════════════════════ */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveHeroIndex(prev => (prev + 1) % HERO_STEPS.length);
+    }, 4000);
+    return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const tunnel   = tunnelRef.current;
-    const branding = brandingRef.current;
-    const viewport = viewportRef.current;
-    if (!tunnel || !branding || !viewport) return;
-
-    gsap.set(tunnel,   { z: 0, opacity: 1, rotationX: 0, rotationY: 0 });
-    gsap.set(branding, { opacity: 0, y: 30, scale: 0.92 });
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: scrollTrackRef.current,
-        start:   'top top',
-        end:     'bottom bottom',
-        scrub:   1.4,
-        onUpdate: (self) => updateHeroIndex(self.progress),
-        onLeave:     () => setTunnelDone(true),
-        onEnterBack: () => setTunnelDone(false),
-      },
-    });
-
-    tl.to(tunnel, {
-      z:        TOTAL_Z + 400,
-      ease:     'power1.inOut',
-      duration: 0.80,
-    }, 0);
-
-    tl.to(tunnel, {
-      opacity:  0,
-      filter:   'brightness(4) blur(6px)',
-      duration: 0.12,
-      ease:     'power2.in',
-    }, 0.80);
-
-    tl.to(branding, {
-      opacity:  1,
-      y:        0,
-      scale:    1,
-      duration: 0.18,
-      ease:     'power3.out',
-    }, 0.88);
-
-    const onMouseMove = (e: MouseEvent) => {
-      const rx = (e.clientY / window.innerHeight - 0.5) * -6;
-      const ry = (e.clientX / window.innerWidth  - 0.5) *  6;
-      gsap.to(tunnel, { rotationX: rx, rotationY: ry, duration: 1.2, ease: 'power2.out', overwrite: 'auto' });
-    };
-    window.addEventListener('mousemove', onMouseMove);
-
-    const particles = particlesRef.current;
-    if (particles) {
-      const dots = particles.querySelectorAll<HTMLElement>('.dust-dot');
-      dots.forEach((dot, i) => {
-        gsap.to(dot, {
-          y:        `${-30 - Math.random() * 60}px`,
-          x:        `${(Math.random() - 0.5) * 40}px`,
-          opacity:  0,
-          duration: 3 + Math.random() * 4,
-          delay:    i * 0.3,
-          repeat:   -1,
-          ease:     'power1.inOut',
-          yoyo:     false,
-          onRepeat: () => {
-            gsap.set(dot, { y: 0, x: 0, opacity: Math.random() * 0.4 + 0.1 });
-          },
-        });
-      });
-    }
-
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      ScrollTrigger.getAll().forEach(t => t.kill());
-    };
-  }, [updateHeroIndex]);
-
+  /* ── Smooth scroll to advantages section ── */
   const scrollToContent = () => {
     document.querySelector('.advantages-section')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -417,7 +285,10 @@ const Home: React.FC = () => {
 
       {/* ══════════════════════════════════════════════════════════════════
           INTRO OVERLAY — Brand splash (first 2.5 seconds)
-          Fades in "南源木材｜NANYUAN TIMBER DESIGN" then fades out.
+          ──────────────────────────────────────────────────────────────
+          Slowly fades in: 南源木材｜NANYUAN TIMBER DESIGN
+          After 2.5s the isIntro flag flips → CSS transition fades out
+          the overlay and unlocks the main content below.
       ══════════════════════════════════════════════════════════════════ */}
       <div className={`home-intro-overlay ${!isIntro ? 'home-intro-overlay--hidden' : ''}`}>
         <div className="home-intro-line" />
@@ -427,163 +298,110 @@ const Home: React.FC = () => {
 
 
       {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 1: CORRIDOR TUNNEL + MULTI-IMAGE HERO BACKGROUND
-          Background images are driven by HERO_STEPS[activeHeroIndex].bg
-          — the SAME state variable controls both text and image.
+          BLOCK 1: FULLSCREEN HERO — Auto-rotating backgrounds + text
+          ──────────────────────────────────────────────────────────────
+          Background images are cross-faded via HERO_STEPS[activeHeroIndex].bg
+          Step text is cross-faded via HERO_STEPS[activeHeroIndex].text
+          Both driven by the SAME state — zero delay.
       ══════════════════════════════════════════════════════════════════ */}
-      <div ref={scrollTrackRef} className="home-scroll-track">
-        <div
-          ref={viewportRef}
-          className={`home-tunnel-viewport ${tunnelDone ? 'home-tunnel-viewport--done' : ''}`}
-        >
-          {/* ── 4 Hero background layers — cross-fade via activeHeroIndex ── */}
-          {HERO_STEPS.map((step, i) => (
-            <div
-              key={`hero-bg-${i}`}
-              className={`home-hero-bg-layer ${i === activeHeroIndex ? 'home-hero-bg-layer--active' : ''}`}
-              style={{ backgroundImage: `url('${step.bg}')` }}
-            />
-          ))}
+      <section className="home-hero-section">
 
-          {/* ── Dark overlay ── */}
-          <div className="home-hero-bg-overlay" />
+        {/* ── 4 Hero background layers — cross-fade via activeHeroIndex ── */}
+        {HERO_STEPS.map((step, i) => (
+          <div
+            key={`hero-bg-${i}`}
+            className={`home-hero-bg-layer ${i === activeHeroIndex ? 'home-hero-bg-layer--active' : ''}`}
+            style={{ backgroundImage: `url('${step.bg}')` }}
+          />
+        ))}
 
-          {/* ── Radial vignette ── */}
-          <div className="home-hero-vignette" />
+        {/* ── Dark overlay ── */}
+        <div className="home-hero-bg-overlay" />
 
-          {/* ── Ambient glow at vanishing point ── */}
-          <div className="ambient-glow" />
+        {/* ── Radial vignette ── */}
+        <div className="home-hero-vignette" />
 
-          {/* ── Perspective rail lines ── */}
-          <div className="home-rails-layer">
-            <PerspectiveRails />
+        {/* ── Hero center content ── */}
+        <div className="home-hero-content">
+
+          {/* ── Eyebrow ornament ── */}
+          <div className="home-hero-eyebrow">
+            <div className="home-hero-eyebrow-line" />
+            <span className="home-hero-eyebrow-text">NANYUAN TIMBER DESIGN</span>
+            <div className="home-hero-eyebrow-line" />
           </div>
 
-          {/* ── 3D tunnel scene ── */}
-          <div ref={tunnelRef} className="home-tunnel-scene">
-            {Array.from({ length: RING_COUNT }).map((_, i) => (
-              <CorridorRing key={i} index={i} depth={-i * RING_STEP} />
-            ))}
+          {/* ── Brand title ── */}
+          <h1 className="home-hero-brand">南源木材</h1>
 
-            {/* Floor lines */}
-            {Array.from({ length: RING_COUNT }).map((_, i) => (
-              <div
-                key={`fl-${i}`}
-                style={{
-                  position:        'absolute',
-                  top:             '50%',
-                  left:            '50%',
-                  width:           '62vw',
-                  height:          '1px',
-                  transform:       `translate3d(-50%, calc(${78 / 2}vh - 0px), ${-i * RING_STEP}px)`,
-                  transformStyle:  'preserve-3d',
-                  backgroundColor: GOLD_DIM,
-                  opacity:         Math.max(0.06, 0.3 - i * 0.02),
-                  pointerEvents:   'none',
-                }}
-              />
-            ))}
-
-            {/* Ceiling lines */}
-            {Array.from({ length: RING_COUNT }).map((_, i) => (
-              <div
-                key={`cl-${i}`}
-                style={{
-                  position:        'absolute',
-                  top:             '50%',
-                  left:            '50%',
-                  width:           '62vw',
-                  height:          '1px',
-                  transform:       `translate3d(-50%, calc(-${78 / 2}vh + 0px), ${-i * RING_STEP}px)`,
-                  transformStyle:  'preserve-3d',
-                  backgroundColor: GOLD_DIM,
-                  opacity:         Math.max(0.06, 0.3 - i * 0.02),
-                  pointerEvents:   'none',
-                }}
-              />
-            ))}
-
-            {/* Floating text labels — synced to hero backgrounds via HERO_STEPS */}
+          {/* ── Rotating step text — synced to backgrounds ── */}
+          <div className="home-hero-step-container">
             {HERO_STEPS.map((step, i) => (
               <div
-                key={`lbl-${i}`}
-                style={{
-                  position:       'absolute',
-                  top:            '50%',
-                  left:           '50%',
-                  transform:      `translate3d(-50%, -50%, ${-RING_STEP * step.zMultiplier}px)`,
-                  transformStyle: 'preserve-3d',
-                  textAlign:      'center',
-                  pointerEvents:  'none',
-                  userSelect:     'none',
-                }}
+                key={`hero-text-${i}`}
+                className={`home-hero-step-group ${i === activeHeroIndex ? 'home-hero-step-group--active' : ''}`}
               >
-                <div className="home-tunnel-label-zh">{step.text}</div>
-                <div className="home-tunnel-label-en">{step.sub}</div>
+                <span className="home-hero-step-zh">{step.text}</span>
+                <span className="home-hero-step-divider">|</span>
+                <span className="home-hero-step-en">{step.sub}</span>
               </div>
             ))}
-
-            {/* Dust particles */}
-            <div ref={particlesRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-              {Array.from({ length: 28 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="dust-dot"
-                  style={{
-                    position:        'absolute',
-                    top:             `${20 + Math.random() * 60}%`,
-                    left:            `${15 + Math.random() * 70}%`,
-                    width:           `${1 + Math.random() * 2}px`,
-                    height:          `${1 + Math.random() * 2}px`,
-                    borderRadius:    '50%',
-                    backgroundColor: GOLD,
-                    opacity:         Math.random() * 0.3 + 0.05,
-                    transform:       `translateZ(${-Math.random() * TOTAL_Z * 0.6}px)`,
-                  }}
-                />
-              ))}
-            </div>
           </div>
 
-          {/* ── Scroll hint ── */}
-          <div className="scroll-hint">
-            <span className="home-scroll-hint-text">Scroll to enter</span>
-            <motion.div
-              className="home-scroll-hint-arrow"
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          {/* ── Tagline ── */}
+          <p className="home-hero-tagline">
+            從材料源頭開始，打造安心落地的空間
+          </p>
+
+          {/* ── Hero CTA buttons ── */}
+          <div className="home-hero-cta-row">
+            <button
+              className="home-hero-btn home-hero-btn--primary"
+              onClick={() => navigate('/contact')}
             >
-              ↓
-            </motion.div>
+              立即預約諮詢 ➜
+            </button>
+            <button
+              className="home-hero-btn home-hero-btn--outline"
+              onClick={scrollToContent}
+            >
+              探索南源工藝
+            </button>
           </div>
 
-          {/* ── BRANDING REVEAL ── */}
-          <div ref={brandingRef} className="home-branding-reveal">
-            <div className="home-branding-ornament-line" />
-            <h1 className="home-branding-title">南源木材</h1>
-            <p className="home-branding-en">NANYUAN TIMBER DESIGN</p>
-            <div className="home-branding-ornament-line home-branding-ornament-line--bottom" />
-            <p className="home-branding-tagline">從材料源頭開始，打造安心落地的空間</p>
-            <div className="home-branding-cta-row">
+          {/* ── Progress indicator dots ── */}
+          <div className="home-hero-dots">
+            {HERO_STEPS.map((step, i) => (
               <button
-                className="home-branding-btn home-branding-btn--outline"
-                onClick={scrollToContent}
-              >
-                探索南源工藝 ➔
-              </button>
-              <button
-                className="home-branding-btn home-branding-btn--ghost"
-                onClick={() => navigate('/contact')}
-              >
-                立即預約諮詢
-              </button>
-            </div>
+                key={`dot-${i}`}
+                className={`home-hero-dot ${i === activeHeroIndex ? 'home-hero-dot--active' : ''}`}
+                onClick={() => setActiveHeroIndex(i)}
+                aria-label={step.text}
+              />
+            ))}
           </div>
+
         </div>
-      </div>
+
+        {/* ── Scroll hint ── */}
+        <div className="scroll-hint">
+          <span className="home-scroll-hint-text">Scroll to explore</span>
+          <motion.div
+            className="home-scroll-hint-arrow"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            ↓
+          </motion.div>
+        </div>
+
+      </section>
 
 
-      {/* ══ BLOCK 2: THREE CORE ADVANTAGES ══ */}
+      {/* ══════════════════════════════════════════════════════════════════
+          BLOCK 2: THREE CORE ADVANTAGES
+          源頭理解 / 細節品質 / 誠信透明
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="advantages-section">
         <div className="container">
           <FadeInSection className="home-advantages-header">
@@ -628,7 +446,13 @@ const Home: React.FC = () => {
       </section>
 
 
-      {/* ══ BLOCK 3: SIX PROCESS STEPS (Alternating Layout) ══ */}
+      {/* ══════════════════════════════════════════════════════════════════
+          BLOCK 3: SIX PROCESS STEPS (Alternating Layout)
+          ──────────────────────────────────────────────────────────────
+          Left-side images: process-01.jpg ~ process-06.jpg
+          If any image fails to load → auto-fallback to inline SVG
+          warm brown gradient placeholder. Zero broken images.
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="home-process-section">
         <div className="container">
           <FadeInSection className="home-process-header">
@@ -643,7 +467,10 @@ const Home: React.FC = () => {
             {PROCESS_STEPS.map((step, i) => {
               const isEven = i % 2 === 1;
               return (
-                <FadeInSection key={step.id} className={`home-process-step ${isEven ? 'home-process-step--reverse' : ''}`}>
+                <FadeInSection
+                  key={step.id}
+                  className={`home-process-step ${isEven ? 'home-process-step--reverse' : ''}`}
+                >
                   <div className="home-process-step-img-wrap">
                     <ProcessImage
                       src={step.img}
@@ -667,7 +494,12 @@ const Home: React.FC = () => {
       </section>
 
 
-      {/* ══ BLOCK 4: RENDER vs REALITY COMPARISON ══ */}
+      {/* ══════════════════════════════════════════════════════════════════
+          BLOCK 4: RENDER vs REALITY COMPARISON
+          ──────────────────────────────────────────────────────────────
+          Left:  設計模擬圖 / RENDER  → compare-render.jpg
+          Right: 實景完工照 / REALITY → compare-reality.jpg
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="home-ba-section">
         <div className="container">
           <FadeInSection>
@@ -681,7 +513,9 @@ const Home: React.FC = () => {
       </section>
 
 
-      {/* ══ BLOCK 5: PORTFOLIO WALL ══ */}
+      {/* ══════════════════════════════════════════════════════════════════
+          BLOCK 5: PORTFOLIO WALL
+      ══════════════════════════════════════════════════════════════════ */}
       <section className="home-portfolio-section">
         <div className="container">
           <FadeInSection className="home-portfolio-header">
@@ -716,6 +550,15 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+
+
+      {/* ══════════════════════════════════════════════════════════════════
+          BLOCK 6: GLOBAL CTA — 全站唯一公共預約引導組件
+          ──────────────────────────────────────────────────────────────
+          引入自 src/components/CTA/CTA.tsx（第一步建立的公共完全體）。
+          此為全站統一預約入口，嚴禁在此處另寫任何 inline CTA 區塊。
+      ══════════════════════════════════════════════════════════════════ */}
+      <CTA />
 
 
     </motion.div>

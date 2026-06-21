@@ -195,7 +195,8 @@ input[type='range']::-moz-range-thumb {
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Smooth scrolling + overflow protection ── */
-html {
+html,
+body {
   scroll-behavior: smooth;
   overflow-x: hidden !important;
 }
@@ -208,6 +209,7 @@ section,
 [class*="accordion"],
 [class*="card"] {
   -webkit-overflow-scrolling: touch !important;
+  will-change: transform;
 }
 
 /* ── Dynamic heading sizes with clamp ── */
