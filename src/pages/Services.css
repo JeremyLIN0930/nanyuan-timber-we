@@ -1,11 +1,15 @@
 /* ═══════════════════════════════════════════════════════════════
    Services.css  —  南源木材 服務項目與流程 頁面
    ─────────────────────────────────────────────────────────────
-   負責：
-   1. Hero Banner 安全頂距（Navbar clearance）
-   2. Hero 視覺層（背景、遮罩、文字排版）
-   3. Timeline zigzag 網格（桌機對齊 ＋ 手機垂直軌道）
-   所有卡片 hover / 顏色樣式在 Services.tsx inline style 處理。
+   100% Separation of Concerns：
+   所有樣式（含 hover 效果）皆由本檔案管理，
+   Services.tsx 不含任何 style={{}} 內聯樣式。
+   ─────────────────────────────────────────────────────────────
+   Brand palette:
+     Gold:      #C5A880
+     Glow:      rgba(197,168,128,0.85)
+     BG:        #050505
+     Card BG:   rgba(18,18,20,0.85)
 ═══════════════════════════════════════════════════════════════ */
 
 /* ──────────────────────────────────────────────────────────────
@@ -23,13 +27,18 @@
 }
 
 /* ──────────────────────────────────────────────────────────────
-   BUG 1 FIX — Hero Banner: Navbar 安全頂距
-   ─────────────────────────────────────────────────────────────
-   .services-hero 是全頁頂部全版面 Banner。
-   它採用 position:relative + min-height，讓背景圖在 fixed
-   Navbar 後方全螢幕鋪滿，同時透過 padding-top 確保文字組件
-   永遠在 Navbar 下方可見。
+   MAIN WRAPPER
+   ────────────────────────────────────────────────────────────── */
+.services-main {
+  background-color: #050505;
+  min-height:       100vh;
+  color:            #fff;
+  overflow-x:       hidden;
+}
 
+/* ──────────────────────────────────────────────────────────────
+   HERO BANNER
+   ─────────────────────────────────────────────────────────────
    Desktop: padding-top: 150px（72px Navbar + 78px 呼吸空間）
    Mobile:  padding-top: 110px（60px Navbar + 50px 呼吸空間）
    ────────────────────────────────────────────────────────────── */
@@ -60,14 +69,14 @@
 
 /* ── Hero gradient overlay ── */
 .services-hero-overlay {
-  position:   absolute;
-  inset:      0;
-  background: linear-gradient(
+  position:       absolute;
+  inset:          0;
+  background:     linear-gradient(
     to bottom,
-    rgba(5, 5, 5, 0.75) 0%,
-    rgba(5, 5, 5, 0.40) 40%,
-    rgba(5, 5, 5, 0.65) 80%,
-    #050505              100%
+    rgba(5, 5, 5, 0.75)  0%,
+    rgba(5, 5, 5, 0.40)  40%,
+    rgba(5, 5, 5, 0.65)  80%,
+    #050505               100%
   );
   pointer-events: none;
   z-index:        1;
@@ -135,6 +144,285 @@
   max-width:      640px;
   margin:         0 auto;
   line-height:    1.85;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION: CORE SERVICES
+   ────────────────────────────────────────────────────────────── */
+.services-core-section {
+  padding:          clamp(4rem, 10vh, 7rem) 0;
+  background-color: #050505;
+}
+
+/* ── Section eyebrow row ── */
+.services-section-eyebrow {
+  display:       flex;
+  align-items:   center;
+  gap:           14px;
+  margin-bottom: 1rem;
+}
+
+.services-section-eyebrow-line {
+  width:            clamp(24px, 4vw, 40px);
+  height:           1px;
+  background-color: #C5A880;
+  box-shadow:       0 0 8px rgba(197, 168, 128, 0.85);
+}
+
+.services-section-eyebrow-text {
+  font-size:      10px;
+  font-weight:    300;
+  letter-spacing: 0.28em;
+  color:          rgba(197, 168, 128, 0.65);
+  text-transform: uppercase;
+}
+
+/* ── Section heading ── */
+.services-section-heading {
+  font-size:      clamp(1.8rem, 4vw, 3rem);
+  font-weight:    900;
+  letter-spacing: -0.04em;
+  color:          #C5A880;
+  text-shadow:    0 0 30px rgba(197, 168, 128, 0.5);
+  margin-bottom:  clamp(2.5rem, 5vh, 4rem);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION: PROCESS / TIMELINE
+   ────────────────────────────────────────────────────────────── */
+.services-process-section {
+  padding:          clamp(4rem, 10vh, 7rem) 0;
+  background-color: #0D0D0E;
+  border-top:       1px solid rgba(255, 255, 255, 0.07);
+  border-bottom:    1px solid rgba(255, 255, 255, 0.07);
+}
+
+.services-process-heading {
+  font-size:      clamp(1.8rem, 4vw, 3rem);
+  font-weight:    900;
+  letter-spacing: -0.04em;
+  color:          #C5A880;
+  text-shadow:    0 0 30px rgba(197, 168, 128, 0.5);
+  margin-bottom:  0.5rem;
+}
+
+.services-process-subtitle {
+  font-size:      clamp(0.8rem, 1.2vw, 0.92rem);
+  font-weight:    300;
+  letter-spacing: 0.18em;
+  color:          rgba(255, 255, 255, 0.38);
+  text-transform: uppercase;
+  margin-bottom:  clamp(3rem, 6vh, 5rem);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SERVICE CARD (3 core services)
+   ─────────────────────────────────────────────────────────────
+   All hover effects use CSS :hover — no JS state required.
+   ────────────────────────────────────────────────────────────── */
+.service-card {
+  padding:          clamp(1.8rem, 2.8vw, 2.8rem);
+  background-color: rgba(18, 18, 20, 0.85);
+  border:           1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:       0 6px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter:  blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  height:           100%;
+  display:          flex;
+  flex-direction:   column;
+  gap:              14px;
+  transition:       box-shadow 0.42s ease,
+                    background-color 0.42s ease,
+                    border-color 0.42s ease,
+                    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.service-card:hover {
+  background-color: rgba(197, 168, 128, 0.06);
+  border-color:     rgba(197, 168, 128, 0.30);
+  box-shadow:       0 12px 40px rgba(0, 0, 0, 0.55),
+                    0 0 0 1px rgba(197, 168, 128, 0.22);
+  transform:        translateY(-5px);
+}
+
+/* ── Card number ── */
+.service-card__number {
+  font-size:      clamp(2.2rem, 4vw, 3.2rem);
+  font-weight:    900;
+  letter-spacing: -0.06em;
+  color:          rgba(197, 168, 128, 0.18);
+  text-shadow:    none;
+  line-height:    1;
+  user-select:    none;
+  transition:     color 0.4s, text-shadow 0.4s;
+}
+
+.service-card:hover .service-card__number {
+  color:       #C5A880;
+  text-shadow: 0 0 28px rgba(197, 168, 128, 0.85);
+}
+
+/* ── Card divider wire ── */
+.service-card__divider {
+  width:            36px;
+  height:           1px;
+  background-color: rgba(197, 168, 128, 0.30);
+  box-shadow:       none;
+  transition:       width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                    background-color 0.4s,
+                    box-shadow 0.4s;
+}
+
+.service-card:hover .service-card__divider {
+  width:            100%;
+  background-color: #C5A880;
+  box-shadow:       0 0 8px rgba(197, 168, 128, 0.7);
+}
+
+/* ── Card title ── */
+.service-card__title {
+  font-size:      clamp(1.05rem, 1.7vw, 1.3rem);
+  font-weight:    900;
+  letter-spacing: -0.025em;
+  color:          rgba(255, 255, 255, 0.88);
+  text-shadow:    none;
+  margin:         0;
+  transition:     color 0.4s, text-shadow 0.4s;
+}
+
+.service-card:hover .service-card__title {
+  color:       #ffffff;
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
+}
+
+/* ── Card English subtitle ── */
+.service-card__en {
+  font-size:      9px;
+  font-weight:    300;
+  letter-spacing: 0.22em;
+  color:          rgba(255, 255, 255, 0.38);
+  text-transform: uppercase;
+  transition:     color 0.4s;
+}
+
+.service-card:hover .service-card__en {
+  color: rgba(197, 168, 128, 0.75);
+}
+
+/* ── Card description ── */
+.service-card__desc {
+  font-size:      clamp(0.82rem, 1.15vw, 0.9rem);
+  font-weight:    300;
+  letter-spacing: 0.04em;
+  color:          rgba(255, 255, 255, 0.45);
+  line-height:    1.85;
+  margin:         0;
+  text-align:     justify;
+  transition:     color 0.4s;
+}
+
+.service-card:hover .service-card__desc {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   PROCESS ITEM (timeline step card)
+   ─────────────────────────────────────────────────────────────
+   All hover effects use CSS :hover — no JS state required.
+   ────────────────────────────────────────────────────────────── */
+.process-item {
+  padding:          clamp(1.5rem, 2.2vw, 2.2rem);
+  background-color: rgba(18, 18, 20, 0.85);
+  border:           1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:       0 4px 20px rgba(0, 0, 0, 0.4);
+  transition:       all 0.42s ease,
+                    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.process-item:hover {
+  background-color: rgba(197, 168, 128, 0.05);
+  border-color:     rgba(197, 168, 128, 0.30);
+  box-shadow:       0 10px 32px rgba(0, 0, 0, 0.55),
+                    0 0 0 1px rgba(197, 168, 128, 0.2);
+  transform:        translateY(-4px);
+}
+
+/* ── Text alignment variants ── */
+.process-item--left {
+  text-align: right;
+}
+
+.process-item--right {
+  text-align: left;
+}
+
+/* ── Process item English label ── */
+.process-item__en {
+  font-size:      9px;
+  font-weight:    300;
+  letter-spacing: 0.22em;
+  color:          rgba(255, 255, 255, 0.38);
+  text-transform: uppercase;
+  display:        block;
+  margin-bottom:  6px;
+  transition:     color 0.4s;
+}
+
+.process-item:hover .process-item__en {
+  color: rgba(197, 168, 128, 0.8);
+}
+
+/* ── Process item heading ── */
+.process-item__heading {
+  font-size:      clamp(1rem, 1.6vw, 1.25rem);
+  font-weight:    900;
+  letter-spacing: -0.025em;
+  color:          rgba(255, 255, 255, 0.88);
+  margin-bottom:  0.9rem;
+  transition:     color 0.4s;
+}
+
+.process-item:hover .process-item__heading {
+  color: #fff;
+}
+
+/* ── Process item divider wire ── */
+.process-item__divider {
+  width:            28px;
+  height:           1px;
+  background-color: rgba(197, 168, 128, 0.30);
+  box-shadow:       none;
+  margin-bottom:    0.9rem;
+  transition:       width 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                    background-color 0.4s,
+                    box-shadow 0.4s;
+}
+
+/* Left-aligned card: divider aligns to right */
+.process-item--left .process-item__divider {
+  margin-left: auto;
+}
+
+.process-item:hover .process-item__divider {
+  width:            100%;
+  background-color: #C5A880;
+  box-shadow:       0 0 8px rgba(197, 168, 128, 0.6);
+}
+
+/* ── Process item description ── */
+.process-item__desc {
+  font-size:      clamp(0.78rem, 1.1vw, 0.85rem);
+  font-weight:    300;
+  letter-spacing: 0.04em;
+  color:          rgba(255, 255, 255, 0.45);
+  line-height:    1.85;
+  margin:         0;
+  text-align:     justify;
+  transition:     color 0.4s;
+}
+
+.process-item:hover .process-item__desc {
+  color: rgba(255, 255, 255, 0.62);
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -230,13 +518,13 @@
 
 .cell-left {
   /* Even steps: card on left, align content to right */
-  margin-right: auto;
+  margin-right:  auto;
   padding-right: clamp(1.5rem, 3vw, 3rem);
 }
 
 .cell-right {
   /* Odd steps: card on right, align content to left */
-  margin-left: auto;
+  margin-left:  auto;
   padding-left: clamp(1.5rem, 3vw, 3rem);
 }
 
@@ -279,9 +567,9 @@
 
   /* Move node to the left track */
   .services-timeline-node {
-    position: absolute;
-    left:     -44px;
-    top:      24px;
+    position:  absolute;
+    left:      -44px;
+    top:       24px;
     transform: none;
   }
 
@@ -289,20 +577,20 @@
   .services-timeline-cell,
   .cell-left,
   .cell-right {
-    width:        100%;
-    margin-left:  0;
-    margin-right: 0;
-    padding-left: 0;
+    width:         100%;
+    margin-left:   0;
+    margin-right:  0;
+    padding-left:  0;
     padding-right: 0;
   }
 
   /* Card text alignment: always left on mobile */
-  .services-timeline-item-wrapper article {
+  .services-timeline-item-wrapper .process-item {
     text-align: left !important;
   }
 
-  /* Wire expander: always aligns left on mobile */
-  .services-timeline-item-wrapper article div[style*="margin-left: auto"] {
+  /* Wire divider: always aligns left on mobile */
+  .services-timeline-item-wrapper .process-item__divider {
     margin-left: 0 !important;
   }
 

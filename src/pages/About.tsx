@@ -8,20 +8,6 @@ import aboutSlide03 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
 import aboutDetail from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════════════════════════════ */
-const GOLD      = '#C5A880';
-const GOLD_GLOW = 'rgba(197,168,128,0.85)';
-// GOLD_DIM unused — kept as reference only
-// const GOLD_DIM  = 'rgba(197,168,128,0.10)';
-const GOLD_WIRE = 'rgba(197,168,128,0.30)';
-const BG        = '#050505';
-const BG_CARD   = 'rgba(15,15,15,0.60)';
-const BORDER    = 'rgba(255,255,255,0.07)';
-const TEXT_DIM  = 'rgba(255,255,255,0.38)';
-const TEXT_MID  = 'rgba(255,255,255,0.62)';
-
-/* ═══════════════════════════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════════════════════════ */
 const HERO_SLIDES = [
@@ -111,17 +97,7 @@ const HeroSlider: React.FC = () => {
   };
 
   return (
-    <section
-      className="about-hero-section"
-      style={{
-        position:        'relative',
-        width:           '100%',
-        height:          '100vh',
-        minHeight:       '560px',
-        overflow:        'hidden',
-        backgroundColor: BG,
-      }}
-    >
+    <section className="about-hero-section">
       {/* ── Background slide images ── */}
       <AnimatePresence custom={direction} initial={false}>
         <motion.div
@@ -132,41 +108,22 @@ const HeroSlider: React.FC = () => {
           animate="center"
           exit="exit"
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            position:           'absolute',
-            inset:              0,
-            backgroundImage:    `url('${HERO_SLIDES[active].src}')`,
-            backgroundSize:     'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat:   'no-repeat',
-            willChange:         'transform, opacity',
-          }}
+          className="about-hero-slide-bg"
+          style={{ backgroundImage: `url('${HERO_SLIDES[active].src}')` }}
         />
       </AnimatePresence>
 
       {/* ── Multi-layer gradient ── */}
-      <div
-        style={{
-          position:      'absolute',
-          inset:         0,
-          background:    `
-            linear-gradient(to bottom, rgba(5,5,5,0.72) 0%, rgba(5,5,5,0.3) 40%, transparent 70%),
-            linear-gradient(to top,    ${BG} 0%,  rgba(5,5,5,0.55) 30%, transparent 60%),
-            linear-gradient(to right,  rgba(5,5,5,0.50) 0%, transparent 55%)
-          `,
-          zIndex:        2,
-          pointerEvents: 'none',
-        }}
-      />
+      <div className="about-hero-gradient" />
 
       {/* ── Hero copy block ── */}
-      <div className="about-hero-copy" style={{ zIndex: 5 }}>
+      <div className="about-hero-copy">
 
         {/* Eyebrow */}
         <Reveal>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.1rem' }}>
-            <div style={{ width: 'clamp(20px,3.5vw,36px)', height: '1px', backgroundColor: GOLD, boxShadow: `0 0 8px ${GOLD_GLOW}` }} />
-            <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.28em', color: 'rgba(197,168,128,0.75)', textTransform: 'uppercase' }}>
+          <div className="about-eyebrow">
+            <div className="about-eyebrow-line" />
+            <span className="about-eyebrow-text">
               ABOUT NANYUAN
             </span>
           </div>
@@ -174,33 +131,15 @@ const HeroSlider: React.FC = () => {
 
         {/* Title */}
         <Reveal delay={0.08}>
-          <h1
-            className="about-hero-title"
-            style={{
-              fontWeight:    900,
-              letterSpacing: '-0.06em',
-              lineHeight:    0.92,
-              color:         '#fff',
-              textShadow:    '0 0 40px rgba(0,0,0,0.6)',
-              margin:        0,
-            }}
-          >
+          <h1 className="about-hero-title">
             關於<br />
-            <span style={{ color: GOLD, textShadow: `0 0 50px ${GOLD_GLOW}` }}>南源</span>
+            <span className="about-hero-title-gold">南源</span>
           </h1>
         </Reveal>
 
         {/* Subtitle */}
         <Reveal delay={0.16}>
-          <p style={{
-            fontSize:      'clamp(0.9rem,1.8vw,1.2rem)',
-            fontWeight:    300,
-            letterSpacing: '0.1em',
-            color:         'rgba(255,255,255,0.72)',
-            lineHeight:    1.75,
-            marginTop:     '1.25rem',
-            marginBottom:  0,
-          }}>
+          <p className="about-hero-subtitle">
             從材料源頭到空間落地，我們懂木，更懂您。
           </p>
         </Reveal>
@@ -213,15 +152,7 @@ const HeroSlider: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{   opacity: 0, y: -8 }}
             transition={{ duration: 0.5 }}
-            style={{
-              fontSize:      '10px',
-              fontWeight:    300,
-              letterSpacing: '0.2em',
-              color:         'rgba(197,168,128,0.55)',
-              textTransform: 'uppercase',
-              marginTop:     '1.2rem',
-              marginBottom:  0,
-            }}
+            className="about-slide-caption"
           >
             {HERO_SLIDES[active].caption}
           </motion.p>
@@ -229,42 +160,16 @@ const HeroSlider: React.FC = () => {
       </div>
 
       {/* ── Dot pagination ── */}
-      <div
-        style={{
-          position:   'absolute',
-          bottom:     'clamp(28px,5vh,48px)',
-          left:       'clamp(20px,6vw,80px)',
-          zIndex:     5,
-          display:    'flex',
-          alignItems: 'center',
-          gap:        '10px',
-        }}
-      >
+      <div className="about-dot-pagination">
         {HERO_SLIDES.map((_, i) => (
           <button
             key={i}
             onClick={() => goTo(i)}
             aria-label={`切換至第 ${i + 1} 張`}
-            style={{
-              width:           i === active ? '28px' : '6px',
-              height:          '6px',
-              borderRadius:    '4px',
-              border:          'none',
-              padding:         0,
-              cursor:          'pointer',
-              backgroundColor: i === active ? GOLD : 'rgba(197,168,128,0.3)',
-              boxShadow:       i === active ? `0 0 10px rgba(197,168,128,0.7)` : 'none',
-              transition:      'all 0.45s cubic-bezier(0.16,1,0.3,1)',
-            }}
+            className={`about-dot-btn ${i === active ? 'about-dot-btn--active' : 'about-dot-btn--inactive'}`}
           />
         ))}
-        <span style={{
-          marginLeft:    '8px',
-          fontSize:      '10px',
-          fontWeight:    300,
-          letterSpacing: '0.18em',
-          color:         TEXT_DIM,
-        }}>
+        <span className="about-dot-counter">
           {String(active + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
         </span>
       </div>
@@ -273,15 +178,7 @@ const HeroSlider: React.FC = () => {
       <motion.div
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-        style={{
-          position:   'absolute',
-          bottom:     'clamp(28px,5vh,48px)',
-          right:      'clamp(20px,5vw,60px)',
-          zIndex:     5,
-          color:      'rgba(197,168,128,0.45)',
-          fontSize:   '1.1rem',
-          lineHeight: 1,
-        }}
+        className="about-scroll-cue"
       >
         ↓
       </motion.div>
@@ -294,40 +191,19 @@ const HeroSlider: React.FC = () => {
 ═══════════════════════════════════════════════════════════════ */
 const StatsBar: React.FC = () => (
   <Reveal>
-    <div
-      className="row g-0"
-      style={{
-        border:               `1px solid ${GOLD_WIRE}`,
-        background:           'rgba(10,10,10,0.55)',
-        backdropFilter:       'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
-      }}
-    >
-      {STATS.map((s, i) => (
+    <div className="row g-0 about-stats-bar">
+      {STATS.map((s) => (
         <div
           key={s.en}
           className="col-12 col-md-4 about-stat-cell"
-          style={{
-            padding:     'clamp(1.4rem,3vw,2.2rem) clamp(1.5rem,3.5vw,3rem)',
-            borderRight: i < 2 ? `1px solid ${GOLD_WIRE}` : 'none',
-            textAlign:   'center',
-          }}
         >
-          <div style={{
-            fontSize:      'clamp(2.2rem,5vw,3.4rem)',
-            fontWeight:    900,
-            letterSpacing: '-0.05em',
-            color:         GOLD,
-            textShadow:    `0 0 30px rgba(197,168,128,0.6)`,
-            lineHeight:    1,
-            marginBottom:  '0.4rem',
-          }}>
+          <div className="about-stat-num">
             {s.num}
           </div>
-          <div style={{ fontSize: 'clamp(0.82rem,1.2vw,0.95rem)', fontWeight: 700, color: 'rgba(255,255,255,0.82)', letterSpacing: '0.04em' }}>
+          <div className="about-stat-label">
             {s.label}
           </div>
-          <div style={{ fontSize: '9px', fontWeight: 300, letterSpacing: '0.22em', color: TEXT_DIM, textTransform: 'uppercase', marginTop: '3px' }}>
+          <div className="about-stat-en">
             {s.en}
           </div>
         </div>
@@ -340,40 +216,22 @@ const StatsBar: React.FC = () => (
    STORY SECTION
 ═══════════════════════════════════════════════════════════════ */
 const StorySection: React.FC = () => (
-  <section style={{ padding: 'clamp(4rem,10vh,8rem) 0' }}>
+  <section className="about-story-section">
     <div className="container px-3 px-md-4">
 
       <Reveal>
-        <p style={{
-          fontSize:      'clamp(1.3rem,3.5vw,2.2rem)',
-          fontWeight:    300,
-          letterSpacing: '-0.02em',
-          lineHeight:    1.55,
-          color:         'rgba(255,255,255,0.88)',
-          maxWidth:      '820px',
-          marginBottom:  'clamp(2rem,5vh,3.5rem)',
-        }}>
+        <p className="about-story-lead">
           早期深耕木材與建築材料領域，擁有超過三十年的產業資歷。我們看過無數材料的優劣，深知一塊好木頭如何決定一個空間的生命力與溫度。
         </p>
       </Reveal>
 
       <Reveal delay={0.1}>
-        <p style={{
-          fontSize:      'clamp(0.9rem,1.5vw,1.05rem)',
-          fontWeight:    300,
-          letterSpacing: '0.06em',
-          lineHeight:    2,
-          color:         TEXT_MID,
-          maxWidth:      '680px',
-          borderLeft:    `3px solid ${GOLD}`,
-          paddingLeft:   '1.5rem',
-          boxShadow:     `-4px 0 18px rgba(197,168,128,0.2)`,
-        }}>
+        <p className="about-story-quote">
           我們承諾，每一個細節都經得起時間的考驗，讓您的空間不只是居住，更是世代安心的歸宿。南源不只提供工程，更是您打造傳世私人空間最值得信賴的職人夥伴。
         </p>
       </Reveal>
 
-      <div style={{ marginTop: 'clamp(3rem,7vh,5rem)' }}>
+      <div className="about-stats-wrapper">
         <StatsBar />
       </div>
     </div>
@@ -384,29 +242,17 @@ const StorySection: React.FC = () => (
    VALUES SECTION
 ═══════════════════════════════════════════════════════════════ */
 const ValuesSection: React.FC = () => (
-  <section style={{
-    padding:         'clamp(4rem,10vh,8rem) 0',
-    backgroundColor: '#0D0D0E',
-    borderTop:       `1px solid ${BORDER}`,
-    borderBottom:    `1px solid ${BORDER}`,
-  }}>
+  <section className="about-values-section">
     <div className="container px-3 px-md-4">
 
       <Reveal className="mb-5">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '1rem' }}>
-          <div style={{ width: 'clamp(24px,4vw,40px)', height: '1px', backgroundColor: GOLD, boxShadow: `0 0 8px ${GOLD_GLOW}` }} />
-          <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.28em', color: 'rgba(197,168,128,0.65)', textTransform: 'uppercase' }}>
+        <div className="about-values-eyebrow">
+          <div className="about-values-eyebrow-line" />
+          <span className="about-values-eyebrow-text">
             OUR CORE VALUES
           </span>
         </div>
-        <h2 style={{
-          fontSize:      'clamp(1.8rem,4vw,3rem)',
-          fontWeight:    900,
-          letterSpacing: '-0.04em',
-          color:         GOLD,
-          textShadow:    `0 0 30px rgba(197,168,128,0.5)`,
-          margin:        0,
-        }}>
+        <h2 className="about-values-title">
           三大核心價值
         </h2>
       </Reveal>
@@ -425,38 +271,19 @@ const ValuesSection: React.FC = () => (
 );
 
 const ValueCard: React.FC<{ value: typeof VALUES[0] }> = ({ value }) => {
-  const [hovered, setHovered] = React.useState(false);
   return (
-    <motion.div
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={()   => setHovered(false)}
-      animate={{ y: hovered ? -5 : 0, borderColor: hovered ? GOLD : 'rgba(197,168,128,0.12)' }}
-      transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-      style={{
-        padding:              'clamp(1.8rem,3vw,2.8rem)',
-        background:           hovered ? `linear-gradient(145deg, rgba(197,168,128,0.08) 0%, ${BG_CARD} 100%)` : BG_CARD,
-        border:               '1px solid rgba(197,168,128,0.12)',
-        boxShadow:            hovered ? '0 12px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(197,168,128,0.28), inset 0 0 30px rgba(197,168,128,0.04)' : '0 6px 24px rgba(0,0,0,0.4)',
-        backdropFilter:       'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
-        transition:           'box-shadow 0.42s ease, background 0.42s ease',
-        height:               '100%',
-        display:              'flex',
-        flexDirection:        'column',
-        gap:                  '14px',
-      }}
-    >
-      <span style={{ fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 900, letterSpacing: '-0.06em', color: hovered ? GOLD : 'rgba(197,168,128,0.2)', textShadow: hovered ? `0 0 30px ${GOLD_GLOW}` : 'none', lineHeight: 1, transition: 'color 0.4s, text-shadow 0.4s', userSelect: 'none' }}>
+    <div className="about-value-card">
+      <span className="about-value-id">
         {value.id}
       </span>
-      <div style={{ width: hovered ? '100%' : '36px', height: '1px', backgroundColor: hovered ? GOLD : GOLD_WIRE, boxShadow: hovered ? `0 0 8px rgba(197,168,128,0.7)` : 'none', transition: 'width 0.5s cubic-bezier(0.16,1,0.3,1), background-color 0.4s, box-shadow 0.4s' }} />
-      <h3 style={{ fontSize: 'clamp(1.1rem,1.8vw,1.35rem)', fontWeight: 900, letterSpacing: '-0.025em', color: hovered ? '#ffffff' : 'rgba(255,255,255,0.88)', textShadow: hovered ? '0 0 18px rgba(255,255,255,0.18)' : 'none', margin: 0, transition: 'color 0.4s, text-shadow 0.4s' }}>
+      <div className="about-value-divider" />
+      <h3 className="about-value-name">
         {value.title}
       </h3>
-      <p style={{ fontSize: 'clamp(0.82rem,1.15vw,0.9rem)', fontWeight: 300, letterSpacing: '0.04em', color: hovered ? TEXT_MID : 'rgba(255,255,255,0.45)', lineHeight: 1.85, margin: 0, textAlign: 'justify', transition: 'color 0.4s' }}>
+      <p className="about-value-desc">
         {value.desc}
       </p>
-    </motion.div>
+    </div>
   );
 };
 
@@ -497,43 +324,22 @@ const RingsSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      style={{
-        padding:         'clamp(5rem,12vh,10rem) 0',
-        backgroundColor: BG,
-        overflow:        'hidden',
-        position:        'relative',
-      }}
+      className="about-rings-section"
     >
       <div className="container px-3 px-md-4">
-        <div
-          style={{
-            display:        'flex',
-            flexDirection:  'column',
-            alignItems:     'center',
-            justifyContent: 'center',
-            position:       'relative',
-            minHeight:      '560px',
-          }}
-        >
+        <div className="about-rings-container">
           {/* LAYER A: CSS-animated inner rings */}
           {CSS_RINGS.map((r, i) => (
             <div
               key={`css-ring-${i}`}
               className="about-ring-css"
               style={{
-                position:       'absolute',
-                top:            '50%',
-                left:           '50%',
                 width:          `${r.size}px`,
                 height:         `${r.size}px`,
                 marginTop:      `${-r.size / 2}px`,
                 marginLeft:     `${-r.size / 2}px`,
-                borderRadius:   '50%',
                 border:         `1px solid rgba(197,168,128,${r.opacity})`,
-                pointerEvents:  'none',
                 animationDelay: r.delay,
-                willChange:     'transform, opacity',
-                transform:      'translate(0,0)',
               }}
             />
           ))}
@@ -542,64 +348,31 @@ const RingsSection: React.FC = () => {
           {FM_RINGS.map((r, i) => (
             <motion.div
               key={`fm-ring-${i}`}
+              className="about-ring-fm"
               style={{
-                position:      'absolute',
-                top:           '50%',
-                left:          '50%',
                 width:         `${r.size}px`,
                 height:        `${r.size}px`,
                 marginTop:     `${-r.size / 2}px`,
                 marginLeft:    `${-r.size / 2}px`,
-                borderRadius:  '50%',
                 border:        `1px solid rgba(197,168,128,${r.borderOpacity})`,
                 boxShadow:     `0 0 ${40 + i * 20}px rgba(197,168,128,${r.shadowOpacity})`,
                 scale:         scaleR[i],
                 opacity:       opacR[i],
-                pointerEvents: 'none',
               }}
             />
           ))}
 
           {/* Centre text */}
           <Reveal>
-            <div
-              style={{
-                textAlign: 'center',
-                position:  'relative',
-                zIndex:    2,
-                padding:   '0 clamp(16px,5vw,48px)',
-              }}
-            >
-              <h2 style={{
-                fontSize:      'clamp(1.8rem,5vw,3.8rem)',
-                fontWeight:    900,
-                letterSpacing: '-0.05em',
-                lineHeight:    1.1,
-                color:         '#fff',
-                textShadow:    '0 0 40px rgba(0,0,0,0.5)',
-                marginBottom:  '1.2rem',
-              }}>
+            <div className="about-rings-centre">
+              <h2 className="about-rings-title">
                 年輪，時間的印記。
               </h2>
-              <p style={{
-                fontSize:      'clamp(0.88rem,1.5vw,1.05rem)',
-                fontWeight:    300,
-                letterSpacing: '0.08em',
-                color:         TEXT_MID,
-                lineHeight:    1.9,
-                maxWidth:      '480px',
-                margin:        '0 auto',
-              }}>
+              <p className="about-rings-desc">
                 一圈圈代表著我們對材料的深刻理解。<br />
                 從源頭開始，為您的空間注入經久耐用的職人精神。
               </p>
-              <div style={{
-                width:           '1px',
-                height:          'clamp(32px,5vw,56px)',
-                backgroundColor: GOLD,
-                boxShadow:       `0 0 12px ${GOLD_GLOW}`,
-                margin:          '2rem auto 0',
-              }} />
+              <div className="about-rings-accent-line" />
             </div>
           </Reveal>
 
@@ -613,27 +386,21 @@ const RingsSection: React.FC = () => {
    PHILOSOPHY SECTION
 ═══════════════════════════════════════════════════════════════ */
 const PhilosophySection: React.FC = () => (
-  <section style={{
-    padding:    'clamp(4rem,10vh,8rem) 0',
-    background: `linear-gradient(to bottom, #0D0D0E 0%, ${BG} 100%)`,
-    borderTop:  `1px solid ${BORDER}`,
-  }}>
+  <section className="about-philosophy-section">
     <div className="container px-3 px-md-4">
       <div className="row g-5 align-items-center">
 
         {/* Image */}
         <div className="col-12 col-lg-5">
           <Reveal from="left">
-            <div style={{ position: 'relative', overflow: 'hidden' }}>
+            <div className="about-philosophy-img-wrap">
               <img
                 src={aboutDetail}
                 alt="南源職人現場工藝"
-                style={{ width: '100%', height: 'clamp(280px,40vw,500px)', objectFit: 'cover', display: 'block', filter: 'brightness(0.72)', transition: 'filter 0.5s' }}
-                onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'brightness(0.9)')}
-                onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.filter = 'brightness(0.72)')}
+                className="about-philosophy-img"
               />
-              <div style={{ position: 'absolute', bottom: 0, left: 0, width: '40px', height: '40px', borderLeft: `2px solid ${GOLD}`, borderBottom: `2px solid ${GOLD}`, boxShadow: `-2px 2px 16px rgba(197,168,128,0.4)` }} />
-              <div style={{ position: 'absolute', top: 0, right: 0, width: '40px', height: '40px', borderTop: `2px solid ${GOLD}`, borderRight: `2px solid ${GOLD}`, boxShadow: `2px -2px 16px rgba(197,168,128,0.4)` }} />
+              <div className="about-philosophy-corner-bl" />
+              <div className="about-philosophy-corner-tr" />
             </div>
           </Reveal>
         </div>
@@ -641,15 +408,15 @@ const PhilosophySection: React.FC = () => (
         {/* Quote */}
         <div className="col-12 col-lg-7">
           <Reveal from="right" delay={0.1}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
-              <div style={{ width: '32px', height: '1px', backgroundColor: GOLD, boxShadow: `0 0 8px ${GOLD_GLOW}` }} />
-              <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.28em', color: 'rgba(197,168,128,0.65)', textTransform: 'uppercase' }}>OUR PHILOSOPHY</span>
+            <div className="about-philosophy-eyebrow">
+              <div className="about-philosophy-eyebrow-line" />
+              <span className="about-philosophy-eyebrow-text">OUR PHILOSOPHY</span>
             </div>
-            <div style={{ fontSize: 'clamp(4rem,8vw,7rem)', fontWeight: 900, lineHeight: 0.7, color: GOLD_WIRE, marginBottom: '0.6rem', letterSpacing: '-0.04em', userSelect: 'none' }}>"</div>
-            <blockquote style={{ fontSize: 'clamp(1rem,2.2vw,1.45rem)', fontWeight: 300, letterSpacing: '0.05em', lineHeight: 1.75, color: 'rgba(255,255,255,0.85)', margin: '0 0 1.5rem', borderLeft: 'none', padding: 0 }}>
+            <div className="about-philosophy-open-quote">"</div>
+            <blockquote className="about-philosophy-blockquote">
               裝修不是花錢買外表，而是花心思在對的地方。我們的工作，是讓每一分材料費都能轉化為您空間裡經得起歲月審視的細節。
             </blockquote>
-            <p style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', color: GOLD, textShadow: `0 0 12px rgba(197,168,128,0.5)`, textTransform: 'uppercase', margin: 0 }}>
+            <p className="about-philosophy-author">
               — 南源木材　創辦人
             </p>
           </Reveal>
@@ -668,7 +435,7 @@ const About: React.FC = () => (
     animate={{ opacity: 1 }}
     exit={{ opacity: 0 }}
     transition={{ duration: 0.5 }}
-    style={{ backgroundColor: BG, minHeight: '100vh', color: '#fff', overflowX: 'hidden' }}
+    className="about-page"
   >
     <HeroSlider />
     <StorySection />

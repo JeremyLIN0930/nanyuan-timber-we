@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import './Projects.css';
+import CTA from '../components/CTA/CTA';
 
 /* ── Real project photos via Vite import ── */
 import projPhoto01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
@@ -20,10 +21,7 @@ import projPhoto13 from '../assets/LINE_ALBUM_2026.6.17_260621_7.jpg';
 import projPhoto14 from '../assets/LINE_ALBUM_2026.6.17_260621_14.jpg';
 import projPhoto15 from '../assets/LINE_ALBUM_2026.6.17_260621_22.jpg';
 
-/* ═══════════════════════════════════════════════════════════════
-   DESIGN CONSTANTS
-═══════════════════════════════════════════════════════════════ */
-const GOLD = '#C5A880';
+/* Design constants moved to Projects.css */
 
 /* ═══════════════════════════════════════════════════════════════
    FILTER CATEGORIES
@@ -355,7 +353,7 @@ const BeforeAfterSlider: React.FC<{
       {/* Divider handle */}
       <div
         className="ba-handle-line"
-        style={{ left: `${pos}%`, transform: 'translateX(-50%)' }}
+        style={{ left: `${pos}%` }}
       >
         <div className="ba-handle-circle">
           <span className="ba-handle-arrows">⟨⟩</span>
@@ -554,23 +552,15 @@ const FilterTabs: React.FC<{
   active:   CategoryId;
   onChange: (id: CategoryId) => void;
 }> = ({ active, onChange }) => {
-  const [hovered, setHovered] = React.useState<CategoryId | null>(null);
 
   return (
-    /*
-      .filter-track  → outer scroll wrapper with centred flex
-      .tab-track-container → the frosted obsidian pill capsule
-      Tasks 2 & 3: centering is handled entirely in Projects.css.
-      No inline justify-content here — CSS owns the layout.
-    */
     <div className="filter-track">
       <div className="tab-track-container">
         {CATEGORIES.map(cat => {
-          const isActive  = active  === cat.id;
-          const isHovered = hovered === cat.id;
+          const isActive = active === cat.id;
 
           return (
-            <div key={cat.id} className="position-relative d-inline-block">
+            <div key={cat.id} className="filter-pill-slot">
               {/* Sliding active pill background */}
               {isActive && (
                 <motion.div
@@ -587,47 +577,17 @@ const FilterTabs: React.FC<{
 
               <button
                 onClick={() => onChange(cat.id)}
-                onMouseEnter={() => setHovered(cat.id)}
-                onMouseLeave={() => setHovered(null)}
-                className="filter-pill-btn"
+                className={`filter-pill-btn ${isActive ? 'filter-pill-btn--active' : ''}`}
                 aria-label={`篩選 ${cat.label}`}
-                style={{
-                  transform: isHovered && !isActive ? 'translateY(-2px)' : 'translateY(0)',
-                }}
               >
-                {/* Chinese label */}
-                <span
-                  className="filter-pill-label"
-                  style={{
-                    fontWeight: isActive ? 800 : isHovered ? 500 : 300,
-                    color:      isActive
-                      ? '#ffffff'
-                      : isHovered
-                        ? GOLD
-                        : 'rgba(255,255,255,0.42)',
-                    textShadow: isActive
-                      ? `0 0 18px rgba(197,168,128,0.7), 0 0 6px rgba(255,255,255,0.3)`
-                      : 'none',
-                  }}
-                >
+                <span className={`filter-pill-label ${isActive ? 'filter-pill-label--active' : ''}`}>
                   {cat.label}
                 </span>
 
-                {/* English sub-label */}
-                <span
-                  className="filter-pill-en"
-                  style={{
-                    color: isActive
-                      ? 'rgba(197,168,128,0.75)'
-                      : isHovered
-                        ? 'rgba(197,168,128,0.55)'
-                        : 'rgba(255,255,255,0.22)',
-                  }}
-                >
+                <span className={`filter-pill-en ${isActive ? 'filter-pill-en--active' : ''}`}>
                   {cat.en}
                 </span>
 
-                {/* Gold wire underline (active only) */}
                 <AnimatePresence>
                   {isActive && (
                     <motion.span
@@ -636,17 +596,7 @@ const FilterTabs: React.FC<{
                       animate={{ scaleX: 1, opacity: 1 }}
                       exit={{   scaleX: 0, opacity: 0 }}
                       transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1], delay: 0.06 }}
-                      className="position-absolute bottom-0 start-50 translate-middle-x"
-                      style={{
-                        display:         'block',
-                        width:           '24px',
-                        height:          '1.5px',
-                        borderRadius:    '2px',
-                        background:      `linear-gradient(90deg, transparent, ${GOLD}, transparent)`,
-                        boxShadow:       `0 0 8px rgba(197,168,128,0.9), 0 0 20px rgba(197,168,128,0.4)`,
-                        transformOrigin: 'center',
-                        marginBottom:    '2px',
-                      }}
+                      className="filter-pill-wire"
                     />
                   )}
                 </AnimatePresence>
@@ -733,6 +683,9 @@ const Projects: React.FC = () => {
         </section>
 
       </div>
+
+      {/* ══ 全站統一公共預約引導組件 ══ */}
+      <CTA />
 
       {/* Detail overlay */}
       <AnimatePresence>

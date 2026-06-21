@@ -1,66 +1,85 @@
+/* ═══════════════════════════════════════════════════════════════
+   Footer.css — 南源木材全站頁尾樣式
+   品牌色：金 #C5A880 ∣ 背景 #050505 ∣ 文字 白/金
+═══════════════════════════════════════════════════════════════ */
+
+/* ── 頁尾根容器 ── */
 .footer {
-  background-color: var(--dark-blue);
-  color: white;
-  padding: 4rem 0 0;
-  margin-top: 4rem;
+  background-color: #050505;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 32px;
 }
 
-.footer-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
+/* ── 頁尾內容區域 ── */
+.footer__content {
+  padding-top: 80px;
 }
 
-.footer-brand h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: var(--earth-light);
+/* ── 品牌標題 ── */
+.footer__brand-title {
+  font-size: clamp(1.5rem, 3vw, 1.8rem);
+  letter-spacing: -0.03em;
+  color: #C5A880;
+  text-shadow: 0 0 30px rgba(197, 168, 128, 0.85);
 }
 
-.footer-brand p {
-  color: #ccc;
-  margin-bottom: 0.5rem;
+/* ── 品牌英文副標 ── */
+.footer__brand-subtitle {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
 }
 
-.footer-links h4, .footer-contact h4 {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  color: var(--earth-light);
+/* ── 品牌描述文 ── */
+.footer__brand-desc {
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.8;
 }
 
-.footer-links ul {
-  list-style: none;
+/* ── 區塊標題（快速連結 / 聯絡我們） ── */
+.footer__section-title {
+  font-size: 0.85rem;
+  letter-spacing: -0.02em;
+  color: #fff;
 }
 
-.footer-links li {
-  margin-bottom: 0.8rem;
+/* ── 快速連結項目 ── */
+.footer__link {
+  font-size: clamp(0.75rem, 1.1vw, 0.85rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.3s;
+  text-decoration: none;
 }
 
-.footer-links a {
-  color: #ccc;
-  transition: color 0.3s ease;
+.footer__link:hover {
+  color: #C5A880;
 }
 
-.footer-links a:hover {
-  color: white;
+/* ── 聯絡資訊容器 ── */
+.footer__contact-info {
+  font-size: clamp(0.75rem, 1.1vw, 0.85rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
 }
 
-.footer-contact p {
-  color: #ccc;
-  margin-bottom: 0.8rem;
+/* ── 底部分隔線區域 ── */
+.footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.footer-bottom {
-  text-align: center;
-  padding: 1.5rem 0;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  color: #888;
-  font-size: 0.9rem;
-}
-
-@media (min-width: 768px) {
-  .footer-container {
-    grid-template-columns: 2fr 1fr 1fr;
-  }
+/* ── 版權聲明文字 ── */
+.footer__copyright {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.15);
+  text-transform: uppercase;
 }

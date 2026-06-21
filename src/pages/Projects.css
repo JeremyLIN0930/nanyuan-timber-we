@@ -144,6 +144,7 @@
   background-color: #C5A880;
   box-shadow:       0 0 25px rgba(197, 168, 128, 0.8);
   z-index:          10;
+  transform:        translateX(-50%);
 }
 
 .ba-handle-circle {
@@ -701,4 +702,73 @@
   box-shadow: 0 0 15px rgba(197, 168, 128, 0.85),
               inset 0 0 10px rgba(197, 168, 128, 0.05);
   z-index:    0;
+}
+
+/* ── Filter pill slot (replaces position-relative d-inline-block) ── */
+.filter-pill-slot {
+  position:       relative;
+  display:        inline-block;
+}
+
+/* ── Pill button hover → lift ── */
+.filter-pill-btn:hover {
+  transform: translateY(-2px);
+}
+
+.filter-pill-btn--active:hover {
+  transform: translateY(0);
+}
+
+/* ── Label default → hover → active ── */
+.filter-pill-label {
+  font-weight: 300;
+  color:       rgba(255, 255, 255, 0.42);
+  text-shadow: none;
+  transition:  color 0.35s, font-weight 0.35s, text-shadow 0.35s;
+}
+
+.filter-pill-btn:hover .filter-pill-label {
+  font-weight: 500;
+  color:       #C5A880;
+}
+
+.filter-pill-label--active {
+  font-weight: 800 !important;
+  color:       #ffffff !important;
+  text-shadow: 0 0 18px rgba(197, 168, 128, 0.7),
+               0 0 6px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ── English sub-label default → hover → active ── */
+.filter-pill-en {
+  font-size:      8px;
+  font-weight:    300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color:          rgba(255, 255, 255, 0.22);
+  transition:     color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filter-pill-btn:hover .filter-pill-en {
+  color: rgba(197, 168, 128, 0.55);
+}
+
+.filter-pill-en--active {
+  color: rgba(197, 168, 128, 0.75) !important;
+}
+
+/* ── Gold wire underline (active only, animated via framer-motion) ── */
+.filter-pill-wire {
+  display:          block;
+  position:         absolute;
+  bottom:           2px;
+  left:             50%;
+  transform:        translateX(-50%);
+  width:            24px;
+  height:           1.5px;
+  border-radius:    2px;
+  background:       linear-gradient(90deg, transparent, #C5A880, transparent);
+  box-shadow:       0 0 8px rgba(197, 168, 128, 0.9),
+                    0 0 20px rgba(197, 168, 128, 0.4);
+  transform-origin: center;
 }

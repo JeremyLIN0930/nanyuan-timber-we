@@ -3,12 +3,6 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import './Knowledge.css';
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN CONSTANTS
-═══════════════════════════════════════════════════════════════ */
-const GOLD = '#C5A880';
-const GOLD_GLOW = 'rgba(197,168,128,0.85)';
-
-/* ═══════════════════════════════════════════════════════════════
    FILTER CATEGORIES
 ═══════════════════════════════════════════════════════════════ */
 type CategoryId = 'all' | 'wood' | 'painting' | 'stone-metal';
@@ -135,6 +129,9 @@ const FilterTabs: React.FC<{
           const isActive  = active  === cat.id;
           const isHovered = hovered === cat.id;
 
+          const labelClass = `filter-pill-label${isActive ? ' filter-pill-label--active' : isHovered ? ' filter-pill-label--hovered' : ''}`;
+          const enClass    = `filter-pill-en${isActive ? ' filter-pill-en--active' : isHovered ? ' filter-pill-en--hovered' : ''}`;
+
           return (
             <div key={cat.id} className="position-relative d-inline-block">
               {isActive && (
@@ -152,23 +149,11 @@ const FilterTabs: React.FC<{
                 className="filter-pill-btn"
                 aria-label={`篩選 ${cat.label}`}
               >
-                <span
-                  className="filter-pill-label"
-                  style={{
-                    fontWeight: isActive ? 800 : isHovered ? 500 : 300,
-                    color:      isActive ? '#ffffff' : isHovered ? GOLD : 'rgba(255,255,255,0.45)',
-                    textShadow: isActive ? `0 0 15px ${GOLD_GLOW}` : 'none',
-                  }}
-                >
+                <span className={labelClass}>
                   {cat.label}
                 </span>
 
-                <span
-                  className="filter-pill-en"
-                  style={{
-                    color: isActive ? 'rgba(197,168,128,0.8)' : isHovered ? 'rgba(197,168,128,0.5)' : 'rgba(255,255,255,0.18)',
-                  }}
-                >
+                <span className={enClass}>
                   {cat.en}
                 </span>
               </button>

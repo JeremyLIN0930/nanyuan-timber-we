@@ -1,18 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════
-   About.css  —  南源木材 About 頁面樣式
+   About.css  —  南源木材 About 頁面樣式（全面 CSS 化）
    ─────────────────────────────────────────────────────────────
-   負責以下兩件事：
-   1. Hero 標題安全位置（Navbar 間距）
-   2. 年輪 CSS @keyframes 呼吸動畫
-   所有其他樣式均在 About.tsx 的 inline style 處理。
+   所有 inline style 均已移至此檔案。
 ═══════════════════════════════════════════════════════════════ */
 
 /* ──────────────────────────────────────────────────────────────
    CUSTOM PROPERTY: Navbar height
-   同步到 Navbar.tsx 的實際高度。
-   Desktop:  ~72px（品牌文字 + padding 12px×2）
-   Mobile:   ~60px
-   ────────────────────────────────────────────────────────────── */
+────────────────────────────────────────────────────────────── */
 :root {
   --navbar-h: 72px;
 }
@@ -23,60 +17,425 @@
   }
 }
 
-/* ──────────────────────────────────────────────────────────────
-   BUG 1 FIX: Hero copy block — positioned from TOP
-   ─────────────────────────────────────────────────────────────
-   .about-hero-copy 絕對定位，top 從 Navbar 底部再加
-   10vh 的呼吸空間，確保「關於南源」大標題永遠在導覽列下方
-   完整顯示。
-
-   left/right/max-width 維持響應式。
-   ────────────────────────────────────────────────────────────── */
-.about-hero-copy {
-  position:   absolute;
-  top:        calc(var(--navbar-h) + 10vh);
-  left:       clamp(20px, 6vw, 80px);
-  right:      clamp(20px, 6vw, 80px);
-  max-width:  clamp(280px, 55vw, 680px);
+/* ═══════════════════════════════════════════════════════════════
+   ABOUT PAGE WRAPPER
+═══════════════════════════════════════════════════════════════ */
+.about-page {
+  background-color: #050505;
+  min-height: 100vh;
+  color: #fff;
+  overflow-x: hidden;
 }
 
-/* Hero title font-size — CSS variable so media query can override */
+/* ═══════════════════════════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════════════════════════ */
+.about-hero-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  background-color: #050505;
+}
+
+.about-hero-slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform, opacity;
+}
+
+.about-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(5,5,5,0.72) 0%, rgba(5,5,5,0.3) 40%, transparent 70%),
+    linear-gradient(to top,    #050505 0%,  rgba(5,5,5,0.55) 30%, transparent 60%),
+    linear-gradient(to right,  rgba(5,5,5,0.50) 0%, transparent 55%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.about-hero-copy {
+  position: absolute;
+  top: calc(var(--navbar-h) + 10vh);
+  left: clamp(20px, 6vw, 80px);
+  right: clamp(20px, 6vw, 80px);
+  max-width: clamp(280px, 55vw, 680px);
+  z-index: 5;
+}
+
 .about-hero-title {
   font-size: clamp(2.8rem, 8vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 0.92;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(0,0,0,0.6);
+  margin: 0;
+}
+
+.about-hero-title-gold {
+  color: #C5A880;
+  text-shadow: 0 0 50px rgba(197,168,128,0.85);
+}
+
+/* Eyebrow */
+.about-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.1rem;
+}
+
+.about-eyebrow-line {
+  width: clamp(20px,3.5vw,36px);
+  height: 1px;
+  background-color: #C5A880;
+  box-shadow: 0 0 8px rgba(197,168,128,0.85);
+}
+
+.about-eyebrow-text {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  color: rgba(197,168,128,0.75);
+  text-transform: uppercase;
+}
+
+/* Subtitle */
+.about-hero-subtitle {
+  font-size: clamp(0.9rem,1.8vw,1.2rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.75;
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+}
+
+/* Slide caption */
+.about-slide-caption {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(197,168,128,0.55);
+  text-transform: uppercase;
+  margin-top: 1.2rem;
+  margin-bottom: 0;
+}
+
+/* Dot pagination */
+.about-dot-pagination {
+  position: absolute;
+  bottom: clamp(28px,5vh,48px);
+  left: clamp(20px,6vw,80px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.about-dot-btn {
+  height: 6px;
+  border-radius: 4px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+.about-dot-btn--active {
+  width: 28px;
+  background-color: #C5A880;
+  box-shadow: 0 0 10px rgba(197,168,128,0.7);
+}
+
+.about-dot-btn--inactive {
+  width: 6px;
+  background-color: rgba(197,168,128,0.3);
+  box-shadow: none;
+}
+
+.about-dot-counter {
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.38);
+}
+
+/* Scroll cue */
+.about-scroll-cue {
+  position: absolute;
+  bottom: clamp(28px,5vh,48px);
+  right: clamp(20px,5vw,60px);
+  z-index: 5;
+  color: rgba(197,168,128,0.45);
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 /* Mobile: shrink title, tighten top gap */
 @media (max-width: 768px) {
   .about-hero-copy {
-    top:       calc(var(--navbar-h) + 6vh);
+    top: calc(var(--navbar-h) + 6vh);
     max-width: calc(100% - 40px);
   }
 
   .about-hero-title {
-    font-size: 2rem;   /* absolute fallback for very small screens */
+    font-size: 2rem;
   }
 }
 
-/* ──────────────────────────────────────────────────────────────
-   BUG 2 FIX: Year-ring CSS breathing animation
-   ─────────────────────────────────────────────────────────────
-   .about-ring-css applies to the five inner concentric rings.
+/* ═══════════════════════════════════════════════════════════════
+   STATS BAR
+═══════════════════════════════════════════════════════════════ */
+.about-stats-bar {
+  border: 1px solid rgba(197,168,128,0.30);
+  background: rgba(10,10,10,0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
 
-   Animation: rings-pulse
-     Scale oscillates 1.0 → 1.025 → 1.0 every 8 s (linear),
-     simulating the slow expansion of tree rings.
-     Opacity breathes 1.0 → 0.35 → 1.0, giving a gentle glow.
+.about-stat-cell {
+  padding: clamp(1.4rem,3vw,2.2rem) clamp(1.5rem,3.5vw,3rem);
+  border-right: 1px solid rgba(197,168,128,0.30);
+  text-align: center;
+}
 
-   Each ring receives a different animation-delay (set inline
-   in About.tsx) so they pulse in a staggered wave pattern,
-   not all at once.
+.about-stat-cell:last-child {
+  border-right: none;
+}
 
-   Hardware acceleration: transform + opacity are both GPU-
-   composited properties — no layout/paint cost.
-   ────────────────────────────────────────────────────────────── */
+.about-stat-num {
+  font-size: clamp(2.2rem,5vw,3.4rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: #C5A880;
+  text-shadow: 0 0 30px rgba(197,168,128,0.6);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.about-stat-label {
+  font-size: clamp(0.82rem,1.2vw,0.95rem);
+  font-weight: 700;
+  color: rgba(255,255,255,0.82);
+  letter-spacing: 0.04em;
+}
+
+.about-stat-en {
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  color: rgba(255,255,255,0.38);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+@media (max-width: 767px) {
+  .about-stat-cell {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(197, 168, 128, 0.28);
+  }
+
+  .about-stat-cell:last-child {
+    border-bottom: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STORY SECTION
+═══════════════════════════════════════════════════════════════ */
+.about-story-section {
+  padding: clamp(4rem,10vh,8rem) 0;
+}
+
+.about-story-lead {
+  font-size: clamp(1.3rem,3.5vw,2.2rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.88);
+  max-width: 820px;
+  margin-bottom: clamp(2rem,5vh,3.5rem);
+}
+
+.about-story-quote {
+  font-size: clamp(0.9rem,1.5vw,1.05rem);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  line-height: 2;
+  color: rgba(255,255,255,0.62);
+  max-width: 680px;
+  border-left: 3px solid #C5A880;
+  padding-left: 1.5rem;
+  box-shadow: -4px 0 18px rgba(197,168,128,0.2);
+}
+
+.about-stats-wrapper {
+  margin-top: clamp(3rem,7vh,5rem);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VALUES SECTION
+═══════════════════════════════════════════════════════════════ */
+.about-values-section {
+  padding: clamp(4rem,10vh,8rem) 0;
+  background-color: #0D0D0E;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.about-values-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 1rem;
+}
+
+.about-values-eyebrow-line {
+  width: clamp(24px,4vw,40px);
+  height: 1px;
+  background-color: #C5A880;
+  box-shadow: 0 0 8px rgba(197,168,128,0.85);
+}
+
+.about-values-eyebrow-text {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  color: rgba(197,168,128,0.65);
+  text-transform: uppercase;
+}
+
+.about-values-title {
+  font-size: clamp(1.8rem,4vw,3rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #C5A880;
+  text-shadow: 0 0 30px rgba(197,168,128,0.5);
+  margin: 0;
+}
+
+/* ── Value Card ── */
+.about-value-card {
+  padding: clamp(1.8rem,3vw,2.8rem);
+  background: rgba(15,15,15,0.60);
+  border: 1px solid rgba(197,168,128,0.12);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: box-shadow 0.42s ease, background 0.42s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.about-value-card:hover {
+  background: linear-gradient(145deg, rgba(197,168,128,0.08) 0%, rgba(15,15,15,0.60) 100%);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(197,168,128,0.28), inset 0 0 30px rgba(197,168,128,0.04);
+}
+
+.about-value-id {
+  font-size: clamp(2rem,4vw,3rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  color: rgba(197,168,128,0.2);
+  line-height: 1;
+  transition: color 0.4s, text-shadow 0.4s;
+  user-select: none;
+}
+
+.about-value-card:hover .about-value-id {
+  color: #C5A880;
+  text-shadow: 0 0 30px rgba(197,168,128,0.85);
+}
+
+.about-value-divider {
+  width: 36px;
+  height: 1px;
+  background-color: rgba(197,168,128,0.30);
+  transition: width 0.5s cubic-bezier(0.16,1,0.3,1), background-color 0.4s, box-shadow 0.4s;
+}
+
+.about-value-card:hover .about-value-divider {
+  width: 100%;
+  background-color: #C5A880;
+  box-shadow: 0 0 8px rgba(197,168,128,0.7);
+}
+
+.about-value-name {
+  font-size: clamp(1.1rem,1.8vw,1.35rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: rgba(255,255,255,0.88);
+  margin: 0;
+  transition: color 0.4s, text-shadow 0.4s;
+}
+
+.about-value-card:hover .about-value-name {
+  color: #ffffff;
+  text-shadow: 0 0 18px rgba(255,255,255,0.18);
+}
+
+.about-value-desc {
+  font-size: clamp(0.82rem,1.15vw,0.9rem);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.85;
+  margin: 0;
+  text-align: justify;
+  transition: color 0.4s;
+}
+
+.about-value-card:hover .about-value-desc {
+  color: rgba(255,255,255,0.62);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RINGS SECTION
+═══════════════════════════════════════════════════════════════ */
+.about-rings-section {
+  padding: clamp(5rem,12vh,10rem) 0;
+  background-color: #050505;
+  overflow: hidden;
+  position: relative;
+}
+
+.about-rings-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 560px;
+}
+
 .about-ring-css {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform: translate(0,0);
   animation: rings-pulse 8s infinite linear;
   transform-origin: center center;
+}
+
+.about-ring-fm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 @keyframes rings-pulse {
@@ -87,7 +446,6 @@
   100% { transform: scale(1.00); opacity: 1;    }
 }
 
-/* Mobile: reduce ring opacity further for text readability */
 @media (max-width: 768px) {
   .about-ring-css {
     animation: rings-pulse-mobile 8s infinite linear;
@@ -102,16 +460,140 @@
   }
 }
 
-/* ──────────────────────────────────────────────────────────────
-   Stats bar: remove right border on last mobile cell
-   ────────────────────────────────────────────────────────────── */
-@media (max-width: 767px) {
-  .about-stat-cell {
-    border-right:  none !important;
-    border-bottom: 1px solid rgba(197, 168, 128, 0.28);
-  }
+/* Ring centre text */
+.about-rings-centre {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  padding: 0 clamp(16px,5vw,48px);
+}
 
-  .about-stat-cell:last-child {
-    border-bottom: none !important;
-  }
+.about-rings-title {
+  font-size: clamp(1.8rem,5vw,3.8rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(0,0,0,0.5);
+  margin-bottom: 1.2rem;
+}
+
+.about-rings-desc {
+  font-size: clamp(0.88rem,1.5vw,1.05rem);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.62);
+  line-height: 1.9;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.about-rings-accent-line {
+  width: 1px;
+  height: clamp(32px,5vw,56px);
+  background-color: #C5A880;
+  box-shadow: 0 0 12px rgba(197,168,128,0.85);
+  margin: 2rem auto 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PHILOSOPHY SECTION
+═══════════════════════════════════════════════════════════════ */
+.about-philosophy-section {
+  padding: clamp(4rem,10vh,8rem) 0;
+  background: linear-gradient(to bottom, #0D0D0E 0%, #050505 100%);
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.about-philosophy-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-philosophy-img {
+  width: 100%;
+  height: clamp(280px,40vw,500px);
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.72);
+  transition: filter 0.5s;
+}
+
+.about-philosophy-img:hover {
+  filter: brightness(0.9);
+}
+
+.about-philosophy-corner-bl {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-left: 2px solid #C5A880;
+  border-bottom: 2px solid #C5A880;
+  box-shadow: -2px 2px 16px rgba(197,168,128,0.4);
+}
+
+.about-philosophy-corner-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-top: 2px solid #C5A880;
+  border-right: 2px solid #C5A880;
+  box-shadow: 2px -2px 16px rgba(197,168,128,0.4);
+}
+
+.about-philosophy-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.about-philosophy-eyebrow-line {
+  width: 32px;
+  height: 1px;
+  background-color: #C5A880;
+  box-shadow: 0 0 8px rgba(197,168,128,0.85);
+}
+
+.about-philosophy-eyebrow-text {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  color: rgba(197,168,128,0.65);
+  text-transform: uppercase;
+}
+
+.about-philosophy-open-quote {
+  font-size: clamp(4rem,8vw,7rem);
+  font-weight: 900;
+  line-height: 0.7;
+  color: rgba(197,168,128,0.30);
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.04em;
+  user-select: none;
+}
+
+.about-philosophy-blockquote {
+  font-size: clamp(1rem,2.2vw,1.45rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.85);
+  margin: 0 0 1.5rem;
+  border-left: none;
+  padding: 0;
+}
+
+.about-philosophy-author {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #C5A880;
+  text-shadow: 0 0 12px rgba(197,168,128,0.5);
+  text-transform: uppercase;
+  margin: 0;
 }
