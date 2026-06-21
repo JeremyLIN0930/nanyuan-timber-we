@@ -2,16 +2,33 @@
    HOME.CSS — 南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
    ARCHITECTURE:
-   1. Preloader curtain (.intro-viewport) — fixed fullscreen,
-      gold logo glows on frame 0 via @keyframes (zero delay).
-      .intro-viewport--exit → CSS dissolve at 2.5s.
-   2. Hero — clean 100vh, crossfade slides, no 400vh.
-   3. Process steps — alternating image/text grid.
-   4. Comparison slider — structural rules only.
-   5. Portfolio grid — 3/2/1 responsive columns.
+   1. Overflow safety: html/body/#root must NOT have overflow:hidden.
+      Declared explicitly here to defeat any global resets.
+   2. Preloader curtain (.brand-intro-viewport) — fixed z:9999,
+      logo glows on frame 0 via @keyframes (zero delay).
+      --exit variant dissolves via CSS transition.
+   3. Scroll theatre: 400vh container + sticky stage.
+      3 CSS states per slide: future / active / past.
+   4. Comparison slider structural rules.
    ZERO inline style props. ZERO <style> tags in TSX.
-   Every visual rule lives exclusively in this file.
 ═══════════════════════════════════════════════════════════════ */
+
+
+/* ──────────────────────────────────────────────────────────────
+   ★ STICKY SAFETY ZONE ★
+   overflow:hidden on ANY ancestor kills position:sticky.
+   We explicitly override here for html, body, and #root
+   so the 400vh scroll theatre works unconditionally.
+   ────────────────────────────────────────────────────────────── */
+html,
+body {
+  overflow-x: hidden;
+  overflow-y: auto;   /* explicitly auto — NOT hidden */
+}
+
+#root {
+  overflow: visible;  /* must not be hidden */
+}
 
 
 /* ──────────────────────────────────────────────────────────────
@@ -19,39 +36,50 @@
    ────────────────────────────────────────────────────────────── */
 
 /*
-  Logo glow — animates from t=0 with NO animation-delay.
-  Phase 1 (0%→20%):  text fades in + glows gold
-  Phase 2 (20%→80%): holds at full glow
-  Phase 3 (80%→100%): very slight dim before the JS curtain exits
+  Brand logo glow — ZERO animation-delay.
+  Fires on the very first CSS paint frame.
+  Phases:
+    0%→18%  : fade in from invisible + gold glow builds
+    18%→80% : holds at full luminance
+    80%→100%: slight dim before JS curtain exits at 2.5s
 */
-@keyframes introLogoGlow {
-  0%   { opacity: 0;    text-shadow: none; }
-  18%  { opacity: 1;
-         text-shadow:
-           0 0 28px rgba(197, 168, 128, 0.70),
-           0 0 60px rgba(197, 168, 128, 0.45),
-           0 0 120px rgba(197, 168, 128, 0.25); }
-  80%  { opacity: 1;
-         text-shadow:
-           0 0 28px rgba(197, 168, 128, 0.70),
-           0 0 60px rgba(197, 168, 128, 0.45),
-           0 0 120px rgba(197, 168, 128, 0.25); }
-  100% { opacity: 0.75;
-         text-shadow:
-           0 0 22px rgba(197, 168, 128, 0.50),
-           0 0 45px rgba(197, 168, 128, 0.30); }
+@keyframes brandGlow {
+  0%   {
+    opacity:     0;
+    text-shadow: none;
+  }
+  18%  {
+    opacity: 1;
+    text-shadow:
+      0 0  28px rgba(197, 168, 128, 0.75),
+      0 0  60px rgba(197, 168, 128, 0.50),
+      0 0 120px rgba(197, 168, 128, 0.28);
+  }
+  80%  {
+    opacity: 1;
+    text-shadow:
+      0 0  28px rgba(197, 168, 128, 0.75),
+      0 0  60px rgba(197, 168, 128, 0.50),
+      0 0 120px rgba(197, 168, 128, 0.28);
+  }
+  100% {
+    opacity: 0.72;
+    text-shadow:
+      0 0 20px rgba(197, 168, 128, 0.50),
+      0 0 40px rgba(197, 168, 128, 0.28);
+  }
 }
 
 /* Scroll cue bounce */
 @keyframes scrollBounce {
   0%, 100% { transform: translateY(0);   }
-  50%       { transform: translateY(7px); }
+  50%       { transform: translateY(8px); }
 }
 
-/* FadeIn reveal */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(48px); }
-  to   { opacity: 1; transform: translateY(0);    }
+/* Progress rail fill — extends smoothly on each activeIndex step */
+@keyframes railPulse {
+  from { opacity: 0.6; }
+  to   { opacity: 1;   }
 }
 
 
@@ -59,28 +87,28 @@
    PAGE SHELL
    ────────────────────────────────────────────────────────────── */
 .home-page {
-  background:                 #050505;
-  min-height:                 100vh;
+  background: #050505;
+  min-height: 100vh;
+  /* GPU compositing — critical for sticky scroll performance on mobile */
   -webkit-overflow-scrolling: touch;
-  overflow-x:                 hidden;
+  overflow-x: hidden;
+  /* Must NOT be overflow:hidden — would kill sticky */
+  overflow-y: visible;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   PRELOADER CURTAIN — .intro-viewport
+   PRELOADER CURTAIN — .brand-intro-viewport
    ─────────────────────────────────────────────────────────────
-   Base state (.intro-viewport):
-     Fixed, full-screen, z-index 9999, solid black.
-     Transition is declared here so .intro-viewport--exit
-     triggers it cleanly.
+   Base:  fixed, full-screen, z:9999, opaque black.
+          Transition declared on BASE so --exit activates it.
 
-   Exit state (.intro-viewport--exit):
-     JS adds this class at 2500ms.
-     opacity: 0 + scale(1.06) dissolve.
-     pointer-events: none so page underneath is interactive.
-     After 1s CSS transition, JS removes from DOM at 3500ms.
+   Exit:  JS adds --exit at 2500ms.
+          opacity:0 + scale(1.06) curtain dissolve.
+          pointer-events:none so page is interactive underneath.
+          JS removes from DOM at 3500ms.
 ═══════════════════════════════════════════════════════════════ */
-.intro-viewport {
+.brand-intro-viewport {
   position:        fixed;
   inset:           0;
   z-index:         9999;
@@ -88,22 +116,21 @@
   display:         flex;
   justify-content: center;
   align-items:     center;
-  /* Transition declared on BASE so it activates when class is added */
+  /* Transition on BASE — fires when --exit class is added */
   transition:
     opacity   1s cubic-bezier(0.85, 0, 0.15, 1),
     transform 1s cubic-bezier(0.85, 0, 0.15, 1);
   will-change: opacity, transform;
 }
 
-/* Curtain exit — JS adds this class at 2500ms */
-.intro-viewport--exit {
+.brand-intro-viewport--exit {
   opacity:        0;
   transform:      scale(1.06);
   pointer-events: none;
 }
 
-/* Logo wrapper */
-.intro-logo {
+/* Logo content wrapper */
+.brand-intro-logo {
   display:        flex;
   flex-direction: column;
   align-items:    center;
@@ -112,35 +139,34 @@
 }
 
 /*
-  ★ ZERO animation-delay ★
-  animation starts at 0ms — logo is glowing on first frame.
+  ★ animation-delay: 0ms ★
+  Glow is visible on the very first frame — no waiting.
 */
-.intro-logo-zh {
-  font-size:      clamp(2.5rem, 6vw, 4.5rem);
-  font-weight:    900;
-  letter-spacing: 0.3em;
-  color:          #ffffff;
-  line-height:    1;
-  margin:         0;
-  /* @keyframes begins immediately, no delay */
-  animation:      introLogoGlow 2.5s ease-out forwards;
-  animation-delay: 0ms;
+.brand-intro-zh {
+  font-size:       clamp(2.5rem, 6vw, 4.5rem);
+  font-weight:     900;
+  letter-spacing:  0.3em;
+  color:           #ffffff;
+  line-height:     1;
+  margin:          0;
+  /* @keyframes starts at 0ms */
+  animation:       brandGlow 2.5s ease-out 0ms forwards;
 }
 
-.intro-logo-en {
-  font-size:      clamp(0.5rem, 1.1vw, 0.84rem);
-  font-weight:    200;
-  letter-spacing: 0.52em;
-  color:          rgba(197, 168, 128, 0.50);
-  text-transform: uppercase;
-  margin:         0;
-  /* Slightly delayed so it appears just after the kanji */
-  animation:      introLogoGlow 2.5s ease-out 0.18s forwards;
-  opacity:        0;
+.brand-intro-en {
+  font-size:       clamp(0.5rem, 1.1vw, 0.84rem);
+  font-weight:     200;
+  letter-spacing:  0.52em;
+  color:           rgba(197, 168, 128, 0.50);
+  text-transform:  uppercase;
+  margin:          0;
+  /* Tiny offset so English appears just after kanji */
+  animation:       brandGlow 2.5s ease-out 0.15s forwards;
+  opacity:         0;
 }
 
 @media (max-width: 768px) {
-  .intro-logo-zh {
+  .brand-intro-zh {
     font-size:      clamp(1.8rem, 8vw, 2.6rem);
     letter-spacing: 0.18em;
   }
@@ -148,17 +174,42 @@
 
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO SECTION — 100vh clean fullscreen
-   No 400vh. No sticky. No scroll-lock.
+   SCROLL THEATRE — 400vh container + sticky stage
+   ─────────────────────────────────────────────────────────────
+   CRITICAL ARCHITECTURE:
+
+   .hero-scroll-container
+     height: 400vh            ← creates the scroll track
+     position: relative       ← needed for sticky child
+     overflow: visible        ← must NOT be hidden
+
+   .hero-sticky-stage
+     position: sticky         ← glued to top while container scrolls
+     top: 0                   ← sticks at viewport top
+     height: 100vh            ← fills exactly one viewport
+     overflow: visible        ← must NOT be hidden
+
+   The browser scrolls the container (400vh) while the stage
+   stays fixed at the top. The RAF loop in Home.tsx reads
+   containerRef.getBoundingClientRect().top each frame and
+   maps it to activeIndex 0–3.
 ═══════════════════════════════════════════════════════════════ */
-.hero-section {
+.hero-scroll-container {
+  height:   400vh;
   position: relative;
-  width:    100%;
-  height:   100vh;
-  overflow: hidden;
+  overflow: visible; /* ★ MUST NOT be hidden — kills sticky ★ */
 }
 
-/* ── Background image layer — opacity crossfade ── */
+.hero-sticky-stage {
+  position: sticky;
+  top:      0;
+  height:   100vh;
+  overflow: visible !important; /* ★ Belt-and-suspenders override ★ */
+  width:    100%;
+}
+
+
+/* ── Background images — crossfade via opacity ── */
 .hero-bg {
   position:    absolute;
   inset:       0;
@@ -179,16 +230,16 @@
   display:    block;
 }
 
-/* ── Dark gradient overlay (top → bottom) ── */
+/* ── Dark gradient overlay ── */
 .hero-overlay {
   position:       absolute;
   inset:          0;
   z-index:        1;
   background:     linear-gradient(
     180deg,
-    rgba(5, 5, 5, 0.42) 0%,
-    rgba(5, 5, 5, 0.52) 50%,
-    rgba(5, 5, 5, 0.84) 100%
+    rgba(5, 5, 5, 0.40) 0%,
+    rgba(5, 5, 5, 0.50) 50%,
+    rgba(5, 5, 5, 0.82) 100%
   );
   pointer-events: none;
 }
@@ -201,8 +252,8 @@
   background:     radial-gradient(
     ellipse 55% 55% at 50% 50%,
     transparent          0%,
-    rgba(5, 5, 5, 0.36)  58%,
-    rgba(5, 5, 5, 0.88)  100%
+    rgba(5, 5, 5, 0.34)  58%,
+    rgba(5, 5, 5, 0.86)  100%
   );
   pointer-events: none;
 }
@@ -242,7 +293,7 @@
   border-right:  1px solid rgba(197, 168, 128, 0.22);
 }
 
-/* ── Content deck — centred in hero ── */
+/* ── Content deck — centred in stage ── */
 .hero-content {
   position:        relative;
   z-index:         10;
@@ -285,7 +336,7 @@
   text-transform: uppercase;
 }
 
-/* ── Deck: number on left, text on right ── */
+/* ── Deck: number left, text right ── */
 .hero-deck {
   display:         flex;
   align-items:     center;
@@ -294,7 +345,13 @@
   justify-content: center;
 }
 
-/* Left: absolute-stacked giant numbers */
+/* ──────────────────────────────────────────────────────────────
+   GIANT NUMBERS — 3-STATE CSS MACHINE
+   ─────────────────────────────────────────────────────────────
+   Default (future):   translateX(+80px)   opacity:0
+   .hero-num--active:  translateX(0)       opacity:1   gold glow
+   .hero-num--past:    translateX(-80px)   opacity:0
+   ────────────────────────────────────────────────────────────── */
 .hero-numbox {
   position:    relative;
   flex-shrink: 0;
@@ -303,32 +360,40 @@
 }
 
 .hero-num {
+  /* Layout */
   position:         absolute;
   inset:            0;
   display:          flex;
   align-items:      center;
   justify-content:  center;
+  /* Typography */
   font-size:        clamp(3.2rem, 11vw, 10rem);
   font-weight:      900;
   letter-spacing:   -0.06em;
   line-height:      1;
   color:            transparent;
   -webkit-text-stroke: 1px rgba(197, 168, 128, 0.06);
+  /* Interaction */
   pointer-events:   none;
   user-select:      none;
-  will-change:      opacity, transform;
-  /* Hidden state */
+  /* DEFAULT STATE: future — positioned right, invisible */
   opacity:          0;
-  transform:        translateX(40px) scale(0.85);
+  transform:        translateX(80px) scale(0.88);
   transition:
     opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
+/* ACTIVE STATE: centred, fully visible, gold glow */
 .hero-num--active {
   opacity:                  1;
   transform:                translateX(0) scale(1);
-  background:               linear-gradient(135deg, #C5A880, rgba(197, 168, 128, 0.26));
+  background:               linear-gradient(
+    135deg,
+    #C5A880,
+    rgba(197, 168, 128, 0.26)
+  );
   -webkit-background-clip:  text;
   background-clip:          text;
   -webkit-text-stroke:      1px rgba(197, 168, 128, 0.16);
@@ -337,36 +402,62 @@
     drop-shadow(0 0 70px rgba(197, 168, 128, 0.20));
 }
 
-/* Right: absolute-stacked text slides */
+/* PAST STATE: slid to left, invisible */
+.hero-num--past {
+  opacity:   0;
+  transform: translateX(-80px) scale(0.88);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SLIDE TEXT CARDS — 3-STATE CSS MACHINE
+   ─────────────────────────────────────────────────────────────
+   Default (future):    translateX(+100%)  opacity:0   (right)
+   .hero-slide--active: translateX(0)      opacity:1   (centre)
+   .hero-slide--past:   translateX(-100%)  opacity:0   (left)
+
+   Transitions use easing with a slight stagger so number leads
+   the text card by ~100ms.
+   ────────────────────────────────────────────────────────────── */
 .hero-textbox {
   position:   relative;
   flex:       1;
   min-height: clamp(95px, 12vw, 170px);
   text-align: left;
+  overflow:   hidden; /* clip the sliding cards inside textbox */
 }
 
 .hero-slide {
+  /* Layout */
   position:        absolute;
   inset:           0;
   display:         flex;
   flex-direction:  column;
   justify-content: center;
+  /* Interaction */
   pointer-events:  none;
-  will-change:     opacity, transform;
-  /* Hidden state */
+  /* DEFAULT STATE: future — right side, invisible */
   opacity:         0;
-  transform:       translateX(60px);
+  transform:       translateX(100%);
   transition:
     opacity   0.70s 0.10s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s 0.10s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.80s 0.10s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
+/* ACTIVE STATE: centre, fully visible */
 .hero-slide--active {
   opacity:        1;
   transform:      translateX(0);
   pointer-events: auto;
 }
 
+/* PAST STATE: left side, invisible */
+.hero-slide--past {
+  opacity:   0;
+  transform: translateX(-100%);
+}
+
+/* Slide typography */
 .hero-slide-zh {
   font-size:   clamp(1.5rem, 3.6vw, 2.7rem) !important;
   font-weight: 900 !important;
@@ -388,7 +479,11 @@
 .hero-slide-wire {
   width:         clamp(20px, 3.2vw, 40px);
   height:        1px;
-  background:    linear-gradient(90deg, #C5A880, rgba(197, 168, 128, 0.08));
+  background:    linear-gradient(
+    90deg,
+    #C5A880,
+    rgba(197, 168, 128, 0.08)
+  );
   box-shadow:    0 0 8px rgba(197, 168, 128, 0.50);
   margin-bottom: 0.62rem;
 }
@@ -403,13 +498,51 @@
   margin:         0;
 }
 
-/* ── Scroll cue — bottom centre ── */
+/* ──────────────────────────────────────────────────────────────
+   PROGRESS RAIL — right edge, shows scroll depth
+   ─────────────────────────────────────────────────────────────
+   A thin vertical line on the right side of the stage.
+   The fill div grows in 4 steps corresponding to activeIndex.
+   CSS classes hero-progress-fill--0/1/2/3 set the height.
+   ────────────────────────────────────────────────────────────── */
+.hero-progress-rail {
+  position:         absolute;
+  right:            clamp(16px, 3vw, 40px);
+  top:              20%;
+  bottom:           20%;
+  width:            1px;
+  background:       rgba(197, 168, 128, 0.12);
+  z-index:          20;
+  border-radius:    1px;
+  overflow:         hidden;
+}
+
+.hero-progress-fill {
+  width:            100%;
+  background:       linear-gradient(
+    to bottom,
+    #C5A880,
+    rgba(197, 168, 128, 0.40)
+  );
+  box-shadow:       0 0 8px rgba(197, 168, 128, 0.60);
+  border-radius:    1px;
+  transition:       height 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  animation:        railPulse 2s ease-in-out infinite alternate;
+}
+
+/* Height steps — one per activeIndex */
+.hero-progress-fill--0 { height: 25%; }
+.hero-progress-fill--1 { height: 50%; }
+.hero-progress-fill--2 { height: 75%; }
+.hero-progress-fill--3 { height: 100%; }
+
+/* ── Scroll cue — shown only on first slide (index 0) ── */
 .hero-scroll-cue {
   position:        absolute;
   bottom:          clamp(0.9rem, 3.2vh, 2rem);
   left:            50%;
   transform:       translateX(-50%);
-  z-index:         10;
+  z-index:         20;
   display:         flex;
   flex-direction:  column;
   align-items:     center;
@@ -432,160 +565,15 @@
 
 
 /* ═══════════════════════════════════════════════════════════════
-   SECTION COMMONS
+   SECTION COMMON
 ═══════════════════════════════════════════════════════════════ */
-.home-section-hdr {
-  text-align:    center;
-  margin-bottom: clamp(2.2rem, 4.5vw, 3.6rem);
-}
-
-.home-eye {
-  font-size:      10px;
-  font-weight:    300;
-  letter-spacing: 0.28em;
-  color:          rgba(197, 168, 128, 0.36);
-  text-transform: uppercase;
-  margin-bottom:  0.85rem;
-}
-
 .home-section-h {
   font-size:      clamp(1.75rem, 4.8vw, 3.1rem) !important;
   font-weight:    900 !important;
   color:          #C5A880;
   text-shadow:    0 0 26px rgba(197, 168, 128, 0.50);
-  margin-bottom:  0.5rem;
+  margin-bottom:  0.75rem;
   line-height:    1.1;
-}
-
-.home-section-sub {
-  font-size:      clamp(0.68rem, 0.98vw, 0.84rem);
-  font-weight:    300;
-  letter-spacing: 0.11em;
-  color:          rgba(255, 255, 255, 0.22);
-  margin:         0;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   FADEIN (IntersectionObserver scroll reveal)
-   JS toggles .fadein--visible when element enters viewport.
-   data-delay attribute maps to transition-delay via CSS.
-═══════════════════════════════════════════════════════════════ */
-.fadein {
-  opacity:    0;
-  transform:  translateY(48px);
-  transition:
-    opacity   0.90s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.90s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.fadein--visible {
-  opacity:   1;
-  transform: translateY(0);
-}
-
-.fadein[data-delay="0ms"]   { transition-delay: 0ms;  }
-.fadein[data-delay="80ms"]  { transition-delay: 80ms; }
-.fadein[data-delay="160ms"] { transition-delay: 160ms; }
-.fadein[data-delay="240ms"] { transition-delay: 240ms; }
-.fadein[data-delay="320ms"] { transition-delay: 320ms; }
-.fadein[data-delay="400ms"] { transition-delay: 400ms; }
-
-
-/* ═══════════════════════════════════════════════════════════════
-   PROCESS STEPS
-═══════════════════════════════════════════════════════════════ */
-.home-process {
-  background: #050505;
-  padding:    clamp(3.2rem, 7.5vw, 4.8rem) 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-/* Two-column alternating grid row */
-.home-step {
-  display:               grid;
-  grid-template-columns: 1fr 1fr;
-  gap:                   clamp(1.4rem, 3.8vw, 3.2rem);
-  align-items:           center;
-  margin-bottom:         clamp(2.8rem, 5.5vw, 4.6rem);
-}
-
-/* Odd steps: reverse column order via RTL trick */
-.home-step--rev     { direction: rtl; }
-.home-step--rev > * { direction: ltr; }
-
-/* Image block */
-.home-step-imgbox {
-  position: relative;
-  overflow: hidden;
-  border:   1px solid rgba(197, 168, 128, 0.08);
-}
-
-.home-step-img {
-  width:      100%;
-  max-height: 275px;
-  object-fit: cover;
-  display:    block;
-  transition: transform 0.80s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.home-step-imgbox:hover .home-step-img {
-  transform: scale(1.04);
-}
-
-/* Ghost step number watermark behind image */
-.home-step-num-bg {
-  position:       absolute;
-  bottom:         -0.15em;
-  right:          -0.04em;
-  font-size:      clamp(2.8rem, 7.5vw, 4.2rem);
-  font-weight:    900;
-  color:          rgba(197, 168, 128, 0.03);
-  line-height:    1;
-  pointer-events: none;
-  user-select:    none;
-}
-
-/* Text block */
-.home-step-info {
-  padding: clamp(0.6rem, 1.4vw, 1.4rem) 0;
-}
-
-.home-step-num {
-  font-size:      clamp(1.5rem, 3vw, 2.5rem);
-  font-weight:    900;
-  color:          rgba(197, 168, 128, 0.12);
-  letter-spacing: -0.05em;
-  line-height:    1;
-  display:        block;
-  margin-bottom:  0.5rem;
-}
-
-.home-step-zh {
-  font-size:     clamp(1.1rem, 2vw, 1.5rem) !important;
-  font-weight:   900 !important;
-  color:         #ffffff !important;
-  margin-bottom: 0.3rem;
-  line-height:   1.1;
-}
-
-.home-step-en {
-  font-size:      10px;
-  font-weight:    300;
-  letter-spacing: 0.24em;
-  color:          #C5A880;
-  text-transform: uppercase;
-  margin-bottom:  0.8rem;
-  opacity:        0.65;
-}
-
-.home-step-desc {
-  font-size:      clamp(0.78rem, 1.12vw, 0.91rem);
-  font-weight:    300;
-  color:          rgba(255, 255, 255, 0.40);
-  line-height:    1.90;
-  letter-spacing: 0.04em;
-  margin:         0;
 }
 
 
@@ -652,7 +640,7 @@
   position:   absolute;
   top:        0;
   bottom:     0;
-  left:       50%; /* JS overrides via .style.left */
+  left:       50%;
   transform:  translateX(-50%);
   width:      2px;
   background: #C5A880;
@@ -684,109 +672,11 @@
 
 
 /* ═══════════════════════════════════════════════════════════════
-   PORTFOLIO GRID
-═══════════════════════════════════════════════════════════════ */
-.home-folio {
-  background: #0d0d0e;
-  padding:    clamp(3.2rem, 7.5vw, 4.8rem) 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.home-folio-hdr {
-  margin-bottom: clamp(1.8rem, 3.8vw, 2.8rem);
-}
-
-/* 3-column desktop */
-.home-folio-grid {
-  display:               grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:                   clamp(0.75rem, 1.4vw, 1.4rem);
-}
-
-/* Card */
-.home-card {
-  position:    relative;
-  overflow:    hidden;
-  cursor:      pointer;
-  will-change: transform;
-  transition:  transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.home-card:hover {
-  transform: translateY(-5px);
-}
-
-.home-card-inner {
-  position:     relative;
-  aspect-ratio: 4 / 3;
-}
-
-.home-card-img {
-  width:      100%;
-  height:     100%;
-  object-fit: cover;
-  opacity:    0.66;
-  display:    block;
-  transition:
-    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.home-card:hover .home-card-img {
-  opacity:   1;
-  transform: scale(1.04);
-}
-
-.home-card-grad {
-  position:   absolute;
-  inset:      0;
-  background: linear-gradient(
-    to top,
-    #050505              0%,
-    rgba(5, 5, 5, 0.26)  50%,
-    transparent          100%
-  );
-  opacity: 0.80;
-}
-
-.home-card-meta {
-  position: absolute;
-  bottom:   0;
-  left:     0;
-  padding:  clamp(0.65rem, 1.3vw, 1.3rem);
-}
-
-.home-card-type {
-  display:        block;
-  font-size:      10px;
-  font-weight:    300;
-  letter-spacing: 0.14em;
-  color:          #C5A880;
-  text-transform: uppercase;
-  margin-bottom:  0.26rem;
-}
-
-.home-card-name {
-  font-size:   clamp(0.92rem, 1.65vw, 1.15rem) !important;
-  font-weight: 900 !important;
-  color:       #ffffff;
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.26);
-  margin:      0;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
 ═══════════════════════════════════════════════════════════════ */
 
-/* ── Tablet ── */
-@media (max-width: 992px) {
-  .home-folio-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  /* Hero */
   .hero-content { padding: 0 0.9rem; }
   .hero-frame   { inset: 11px; }
   .hero-corner  { width: 12px; height: 12px; }
@@ -806,16 +696,8 @@
     min-height: 138px;
   }
 
-  /* Centre the slide content on mobile */
-  .hero-slide {
-    align-items: center;
-    transform:   translateX(30px);
-  }
-
-  .hero-slide--active {
-    align-items: center;
-    transform:   translateX(0);
-  }
+  .hero-slide { align-items: center; }
+  .hero-slide--active { align-items: center; }
 
   .hero-slide-wire {
     margin-left:  auto;
@@ -824,32 +706,15 @@
 
   .hero-slide-desc { text-align: center; }
 
-  .hero-num {
-    transform: translateX(20px) scale(0.85);
-  }
+  .hero-progress-rail { display: none; }
 
-  .hero-num--active {
-    transform: translateX(0) scale(1);
-  }
-
-  /* Process steps: single column */
-  .home-step      { grid-template-columns: 1fr; gap: 1.1rem; }
-  .home-step--rev { direction: ltr; }
-  .home-step-img  { max-height: 220px; }
-  .home-step-num-bg { display: none; }
-
-  /* Comparison slider */
   .cmp-box { height: 220px; }
-
-  /* Portfolio: single column */
-  .home-folio-grid { grid-template-columns: 1fr; }
 }
 
 /* ── Small mobile ── */
 @media (max-width: 480px) {
   .hero-slide-zh { font-size: clamp(1.2rem, 5.8vw, 1.65rem) !important; }
   .cmp-box       { height: 185px; }
-  .home-step-img { max-height: 185px; }
 }
 
 /* ── Large desktop ── */
