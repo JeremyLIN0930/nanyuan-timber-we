@@ -5,7 +5,6 @@ import './Home.css';
 
 /* ═══════════════════════════════════════════════════════════════
    ASSET IMPORTS — Real project photography from src/assets/
-   NO external URLs. All images verified to exist locally.
 ═══════════════════════════════════════════════════════════════ */
 import heroSlide01 from '../assets/home-hero-material.jpg';
 import heroSlide02 from '../assets/home-hero-craft.jpg';
@@ -28,8 +27,7 @@ import portfolio06 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 
 
 /* ═══════════════════════════════════════════════════════════════
-   DATA — B2C Advantage Matrix (4 slides × 100vh scroll each)
-   ZERO auto-play. ZERO setInterval. Scroll-position-mapped only.
+   DATA
 ═══════════════════════════════════════════════════════════════ */
 const ADVANTAGES = [
   { num: '01', zh: '嚴選頂級建材', en: 'PREMIUM ECO-MATERIALS', desc: '採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',       img: heroSlide01 },
@@ -58,7 +56,7 @@ const PORTFOLIO = [
 
 
 /* ═══════════════════════════════════════════════════════════════
-   SCROLL-REVEAL WRAPPER (IntersectionObserver, zero inline style)
+   SCROLL-REVEAL (IntersectionObserver, zero inline style)
 ═══════════════════════════════════════════════════════════════ */
 const FadeIn: React.FC<{ children: React.ReactNode; className?: string; delay?: string }> = ({
   children, className = '', delay,
@@ -90,8 +88,7 @@ const FadeIn: React.FC<{ children: React.ReactNode; className?: string; delay?: 
 
 
 /* ═══════════════════════════════════════════════════════════════
-   COMPARISON SLIDER
-   Dynamic clipPath + left applied via refs (zero inline style).
+   COMPARISON SLIDER (clipPath via ref — zero inline style)
 ═══════════════════════════════════════════════════════════════ */
 const ComparisonSlider: React.FC = () => {
   const boxRef     = useRef<HTMLDivElement>(null);
@@ -144,70 +141,73 @@ const ComparisonSlider: React.FC = () => {
 /* ═══════════════════════════════════════════════════════════════
    HOME — MAIN COMPONENT
    ─────────────────────────────────────────────────────────────
-   THREE-PHASE LIFECYCLE:
+   LIFECYCLE (all timings from component mount at 0ms):
 
-   Phase 1 (0–3s):    isIntro=true, isReady=false
-     → .intro-viewport visible — brand gold glow CSS @keyframes
-     → body scroll locked via className
-     → Main content exists in DOM but hidden behind overlay
+     0ms     → React renders .intro-viewport with .intro-logo-box
+               CSS @keyframes logoGlow starts IMMEDIATELY (0 delay)
+               Gold text visible within ~150ms (5% of 3s)
+               body.scroll-locked prevents scrolling
 
-   Phase 2 (3s):      isIntro=false, isReady=false
-     → .intro-viewport gets .fade-out → CSS slides it UP
-     → After 1.4s transition: isReady=true
+     3000ms  → isIntroFadeOut = true
+               .fade-out added → CSS translateY(-100vh) 1s
+               Main content starts floating up (.content-ready)
+               body.scroll-locked removed
 
-   Phase 3 (4.4s+):   isIntro=false, isReady=true
-     → .main-homepage-content gets .content-ready
-     → Content float-up transition plays
-     → Scroll unlocked, 400vh sticky theatre fully active
+     4000ms  → isIntroActive = false
+               .intro-viewport removed from DOM entirely
 
-   SAFETY: Main content is ALWAYS in the DOM. The intro is just
-   a fixed overlay on top. Even if JS fails, the CSS fallback
-   animation on .intro-viewport auto-hides it after 5s.
+   SCROLL THEATRE:
+     400vh container + sticky 100vh stage
+     progress = clamp(-rect.top / (height - innerHeight), 0, 0.99)
+     activeIndex = floor(progress * 4) → 0, 1, 2, 3
+
+   ZERO inline styles. ZERO setInterval. ZERO buttons. ZERO dots.
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  /* ── Three-phase state ── */
-  const [isIntro, setIsIntro] = useState(true);
-  const [isReady, setIsReady] = useState(false);
+  /* ── Intro lifecycle ── */
+  const [isIntroActive, setIsIntroActive]   = useState(true);
+  const [isIntroFadeOut, setIsIntroFadeOut] = useState(false);
 
   /* ── Scroll-mapped advantage index ── */
   const [activeIdx, setActiveIdx] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   /* ══════════════════════════════════════════════════════════
-     PHASE 1 → 2: After 3s, dismiss intro
-     PHASE 2 → 3: After intro transition (1.4s), unlock content
+     INTRO TIMER — fires at 0ms mount
+     3s → fade-out class + unlock scroll + float-up content
+     4s → remove intro from DOM
   ══════════════════════════════════════════════════════════ */
   useEffect(() => {
-    const introTimer = setTimeout(() => {
-      setIsIntro(false);
-
-      const readyTimer = setTimeout(() => {
-        setIsReady(true);
-      }, 1400);
-
-      return () => clearTimeout(readyTimer);
+    const fadeTimer = setTimeout(() => {
+      setIsIntroFadeOut(true);
     }, 3000);
 
-    return () => clearTimeout(introTimer);
+    const removeTimer = setTimeout(() => {
+      setIsIntroActive(false);
+    }, 4000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
   }, []);
 
-  /* ── Lock scroll during intro ── */
+  /* ── Lock scroll during intro, unlock on fade-out ── */
   useEffect(() => {
-    if (isIntro) {
+    if (isIntroActive && !isIntroFadeOut) {
       document.body.classList.add('scroll-locked');
     } else {
       document.body.classList.remove('scroll-locked');
     }
     return () => document.body.classList.remove('scroll-locked');
-  }, [isIntro]);
+  }, [isIntroActive, isIntroFadeOut]);
 
   /* ══════════════════════════════════════════════════════════
      SCROLL-MAPPED INDEX — PRECISE MATH
-     Container = 400vh. Scrollable depth = 400vh - 100vh = 300vh.
      progress = clamp(-rect.top / (rect.height - innerHeight), 0, 0.99)
-     activeIndex = floor(progress * 4) → 0, 1, 2, 3
+     step = floor(progress * 4) → 0, 1, 2, 3
   ══════════════════════════════════════════════════════════ */
   useEffect(() => {
     const handleScroll = () => {
@@ -229,8 +229,8 @@ const Home: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  /* ── Per-slide state: upcoming / active / passed ── */
-  const slideState = (i: number): string => {
+  /* ── Per-slide state ── */
+  const ss = (i: number): string => {
     if (i < activeIdx) return 'slide-passed';
     if (i === activeIdx) return 'slide-active';
     return 'slide-upcoming';
@@ -241,46 +241,40 @@ const Home: React.FC = () => {
     <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════
-          PHASE 1: BRAND GLOW INTRO VIEWPORT
-          ─────────────────────────────────────────────────────────
-          Fixed overlay. Gold glow @keyframes in CSS.
-          isIntro=true  → .intro-viewport (visible)
-          isIntro=false → .intro-viewport.fade-out (slides up)
-          CSS failsafe: auto-hides after 5s even without JS.
+          INTRO VIEWPORT — 0ms instant glow
+          Rendered at mount. Gold glow CSS starts immediately.
+          3s → .fade-out slides it up. 4s → removed from DOM.
       ══════════════════════════════════════════════════════════ */}
-      <div className={`intro-viewport${isIntro ? '' : ' fade-out'}`} aria-hidden="true">
-        <div className="intro-logo-container">
-          <h1 className="intro-logo-zh">南源木材</h1>
-          <span className="intro-logo-sep" />
-          <p className="intro-logo-en">NANYUAN TIMBER DESIGN</p>
+      {isIntroActive && (
+        <div className={`intro-viewport${isIntroFadeOut ? ' fade-out' : ''}`}>
+          <div className="intro-logo-box">
+            <h1 className="intro-logo-zh">南源木材</h1>
+            <span className="intro-logo-sep" />
+            <p className="intro-logo-en">NANYUAN TIMBER DESIGN</p>
+          </div>
         </div>
-      </div>
+      )}
 
 
       {/* ══════════════════════════════════════════════════════════
-          PHASES 2–3: MAIN CONTENT
-          ─────────────────────────────────────────────────────────
-          ALWAYS in the DOM. Hidden behind intro overlay.
-          isReady=true → .content-ready → float-up transition.
+          MAIN CONTENT — always in DOM
+          .content-ready triggers float-up when intro fades out
       ══════════════════════════════════════════════════════════ */}
-      <div className={`main-homepage-content${isReady ? ' content-ready' : ''}`}>
+      <div className={`main-homepage-content${isIntroFadeOut ? ' content-ready' : ''}`}>
 
         {/* ── 400vh SCROLL-ANCHORED HERO THEATRE ── */}
         <div className="hero-scroll-container" ref={containerRef}>
           <div className="hero-sticky-stage">
 
-            {/* Full-bleed background images — three-state slide */}
             {ADVANTAGES.map((adv, i) => (
-              <div key={adv.num} className={`hero-bg ${slideState(i)}`}>
+              <div key={adv.num} className={`hero-bg ${ss(i)}`}>
                 <img src={adv.img} alt={`南源木材 ${adv.zh}`} className="hero-bg-img" />
               </div>
             ))}
 
-            {/* Dark overlays */}
             <div className="hero-overlay" />
             <div className="hero-vignette" />
 
-            {/* Geometric bracket frame — four corners [ ] */}
             <div className="hero-frame">
               <div className="hero-corner hero-corner--tl" />
               <div className="hero-corner hero-corner--tr" />
@@ -288,16 +282,13 @@ const Home: React.FC = () => {
               <div className="hero-corner hero-corner--br" />
             </div>
 
-            {/* Center crosshair */}
             <div className={`hero-xhair hero-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
               <span className="hero-xhair-h" />
               <span className="hero-xhair-v" />
               <span className="hero-xhair-dot" />
             </div>
 
-            {/* Hero content: number + text deck */}
             <div className="hero-content">
-
               <div className="hero-eyebrow">
                 <span className="hero-eyebrow-line" />
                 <span className="hero-eyebrow-text">NANYUAN TIMBER DESIGN</span>
@@ -305,19 +296,15 @@ const Home: React.FC = () => {
               </div>
 
               <div className="hero-deck">
-                {/* Left: giant geometric number */}
                 <div className="hero-numbox">
                   {ADVANTAGES.map((a, i) => (
-                    <span key={a.num} className={`hero-num ${slideState(i)}`}>
-                      {a.num}
-                    </span>
+                    <span key={a.num} className={`hero-num ${ss(i)}`}>{a.num}</span>
                   ))}
                 </div>
 
-                {/* Right: text cards */}
                 <div className="hero-textbox">
                   {ADVANTAGES.map((a, i) => (
-                    <div key={a.num} className={`hero-slide ${slideState(i)}`}>
+                    <div key={a.num} className={`hero-slide ${ss(i)}`}>
                       <h2 className="hero-slide-zh">{a.zh}</h2>
                       <p  className="hero-slide-en">{a.en}</p>
                       <div className="hero-slide-wire" />
@@ -326,10 +313,8 @@ const Home: React.FC = () => {
                   ))}
                 </div>
               </div>
-
             </div>
 
-            {/* Scroll cue */}
             <div className="hero-scroll-cue">
               <span className="hero-scroll-text">SCROLL</span>
               <span className="hero-scroll-arrow">↓</span>
@@ -339,7 +324,6 @@ const Home: React.FC = () => {
         </div>
 
 
-        {/* ── PROCESS STEPS ── */}
         <section className="home-process">
           <div className="container">
             <FadeIn className="home-process-hdr">
@@ -365,7 +349,6 @@ const Home: React.FC = () => {
         </section>
 
 
-        {/* ── RENDER vs REALITY ── */}
         <section className="home-compare">
           <div className="container">
             <FadeIn>
@@ -377,7 +360,6 @@ const Home: React.FC = () => {
         </section>
 
 
-        {/* ── PORTFOLIO WALL ── */}
         <section className="home-folio">
           <div className="container">
             <FadeIn className="home-folio-hdr">
@@ -403,8 +385,6 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-
-        {/* ── GLOBAL CTA ── */}
         <CTA />
 
       </div>

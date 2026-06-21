@@ -1,33 +1,31 @@
 /* ═══════════════════════════════════════════════════════════════
-   HOME PAGE — Brand Glow Intro → 400vh Sticky Scroll-Linked Deck
+   HOME PAGE — 0ms Instant Brand Glow → 400vh Sticky Scroll Deck
    南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
-   THREE-PHASE LIFECYCLE:
+   LIFECYCLE:
 
-   Phase 1 (0–3s):  .intro-viewport visible
-                    Gold glow @keyframes on brand text
-                    Body scroll locked via .scroll-locked
+   0ms    → .intro-viewport renders. .intro-logo-box has gold
+            text-shadow as BASE PROPERTY (not animated-in).
+            @keyframes logoGlow starts at 0ms — NO DELAY.
+            Logo visible within ~150ms (5% of 3s animation).
 
-   Phase 2 (3s):    .intro-viewport.fade-out
-                    translateY(-100vh) curtain slide-up 1.2s
-                    pointer-events: none after transition
+   3000ms → .fade-out added → translateY(-100vh) curtain up
+            .content-ready on main → float-up transition
+            scroll-locked removed
 
-   Phase 3 (4.4s):  .main-homepage-content.content-ready
-                    translateY(40px→0) opacity(0→1) float-up
-                    400vh sticky scroll theatre fully active
+   4000ms → .intro-viewport removed from DOM
 
-   CSS FAILSAFE:    @keyframes introFailsafe auto-hides intro
-                    after 5s even if JS fails completely.
-
-   STICKY SAFETY:   All ancestors use overflow-x: clip (not hidden)
-                    to preserve position: sticky.
+   KEY FIX: The gold text-shadow is a BASE CSS property on
+   .intro-logo-zh, NOT hidden behind an animation start.
+   This means the glow is rendered on the VERY FIRST PAINT
+   even before the @keyframes begins interpolating.
 ═══════════════════════════════════════════════════════════════ */
 
 
 /* ════════════════════════════════════════════════════
    STICKY-SAFE ANCESTOR RESET
-   overflow: clip hides overflow WITHOUT creating a
-   scroll context — sticky positioning is preserved.
+   overflow-x: clip — hides overflow WITHOUT creating
+   a scroll context. Sticky positioning is preserved.
 ════════════════════════════════════════════════════ */
 html,
 body,
@@ -38,9 +36,9 @@ body,
   overflow-y: visible !important;
 }
 
-/* ── Scroll lock during intro ── */
 body.scroll-locked {
   overflow: hidden !important;
+  height: 100vh;
 }
 
 
@@ -58,7 +56,7 @@ body.scroll-locked {
 
 
 /* ════════════════════════════════════════════════════
-   SCROLL-REVEAL (FadeIn component)
+   SCROLL-REVEAL (FadeIn)
 ════════════════════════════════════════════════════ */
 .fadein {
   opacity: 0;
@@ -82,11 +80,11 @@ body.scroll-locked {
 
 
 /* ════════════════════════════════════════════════════════════════
-   PHASE 1: BRAND GLOW INTRO VIEWPORT
+   INTRO VIEWPORT — 0ms INSTANT GLOW
    ─────────────────────────────────────────────────────────────
-   100vh fixed black overlay with gold-glowing brand text.
-   Pure CSS @keyframes for the gold breathe + glow effect.
-   CSS failsafe: auto-hides at 5s even without JS.
+   Fixed overlay. Gold glow is a BASE text-shadow property.
+   @keyframes logoGlow: 0% = opacity:0 → 5% = opacity:1 (150ms)
+   NO animation-delay anywhere.
 ════════════════════════════════════════════════════════════════ */
 .intro-viewport {
   position: fixed;
@@ -96,78 +94,62 @@ body.scroll-locked {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* Curtain slide-up transition — triggered by .fade-out */
   transform: translateY(0);
-  transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+  transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1);
   will-change: transform;
-
-  /* CSS FAILSAFE: even if JS never fires, hide after 5s */
-  animation: introFailsafe 0.01s 5s forwards;
 }
 
-/* Phase 2: JS adds .fade-out → curtain slides up */
 .intro-viewport.fade-out {
   transform: translateY(-100vh);
   pointer-events: none;
 }
 
-/* Failsafe: if JS never toggles .fade-out, force hide at 5s */
-@keyframes introFailsafe {
-  to {
-    transform: translateY(-100vh);
-    pointer-events: none;
-    visibility: hidden;
-  }
-}
 
-
-/* ── LOGO container ── */
-.intro-logo-container {
+/* ── Logo container ── */
+.intro-logo-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(12px, 1.8vh, 18px);
   pointer-events: none;
-
-  /* 3-second lifecycle: fade-in → glow → fade-out */
-  animation: logoLifecycle 3s ease-in-out forwards;
+  /* Animation: 0ms start, NO delay. Logo appears within 150ms. */
+  animation: logoGlow 3s ease-in-out forwards;
 }
 
-@keyframes logoLifecycle {
-  /* 0–10%: invisible */
+/* ── THE KEYFRAMES — 0% starts immediately ── */
+@keyframes logoGlow {
   0% {
     opacity: 0;
     transform: scale(1.06);
-    filter: blur(6px);
   }
-  /* 10–50%: fade in with glow expansion */
-  25% {
+  5% {
+    opacity: 0.7;
+    transform: scale(1.04);
+  }
+  15% {
     opacity: 1;
-    transform: scale(1.03);
-    filter: blur(0px);
+    transform: scale(1.02);
   }
-  /* 50–75%: hold with subtle breathing */
-  60% {
+  40% {
     opacity: 1;
     transform: scale(1.0);
-    filter: blur(0px);
   }
-  /* 75–100%: glow intensifies then dissolves */
-  85% {
-    opacity: 0.8;
-    transform: scale(0.98);
-    filter: blur(2px);
+  70% {
+    opacity: 1;
+    transform: scale(1.0);
+  }
+  90% {
+    opacity: 0.6;
+    transform: scale(0.99);
   }
   100% {
-    opacity: 0;
-    transform: scale(0.96);
-    filter: blur(8px);
+    opacity: 0.2;
+    transform: scale(0.97);
   }
 }
 
 
-/* ── Brand text ── */
+/* ── Brand text — gold glow is a BASE PROPERTY ── */
 .intro-logo-zh {
   font-size: clamp(2.6rem, 8vw, 5.5rem);
   font-weight: 900;
@@ -175,41 +157,46 @@ body.scroll-locked {
   color: #C5A880;
   line-height: 1;
   margin: 0;
+  /* BASE glow — visible from first paint, not animated-in */
   text-shadow:
-    0 0 20px rgba(197, 168, 128, 0.4),
+    0 0 20px rgba(197, 168, 128, 0.5),
     0 0 40px rgba(197, 168, 128, 0.6),
     0 0 80px rgba(197, 168, 128, 0.4),
-    0 0 160px rgba(197, 168, 128, 0.2),
-    0 0 280px rgba(197, 168, 128, 0.1);
-
-  /* Independent glow pulse */
-  animation: zhGlowPulse 3s ease-in-out forwards;
+    0 0 160px rgba(197, 168, 128, 0.2);
+  /* Additional glow pulse animation */
+  animation: zhPulse 3s ease-in-out forwards;
 }
 
-@keyframes zhGlowPulse {
+@keyframes zhPulse {
   0% {
     text-shadow:
-      0 0 10px rgba(197, 168, 128, 0.0),
-      0 0 20px rgba(197, 168, 128, 0.0);
+      0 0 10px rgba(197, 168, 128, 0.2),
+      0 0 20px rgba(197, 168, 128, 0.1);
   }
-  30% {
+  15% {
     text-shadow:
-      0 0 30px rgba(197, 168, 128, 0.5),
+      0 0 30px rgba(197, 168, 128, 0.6),
       0 0 60px rgba(197, 168, 128, 0.7),
       0 0 120px rgba(197, 168, 128, 0.4),
-      0 0 240px rgba(197, 168, 128, 0.15);
+      0 0 200px rgba(197, 168, 128, 0.15);
   }
-  60% {
+  50% {
     text-shadow:
-      0 0 40px rgba(197, 168, 128, 0.6),
+      0 0 40px rgba(197, 168, 128, 0.7),
       0 0 80px rgba(197, 168, 128, 0.8),
       0 0 160px rgba(197, 168, 128, 0.5),
       0 0 300px rgba(197, 168, 128, 0.2);
   }
+  80% {
+    text-shadow:
+      0 0 50px rgba(197, 168, 128, 0.5),
+      0 0 100px rgba(197, 168, 128, 0.6),
+      0 0 200px rgba(197, 168, 128, 0.3);
+  }
   100% {
     text-shadow:
-      0 0 60px rgba(197, 168, 128, 0.2),
-      0 0 120px rgba(197, 168, 128, 0.1);
+      0 0 30px rgba(197, 168, 128, 0.15),
+      0 0 60px rgba(197, 168, 128, 0.05);
   }
 }
 
@@ -218,7 +205,6 @@ body.scroll-locked {
   width: clamp(30px, 5vw, 60px);
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(197, 168, 128, 0.5), transparent);
-  animation: logoLifecycle 3s ease-in-out forwards;
 }
 
 .intro-logo-en {
@@ -228,15 +214,12 @@ body.scroll-locked {
   color: rgba(197, 168, 128, 0.5);
   text-transform: uppercase;
   margin: 0;
-  animation: logoLifecycle 3s ease-in-out forwards;
 }
 
 
 /* ════════════════════════════════════════════════════
-   PHASE 3: MAIN CONTENT FLOAT-UP
-   ─────────────────────────────────────────────
-   Starts at opacity:0 translateY(40px).
-   .content-ready triggers the float-up reveal.
+   MAIN CONTENT FLOAT-UP
+   Starts hidden, floats up when .content-ready added.
 ════════════════════════════════════════════════════ */
 .main-homepage-content {
   opacity: 0;
@@ -254,10 +237,7 @@ body.scroll-locked {
 
 /* ════════════════════════════════════════════════════
    400vh SCROLL-ANCHORED HERO THEATRE
-   ─────────────────────────────────────────────
-   .hero-scroll-container = 400vh scroll runway
-   .hero-sticky-stage     = sticky 100vh viewport lock
-   overflow: visible is MANDATORY for sticky!
+   overflow: visible MANDATORY for sticky.
 ════════════════════════════════════════════════════ */
 .hero-scroll-container {
   position: relative;
@@ -282,10 +262,8 @@ body.scroll-locked {
 
 
 /* ════════════════════════════════════════════════════
-   THREE-STATE SLIDE SYSTEM — BACKGROUND IMAGES
-   .slide-upcoming → RIGHT (waiting to enter)
-   .slide-active   → CENTER (current)
-   .slide-passed   → LEFT (already scrolled past)
+   THREE-STATE SLIDES — BACKGROUND IMAGES
+   upcoming → RIGHT  |  active → CENTER  |  passed → LEFT
 ════════════════════════════════════════════════════ */
 .hero-bg {
   position: absolute;
@@ -354,7 +332,7 @@ body.scroll-locked {
 }
 
 
-/* ── Bracket corner frame [ ] ── */
+/* ── Bracket frame [ ] ── */
 .hero-frame {
   position: absolute;
   inset: clamp(20px, 4vw, 60px);
@@ -375,7 +353,7 @@ body.scroll-locked {
 .hero-corner--br { bottom: 0; right: 0;  border-bottom: 1px solid rgba(197,168,128,0.2); border-right:  1px solid rgba(197,168,128,0.2); }
 
 
-/* ── Center crosshair ── */
+/* ── Crosshair ── */
 .hero-xhair {
   position: absolute;
   top: 50%;
@@ -435,9 +413,7 @@ body.scroll-locked {
   animation: xhRestore 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes xhRestore {
-  to { transform: translate(-50%, -50%) scale(1); }
-}
+@keyframes xhRestore { to { transform: translate(-50%, -50%) scale(1); } }
 
 @keyframes xhA {
   0%   { transform: translate(-50%,-50%) scale(1);   box-shadow: 0 0 8px  rgba(197,168,128,0.8); }
@@ -488,7 +464,7 @@ body.scroll-locked {
 }
 
 
-/* ── Deck: number left + text right ── */
+/* ── Deck ── */
 .hero-deck {
   display: flex;
   align-items: center;
@@ -526,34 +502,25 @@ body.scroll-locked {
 .hero-num.slide-upcoming {
   opacity: 0;
   transform: translateX(60px) scale(0.85);
-  transition:
-    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hero-num.slide-active {
   opacity: 1;
   transform: translateX(0) scale(1);
-  background: linear-gradient(135deg, #C5A880 0%, rgba(197,168,128,0.28) 100%);
+  background: linear-gradient(135deg, #C5A880, rgba(197,168,128,0.28));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-stroke: 1px rgba(197,168,128,0.18);
-  filter:
-    drop-shadow(0 0 38px rgba(197,168,128,0.55))
-    drop-shadow(0 0 75px rgba(197,168,128,0.2));
-  transition:
-    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 0 38px rgba(197,168,128,0.55)) drop-shadow(0 0 75px rgba(197,168,128,0.2));
+  transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hero-num.slide-passed {
   opacity: 0;
   transform: translateX(-60px) scale(0.85);
-  transition:
-    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1);
 }
-
 
 .hero-textbox {
   position: relative;
@@ -577,26 +544,20 @@ body.scroll-locked {
 .hero-slide.slide-upcoming {
   opacity: 0;
   transform: translateX(80px) scale(1.02);
-  transition:
-    opacity   0.7s 0.12s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.7s 0.12s cubic-bezier(0.16,1,0.3,1), transform 0.85s 0.12s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hero-slide.slide-active {
   opacity: 1;
   transform: translateX(0) scale(1);
   pointer-events: auto;
-  transition:
-    opacity   0.7s 0.12s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.7s 0.12s cubic-bezier(0.16,1,0.3,1), transform 0.85s 0.12s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hero-slide.slide-passed {
   opacity: 0;
   transform: translateX(-80px) scale(1.02);
-  transition:
-    opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hero-slide-zh {
@@ -882,7 +843,7 @@ body.scroll-locked {
 
 
 /* ════════════════════════════════════════════════════
-   PORTFOLIO WALL
+   PORTFOLIO
 ════════════════════════════════════════════════════ */
 .home-folio {
   background: #0d0d0e;
@@ -932,9 +893,7 @@ body.scroll-locked {
   object-fit: cover;
   opacity: 0.68;
   display: block;
-  transition:
-    opacity   0.7s cubic-bezier(0.16,1,0.3,1),
-    transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
 }
 
 .home-card:hover .home-card-img { opacity: 1; transform: scale(1.05); }
@@ -1005,7 +964,7 @@ body.scroll-locked {
   .cmp-box            { height: 230px; }
   .home-folio-grid    { grid-template-columns: repeat(2, 1fr); }
 
-  .home-page, .hero-scroll-container, .home-process, .home-compare, .home-folio {
+  .home-page, .hero-scroll-container {
     -webkit-overflow-scrolling: touch !important;
     will-change: transform;
   }
