@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import './Projects.css';
-import CTA from '../components/CTA/CTA';
 
 /* ── Real project photos via Vite import ── */
 import projPhoto01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
@@ -734,9 +733,6 @@ const Projects: React.FC = () => {
         </section>
 
       </div>
-
-      {/* ══ 全站統一公共預約引導組件 ══ */}
-      <CTA />
 
       {/* Detail overlay */}
       <AnimatePresence>

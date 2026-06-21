@@ -3,7 +3,6 @@ import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Trees, ShieldCheck, ClipboardCheck } from 'lucide-react';
 import './Home.css';
-import CTA from '../components/CTA/CTA';
 
 /* ── Asset Imports: Hero backgrounds ─────────────────────────── */
 import heroMaterial     from '../assets/home-hero-material.jpg';
@@ -550,15 +549,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
-
-      {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 6: GLOBAL CTA — 全站唯一公共預約引導組件
-          ──────────────────────────────────────────────────────────────
-          引入自 src/components/CTA/CTA.tsx（第一步建立的公共完全體）。
-          此為全站統一預約入口，嚴禁在此處另寫任何 inline CTA 區塊。
-      ══════════════════════════════════════════════════════════════════ */}
-      <CTA />
 
 
     </motion.div>
