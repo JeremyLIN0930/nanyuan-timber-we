@@ -1,20 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Trees, ShieldCheck, ClipboardCheck } from 'lucide-react';
 import './Home.css';
 
-/* ── Asset Imports: Hero backgrounds ─────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   ASSET IMPORTS
+═══════════════════════════════════════════════════════════════ */
+
+/* Hero / Advantage backgrounds */
 import heroMaterial     from '../assets/home-hero-material.jpg';
 import heroCraft        from '../assets/home-hero-craft.jpg';
 import heroTransparency from '../assets/home-hero-transparency.jpg';
 import heroRealization  from '../assets/home-hero-realization.jpg';
 
-/* ── Asset Imports: Comparison slider ────────────────────────── */
+/* Comparison slider */
 import compareRender  from '../assets/compare-render.jpg';
 import compareReality from '../assets/compare-reality.jpg';
 
-/* ── Asset Imports: Process steps ────────────────────────────── */
+/* Process steps 01–06 */
 import process01 from '../assets/process-01.jpg';
 import process02 from '../assets/process-02.jpg';
 import process03 from '../assets/process-03.jpg';
@@ -22,7 +25,7 @@ import process04 from '../assets/process-04.jpg';
 import process05 from '../assets/process-05.jpg';
 import process06 from '../assets/process-06.jpg';
 
-/* ── Asset Imports: Portfolio real project photos ────────────── */
+/* Portfolio real project photos */
 import realPhoto01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
 import realPhoto02 from '../assets/LINE_ALBUM_2026.6.17_260621_70.jpg';
 import realPhoto03 from '../assets/LINE_ALBUM_2026.6.17_260621_30.jpg';
@@ -30,90 +33,144 @@ import realPhoto04 from '../assets/LINE_ALBUM_2026.6.17_260621_10.jpg';
 import realPhoto05 from '../assets/LINE_ALBUM_2026.6.17_260621_1.jpg';
 import realPhoto06 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 
+
 /* ═══════════════════════════════════════════════════════════════
-   UNIFIED HERO STEPS — Single source of truth
+   DATA: FOUR CINEMATIC ADVANTAGE SLIDES
    ─────────────────────────────────────────────────────────────
-   Text + background image bound to the SAME array index.
-   A single setInterval timer (4 seconds) drives BOTH text
-   and background changes in the exact same React setState call.
-   Zero desync guaranteed.
+   Single source of truth for the hero cinematic deck.
+   Each entry simultaneously drives:
+     • The fullscreen background image (cross-fade via opacity)
+     • The giant left-side geometric number (.luxury-number)
+     • The right-side Chinese / English headline + description
+
+   All bound to the same activeIndex state variable, updated by
+   a single setInterval(4000). Zero desync guaranteed.
 ═══════════════════════════════════════════════════════════════ */
-const HERO_STEPS = [
-  { text: '材料源頭', sub: 'MATERIAL ORIGIN',  bg: heroMaterial     },
-  { text: '工藝精準', sub: 'PRECISION CRAFT',  bg: heroCraft        },
-  { text: '誠信透明', sub: 'TRANSPARENCY',     bg: heroTransparency },
-  { text: '空間落地', sub: 'SPACE REALIZATION', bg: heroRealization  },
+interface AdvantageSlide {
+  num:     string;
+  titleZh: string;
+  titleEn: string;
+  desc:    string;
+  bg:      string;
+}
+
+const ADVANTAGES: AdvantageSlide[] = [
+  {
+    num:     '01',
+    titleZh: '嚴選頂級建材',
+    titleEn: 'PREMIUM ECO-MATERIALS',
+    desc:    '採用 F1/F2 低甲醛環保綠建材，從源頭為健康把關。',
+    bg:      heroMaterial,
+  },
+  {
+    num:     '02',
+    titleZh: '精細職人工藝',
+    titleEn: 'ARTISAN PRECISION',
+    desc:    '三十年高級木作老師傅手工微調，接合收口精度嚴控於 ±1mm 誤差內。',
+    bg:      heroCraft,
+  },
+  {
+    num:     '03',
+    titleZh: '透明報價零隱藏',
+    titleEn: 'TOTAL TRANSPARENCY',
+    desc:    '報價單逐項逐料透明列出，白紙黑字簽約承諾工程中絕不惡意追加。',
+    bg:      heroTransparency,
+  },
+  {
+    num:     '04',
+    titleZh: '一條龍完美成家',
+    titleEn: 'TURNKEY DREAM HOME',
+    desc:    '從高精度 3D 設計模擬圖到自有工班落地，現場總監全程控管直接入住。',
+    bg:      heroRealization,
+  },
 ];
 
+
 /* ═══════════════════════════════════════════════════════════════
-   PROCESS STEP DATA
+   DATA: SIX PROCESS STEPS
 ═══════════════════════════════════════════════════════════════ */
-const PROCESS_STEPS = [
+interface ProcessStep {
+  id:    string;
+  title: string;
+  en:    string;
+  desc:  string;
+  img:   string;
+}
+
+const PROCESS_STEPS: ProcessStep[] = [
   {
-    id: '01',
+    id:    '01',
     title: '初步諮詢',
-    en: 'BESPOKE CONSULTATION',
-    desc: '傾聽您對場域的無限想像，開展客製化空間設計藍圖。',
-    img: process01,
+    en:    'BESPOKE CONSULTATION',
+    desc:  '傾聽您對場域的無限想像。南源木材專業顧問為您勾勒核心工藝改造方向，結合生活動線與預算範疇，開展客製化空間設計藍圖。',
+    img:   process01,
   },
   {
-    id: '02',
+    id:    '02',
     title: '現場勘測',
-    en: 'PRECISION SITE SURVEY',
-    desc: '職人團隊親赴現場，記錄尺度、採光、結構與管線細節。',
-    img: process02,
+    en:    'PRECISION SITE SURVEY',
+    desc:  '職人團隊親赴現場，使用高階雷射丈量儀器記錄三維尺度。深度診斷老屋結構、採光風向與水電管線，確保設計防漏防震基礎。',
+    img:   process02,
   },
   {
-    id: '03',
+    id:    '03',
     title: '設計提案',
-    en: 'CONCEPT & SPACE DESIGN',
-    desc: '將創意轉化為空間美學，提供格局、材質與視覺提案。',
-    img: process03,
+    en:    'CONCEPT & SPACE DESIGN',
+    desc:  '將創意轉化為空間美學。提供客製化格局圖、職人手作木料選配與立面視覺意境，實現每一個居住夢想的精品品味。',
+    img:   process03,
   },
   {
-    id: '04',
+    id:    '04',
     title: '工程合約',
-    en: 'TRANSPARENT AGREEMENT',
-    desc: '條列式報價與施工節點，確保合作流程清楚透明。',
-    img: process04,
+    en:    'TRANSPARENT AGREEMENT',
+    desc:  '堅持誠信透明。條列化報價單，明確標示品牌、數量與單價。確立每週施工查核點與工程進度，簽署正式工程合約，絕無隱藏追加。',
+    img:   process04,
   },
   {
-    id: '05',
+    id:    '05',
     title: '精湛施工',
-    en: 'MASTER CRAFTSMANSHIP',
-    desc: '由自有工班與現場總監執行，精準落實設計圖面。',
-    img: process05,
+    en:    'MASTER CRAFTSMANSHIP',
+    desc:  '自有專業工班、現場總監全程監督。遵循嚴格防水蓄水測試與防塵木作封邊規範，將設計圖面由資深職人按圖精準落地。',
+    img:   process05,
   },
   {
-    id: '06',
+    id:    '06',
     title: '完工驗收',
-    en: 'PERFECT HANDOVER',
-    desc: '高規格檢驗細節，交付安心、完整且具質感的空間。',
-    img: process06,
+    en:    'PERFECT HANDOVER',
+    desc:  '高規格品質交叉檢驗。實施管線壓力、特殊漆面側光打磨及試水測試。家具軟裝完美定位清潔，交付尊榮傳世的私人健康空間。',
+    img:   process06,
   },
 ];
+
 
 /* ═══════════════════════════════════════════════════════════════
-   PORTFOLIO ITEMS
+   DATA: PORTFOLIO SHOWCASE
 ═══════════════════════════════════════════════════════════════ */
-const portfolioItems = [
-  { title: '木光雅居', type: '全屋統包', img: realPhoto01 },
-  { title: '奢韻臥室', type: '主臥設計', img: realPhoto02 },
-  { title: '原木廚域', type: '廚房木作', img: realPhoto03 },
-  { title: '迎賓大廳', type: '公設工程', img: realPhoto04 },
-  { title: '雲杉寢閣', type: '系統收納', img: realPhoto05 },
-  { title: '織錦牆面', type: '繃布壁飾', img: realPhoto06 },
+interface PortfolioItem {
+  img:   string;
+  title: string;
+  type:  string;
+}
+
+const PORTFOLIO_ITEMS: PortfolioItem[] = [
+  { img: realPhoto01, title: '木光雅居', type: '全屋統包' },
+  { img: realPhoto02, title: '奢韻臥室', type: '主臥設計' },
+  { img: realPhoto03, title: '原木廚域', type: '廚房木作' },
+  { img: realPhoto04, title: '迎賓大廳', type: '公設工程' },
+  { img: realPhoto05, title: '雲杉寢閣', type: '系統收納' },
+  { img: realPhoto06, title: '織錦牆面', type: '繃布壁飾' },
 ];
 
-/* ─────────────────────────────────────────────────────────────
-   FADE-IN SECTION (scroll-driven reveal via Intersection Observer)
-───────────────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY: SCROLL-REVEAL WRAPPER (Intersection Observer)
+═══════════════════════════════════════════════════════════════ */
 const FadeInSection: React.FC<{
-  children: React.ReactNode;
+  children:   React.ReactNode;
   className?: string;
-  delay?: number;
+  delay?:     number;
 }> = ({ children, className = '', delay = 0 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref      = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   return (
     <motion.div
@@ -128,14 +185,14 @@ const FadeInSection: React.FC<{
   );
 };
 
-/* ─────────────────────────────────────────────────────────────
-   PROCESS STEP IMAGE with SVG gradient fallback
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY: PROCESS STEP IMAGE with SVG gradient fallback
    ─────────────────────────────────────────────────────────────
-   If the image file fails to load (onError), automatically
-   renders an inline SVG warm brown gradient placeholder with
-   the step number. Ensures zero broken images across all
-   environments.
-───────────────────────────────────────────────────────────── */
+   If the image fails to load (onError), automatically renders
+   an inline SVG warm brown gradient placeholder with the step
+   number. Ensures zero broken images across all environments.
+═══════════════════════════════════════════════════════════════ */
 const ProcessImage: React.FC<{ src: string; alt: string; stepId: string }> = ({ src, alt, stepId }) => {
   const [hasError, setHasError] = useState(false);
 
@@ -170,15 +227,16 @@ const ProcessImage: React.FC<{ src: string; alt: string; stepId: string }> = ({ 
   );
 };
 
-/* ─────────────────────────────────────────────────────────────
-   RENDER vs REALITY COMPARISON SLIDER
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY: RENDER vs REALITY COMPARISON SLIDER
    ─────────────────────────────────────────────────────────────
-   Left:  設計模擬圖 / RENDER  (compare-render.jpg)
-   Right: 實景完工照 / REALITY (compare-reality.jpg)
-───────────────────────────────────────────────────────────── */
+   Left:  設計模擬圖 / RENDER  → compare-render.jpg
+   Right: 實景完工照 / REALITY → compare-reality.jpg
+═══════════════════════════════════════════════════════════════ */
 const RenderRealitySlider: React.FC = () => {
   const [pos, setPos] = useState(50);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef  = useRef<HTMLDivElement>(null);
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
@@ -220,17 +278,17 @@ const RenderRealitySlider: React.FC = () => {
   );
 };
 
+
 /* ═══════════════════════════════════════════════════════════════
    HOME PAGE COMPONENT
    ─────────────────────────────────────────────────────────────
    Architecture:
-   1. Intro Overlay    — 2.5s brand splash → fade out
-   2. Fullscreen Hero  — 4s setInterval rotating bg + text
-   3. Three Advantages — 源頭理解 / 細節品質 / 誠信透明
-   4. Six Processes    — Alternating image-text layout
-   5. Render vs Reality— Interactive comparison slider
-   6. Portfolio Wall   — 6-card grid → /projects
-   7. Shared CTA       — 全站唯一公共預約引導組件
+   1. Intro Overlay          — 2.5s brand splash → scale micro-zoom
+   2. Cinematic Advantage    — 100vh sticky deck, 4 auto-rotating slides
+   3. Six Process Steps      — Alternating image-text layout
+   4. Render vs Reality      — Interactive comparison slider
+   5. Portfolio Wall         — 6-card grid → /projects
+   (CTA handled globally by Footer.tsx — zero duplication)
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -238,13 +296,13 @@ const Home: React.FC = () => {
   /* ── Intro overlay state (brand splash) ── */
   const [isIntro, setIsIntro] = useState(true);
 
-  /* ── Hero rotation index — drives BOTH text and background ── */
-  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+  /* ── Cinematic deck index — drives BOTH background + text ── */
+  const [activeIndex, setActiveIndex] = useState(0);
 
   /* ══════════════════════════════════════════════════════════
      INTRO: auto-dismiss after 2.5 seconds
-     The overlay fades out via CSS transition, then the main
-     content beneath becomes visible and interactive.
+     CSS transition on the overlay handles the fade-out with
+     scale(1.02) → scale(1) micro-zoom sinking effect.
   ══════════════════════════════════════════════════════════ */
   useEffect(() => {
     const timer = setTimeout(() => setIsIntro(false), 2500);
@@ -254,23 +312,19 @@ const Home: React.FC = () => {
   /* ══════════════════════════════════════════════════════════
      HERO ROTATION — Single setInterval, 4-second cycle
      ──────────────────────────────────────────────────────
-     Both text and background image are driven by the SAME
-     activeHeroIndex state variable, updated in a single
-     setState call. Zero desync guaranteed.
-
-     Fix: replaces the old scroll-driven GSAP approach which
-     caused severe text-to-background delay on certain devices.
+     Both text and background are bound to the SAME activeIndex.
+     Updated in a single setState call. Zero desync guaranteed.
   ══════════════════════════════════════════════════════════ */
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveHeroIndex(prev => (prev + 1) % HERO_STEPS.length);
+      setActiveIndex(prev => (prev + 1) % ADVANTAGES.length);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
 
-  /* ── Smooth scroll to advantages section ── */
-  const scrollToContent = () => {
-    document.querySelector('.advantages-section')?.scrollIntoView({ behavior: 'smooth' });
+  /* ── Scroll to process section ── */
+  const scrollToProcess = () => {
+    document.querySelector('.home-process-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -283,11 +337,11 @@ const Home: React.FC = () => {
     >
 
       {/* ══════════════════════════════════════════════════════════════════
-          INTRO OVERLAY — Brand splash (first 2.5 seconds)
+          BLOCK 0: INTRO OVERLAY — Brand Splash (first 2.5 seconds)
           ──────────────────────────────────────────────────────────────
-          Slowly fades in: 南源木材｜NANYUAN TIMBER DESIGN
-          After 2.5s the isIntro flag flips → CSS transition fades out
-          the overlay and unlocks the main content below.
+          Centre-screen glow: 南源木材｜NANYUAN TIMBER DESIGN
+          Accompanies a scale(1.02) → scale(1) micro-zoom sinking feel.
+          After 2.5s → CSS transition fades out, main content unlocks.
       ══════════════════════════════════════════════════════════════════ */}
       <div className={`home-intro-overlay ${!isIntro ? 'home-intro-overlay--hidden' : ''}`}>
         <div className="home-intro-line" />
@@ -297,20 +351,22 @@ const Home: React.FC = () => {
 
 
       {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 1: FULLSCREEN HERO — Auto-rotating backgrounds + text
+          BLOCK 1: CINEMATIC ADVANTAGE DECK — 100vh Sticky Theatre
           ──────────────────────────────────────────────────────────────
-          Background images are cross-faded via HERO_STEPS[activeHeroIndex].bg
-          Step text is cross-faded via HERO_STEPS[activeHeroIndex].text
-          Both driven by the SAME state — zero delay.
+          Full-viewport immersive hero with 4 auto-rotating slides.
+          Left:  Giant gold geometric number (.luxury-number)
+          Right: Chinese title + English subtitle + description
+          Background: Dual-layer cross-fade (opacity 0.6s) + scale(1.05→1)
+          Driven by a single setInterval(4000) → zero desync.
       ══════════════════════════════════════════════════════════════════ */}
       <section className="home-hero-section">
 
-        {/* ── 4 Hero background layers — cross-fade via activeHeroIndex ── */}
-        {HERO_STEPS.map((step, i) => (
+        {/* ── 4 Background layers — cross-fade via activeIndex ── */}
+        {ADVANTAGES.map((adv, i) => (
           <div
-            key={`hero-bg-${i}`}
-            className={`home-hero-bg-layer ${i === activeHeroIndex ? 'home-hero-bg-layer--active' : ''}`}
-            style={{ backgroundImage: `url('${step.bg}')` }}
+            key={`hero-bg-${adv.num}`}
+            className={`home-hero-bg-layer ${i === activeIndex ? 'home-hero-bg-layer--active' : ''}`}
+            style={{ backgroundImage: `url('${adv.bg}')` }}
           />
         ))}
 
@@ -320,7 +376,7 @@ const Home: React.FC = () => {
         {/* ── Radial vignette ── */}
         <div className="home-hero-vignette" />
 
-        {/* ── Hero center content ── */}
+        {/* ── Cinematic deck content — split layout ── */}
         <div className="home-hero-content">
 
           {/* ── Eyebrow ornament ── */}
@@ -330,27 +386,37 @@ const Home: React.FC = () => {
             <div className="home-hero-eyebrow-line" />
           </div>
 
-          {/* ── Brand title ── */}
-          <h1 className="home-hero-brand">南源木材</h1>
+          {/* ── Cinematic deck: giant number (left) + text (right) ── */}
+          <div className="home-hero-deck">
 
-          {/* ── Rotating step text — synced to backgrounds ── */}
-          <div className="home-hero-step-container">
-            {HERO_STEPS.map((step, i) => (
-              <div
-                key={`hero-text-${i}`}
-                className={`home-hero-step-group ${i === activeHeroIndex ? 'home-hero-step-group--active' : ''}`}
-              >
-                <span className="home-hero-step-zh">{step.text}</span>
-                <span className="home-hero-step-divider">|</span>
-                <span className="home-hero-step-en">{step.sub}</span>
-              </div>
-            ))}
+            {/* Left column: Giant geometric gold number */}
+            <div className="home-hero-number-col">
+              {ADVANTAGES.map((adv, i) => (
+                <span
+                  key={`num-${adv.num}`}
+                  className={`luxury-number ${i === activeIndex ? 'luxury-number--active' : ''}`}
+                >
+                  {adv.num}
+                </span>
+              ))}
+            </div>
+
+            {/* Right column: Advantage text */}
+            <div className="home-hero-text-col">
+              {ADVANTAGES.map((adv, i) => (
+                <div
+                  key={`slide-${adv.num}`}
+                  className={`home-hero-slide ${i === activeIndex ? 'home-hero-slide--active' : ''}`}
+                >
+                  <h2 className="home-hero-title-zh">{adv.titleZh}</h2>
+                  <p className="home-hero-title-en">{adv.titleEn}</p>
+                  <div className="home-hero-title-wire" />
+                  <p className="home-hero-desc">{adv.desc}</p>
+                </div>
+              ))}
+            </div>
+
           </div>
-
-          {/* ── Tagline ── */}
-          <p className="home-hero-tagline">
-            從材料源頭開始，打造安心落地的空間
-          </p>
 
           {/* ── Hero CTA buttons ── */}
           <div className="home-hero-cta-row">
@@ -362,7 +428,7 @@ const Home: React.FC = () => {
             </button>
             <button
               className="home-hero-btn home-hero-btn--outline"
-              onClick={scrollToContent}
+              onClick={scrollToProcess}
             >
               探索南源工藝
             </button>
@@ -370,12 +436,12 @@ const Home: React.FC = () => {
 
           {/* ── Progress indicator dots ── */}
           <div className="home-hero-dots">
-            {HERO_STEPS.map((step, i) => (
+            {ADVANTAGES.map((adv, i) => (
               <button
-                key={`dot-${i}`}
-                className={`home-hero-dot ${i === activeHeroIndex ? 'home-hero-dot--active' : ''}`}
-                onClick={() => setActiveHeroIndex(i)}
-                aria-label={step.text}
+                key={`dot-${adv.num}`}
+                className={`home-hero-dot ${i === activeIndex ? 'home-hero-dot--active' : ''}`}
+                onClick={() => setActiveIndex(i)}
+                aria-label={adv.titleZh}
               />
             ))}
           </div>
@@ -384,7 +450,7 @@ const Home: React.FC = () => {
 
         {/* ── Scroll hint ── */}
         <div className="scroll-hint">
-          <span className="home-scroll-hint-text">Scroll to explore</span>
+          <span className="home-scroll-hint-text">SCROLL</span>
           <motion.div
             className="home-scroll-hint-arrow"
             animate={{ y: [0, 8, 0] }}
@@ -398,55 +464,7 @@ const Home: React.FC = () => {
 
 
       {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 2: THREE CORE ADVANTAGES
-          源頭理解 / 細節品質 / 誠信透明
-      ══════════════════════════════════════════════════════════════════ */}
-      <section className="advantages-section">
-        <div className="container">
-          <FadeInSection className="home-advantages-header">
-            <h2 className="home-advantages-title">三大核心優勢</h2>
-            <p className="home-advantages-subtitle">
-              從選材到施工，南源以三大核心堅持，為您打造安心穩定的裝修體驗。
-            </p>
-          </FadeInSection>
-
-          <div className="row g-4 justify-content-center">
-            {[
-              {
-                icon: <Trees size={32} className="home-advantage-icon-svg" />,
-                title: '源頭理解',
-                desc: '擁有深厚的木材與材料背景，從源頭精準理解各種材料的物理特性與適用性，為您的空間挑選最合適、最耐用的高品質用料。',
-              },
-              {
-                icon: <ShieldCheck size={32} className="home-advantage-icon-svg" />,
-                title: '細節品質',
-                desc: '在每一項施工環節皆設立嚴格的檢核點，尤其是防水、木作與油漆工程，我們堅持多次逐項驗收，不放過任何影響居住安全的微小細節。',
-              },
-              {
-                icon: <ClipboardCheck size={32} className="home-advantage-icon-svg" />,
-                title: '誠信透明',
-                desc: '提供完全透明、逐項列出的工程報價單，簽約金額即為最終造價，絕不惡意追加任何隱藏預算；施工過程全程記錄，讓您住得安心、放心。',
-              },
-            ].map((item, i) => (
-              <div className="col-12 col-md-4" key={i}>
-                <FadeInSection delay={i * 0.15}>
-                  <div className="home-advantage-card">
-                    <div className="home-advantage-icon-wrap">
-                      {item.icon}
-                    </div>
-                    <h3 className="home-advantage-card-title">{item.title}</h3>
-                    <p className="home-advantage-card-desc">{item.desc}</p>
-                  </div>
-                </FadeInSection>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 3: SIX PROCESS STEPS (Alternating Layout)
+          BLOCK 2: SIX PROCESS STEPS (Alternating Layout)
           ──────────────────────────────────────────────────────────────
           Left-side images: process-01.jpg ~ process-06.jpg
           If any image fails to load → auto-fallback to inline SVG
@@ -494,7 +512,7 @@ const Home: React.FC = () => {
 
 
       {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 4: RENDER vs REALITY COMPARISON
+          BLOCK 3: RENDER vs REALITY COMPARISON
           ──────────────────────────────────────────────────────────────
           Left:  設計模擬圖 / RENDER  → compare-render.jpg
           Right: 實景完工照 / REALITY → compare-reality.jpg
@@ -513,7 +531,7 @@ const Home: React.FC = () => {
 
 
       {/* ══════════════════════════════════════════════════════════════════
-          BLOCK 5: PORTFOLIO WALL
+          BLOCK 4: PORTFOLIO WALL
       ══════════════════════════════════════════════════════════════════ */}
       <section className="home-portfolio-section">
         <div className="container">
@@ -522,7 +540,7 @@ const Home: React.FC = () => {
             <p className="home-portfolio-subtitle">點擊探索每一個空間的完整故事。</p>
           </FadeInSection>
           <div className="row g-4">
-            {portfolioItems.map((item, i) => (
+            {PORTFOLIO_ITEMS.map((item, i) => (
               <div className="col-12 col-md-6 col-lg-4" key={i}>
                 <FadeInSection delay={i * 0.08}>
                   <motion.div

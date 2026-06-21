@@ -1,15 +1,14 @@
 /* ═══════════════════════════════════════════════════════════════
-   HOME PAGE — Bespoke Luxury Design System
+   HOME PAGE — Apple-Level Cinematic Advantage Deck
    南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
    Architecture:
-   1. Intro Overlay    — 2.5s brand splash
-   2. Fullscreen Hero  — 4s auto-rotating bg + text
-   3. Three Advantages — icon cards
-   4. Six Processes    — alternating image-text
-   5. Render vs Reality— comparison slider
-   6. Portfolio Wall   — 6-card grid
-   7. Shared CTA       — imported from components/CTA
+   0. Intro Overlay        — 2.5s brand splash + micro-zoom
+   1. Cinematic Deck       — 100vh sticky theatre, 4 auto-rotating slides
+   2. Six Process Steps    — alternating image-text
+   3. Render vs Reality    — comparison slider
+   4. Portfolio Wall       — 6-card grid
+   (CTA handled globally by Footer — zero duplication)
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Page Wrapper ───────────────────────────────────────────── */
@@ -19,11 +18,13 @@
   overflow-x: hidden;
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
-   INTRO OVERLAY — Brand splash (first 2.5s)
+   BLOCK 0: INTRO OVERLAY — Brand splash (first 2.5s)
    ─────────────────────────────────────────────────────────────
-   Fades in 南源木材｜NANYUAN TIMBER DESIGN at screen center,
-   then CSS transition fades out when isIntro flips to false.
+   Fades in 南源木材｜NANYUAN TIMBER DESIGN at screen center
+   with scale(1.02) → scale(1) sinking micro-zoom.
+   CSS transition fades out when isIntro flips to false.
 ═══════════════════════════════════════════════════════════════ */
 .home-intro-overlay {
   position: fixed;
@@ -35,11 +36,15 @@
   justify-content: center;
   background-color: #050505;
   pointer-events: none;
-  transition: opacity 0.8s ease-out;
+  transform: scale(1.02);
+  transition:
+    opacity 0.8s ease-out,
+    transform 1s ease-out;
 }
 
 .home-intro-overlay--hidden {
   opacity: 0;
+  transform: scale(1);
 }
 
 .home-intro-brand-zh {
@@ -90,12 +95,13 @@
   }
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 1 — FULLSCREEN HERO with auto-rotating backgrounds
+   BLOCK 1: CINEMATIC ADVANTAGE DECK — 100vh Sticky Theatre
    ─────────────────────────────────────────────────────────────
-   100vh viewport-fill hero. Background layers cross-fade via
-   activeHeroIndex state (setInterval 4s). Text cross-fades
-   simultaneously — zero delay sync.
+   Full-viewport hero. Background layers cross-fade via
+   activeIndex (setInterval 4s). Left: giant geometric number.
+   Right: advantage text. Zero delay sync.
 ═══════════════════════════════════════════════════════════════ */
 .home-hero-section {
   position: relative;
@@ -108,9 +114,9 @@
   justify-content: center;
 }
 
-/* ── Background image layers — cross-fade ────────────────────
-   All 4 layers are stacked; only the --active one has opacity 1.
-   transition: opacity 0.6s handles the silky cross-fade.
+/* ── Background image layers — dual-layer cross-fade ─────────
+   All 4 layers stacked; only --active has opacity 1.
+   transition: opacity 0.6s + scale(1.05→1) cinematic zoom.
 ─────────────────────────────────────────────────────────────── */
 .home-hero-bg-layer {
   position: absolute;
@@ -120,16 +126,19 @@
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
-  transition: opacity 0.6s ease-in-out;
-  will-change: opacity;
-  transform: scale(1.03);
+  transform: scale(1.05);
+  transition:
+    opacity 0.6s ease-in-out,
+    transform 4s ease-out;
+  will-change: opacity, transform;
 }
 
 .home-hero-bg-layer--active {
   opacity: 1;
+  transform: scale(1);
 }
 
-/* ── Dark overlay atop the hero image ────────────────────────── */
+/* ── Dark overlay ──────────────────────────────────────────── */
 .home-hero-bg-overlay {
   position: absolute;
   inset: 0;
@@ -137,12 +146,12 @@
   background: linear-gradient(
     180deg,
     rgba(5, 5, 5, 0.50) 0%,
-    rgba(5, 5, 5, 0.65) 50%,
+    rgba(5, 5, 5, 0.60) 50%,
     rgba(5, 5, 5, 0.80) 100%
   );
 }
 
-/* ── Radial vignette ─────────────────────────────────────────── */
+/* ── Radial vignette ─────────────────────────────────────── */
 .home-hero-vignette {
   position: absolute;
   inset: 0;
@@ -156,7 +165,7 @@
   pointer-events: none;
 }
 
-/* ── Hero center content ─────────────────────────────────────── */
+/* ── Hero center content ─────────────────────────────────── */
 .home-hero-content {
   position: relative;
   z-index: 10;
@@ -165,16 +174,17 @@
   align-items: center;
   text-align: center;
   padding: 0 clamp(1.5rem, 5vw, 4rem);
-  max-width: 900px;
+  max-width: 1100px;
+  width: 100%;
 }
 
-/* ── Eyebrow ornament ────────────────────────────────────────── */
+/* ── Eyebrow ornament ────────────────────────────────────── */
 .home-hero-eyebrow {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 18px;
-  margin-bottom: clamp(1.2rem, 3vw, 2rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .home-hero-eyebrow-line {
@@ -196,92 +206,155 @@
   text-transform: uppercase;
 }
 
-/* ── Brand title ─────────────────────────────────────────────── */
-.home-hero-brand {
-  font-size: clamp(3rem, 10vw, 7.5rem) !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.05em !important;
-  line-height: 1 !important;
-  color: #C5A880;
-  text-shadow:
-    0 0 80px rgba(197, 168, 128, 0.90),
-    0 0 160px rgba(197, 168, 128, 0.40),
-    0 0 300px rgba(197, 168, 128, 0.20);
-  margin: 0 0 clamp(1rem, 2.5vw, 1.8rem);
-}
 
-/* ── Rotating step text container ────────────────────────────── */
-.home-hero-step-container {
-  position: relative;
+/* ═══════════════════════════════════════════════════════════════
+   CINEMATIC DECK — Split Layout (Number Left + Text Right)
+   ─────────────────────────────────────────────────────────────
+   Desktop: flex-row — giant number on left, text on right.
+   Mobile:  flex-column — number on top, text below.
+═══════════════════════════════════════════════════════════════ */
+.home-hero-deck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 5rem);
   width: 100%;
-  height: clamp(2rem, 4vw, 3rem);
-  margin-bottom: clamp(1.5rem, 3vw, 2.2rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-/* ── Each step text group — fade via opacity ────────────────── */
-.home-hero-step-group {
+/* ── Left column: Giant geometric gold number ──────────── */
+.home-hero-number-col {
+  position: relative;
+  flex-shrink: 0;
+  width: clamp(100px, 20vw, 260px);
+  height: clamp(100px, 20vw, 260px);
+}
+
+.luxury-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(5rem, 15vw, 14rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    rgba(197, 168, 128, 0.06) 0%,
+    rgba(197, 168, 128, 0.03) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 1px rgba(197, 168, 128, 0.10);
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 0.6s ease-in-out,
+    transform 0.6s ease-in-out,
+    color 0.6s ease-in-out;
+  pointer-events: none;
+  user-select: none;
+}
+
+.luxury-number--active {
+  opacity: 1;
+  transform: scale(1);
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    #C5A880 0%,
+    rgba(197, 168, 128, 0.30) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 1px rgba(197, 168, 128, 0.25);
+  filter: drop-shadow(0 0 40px rgba(197, 168, 128, 0.60))
+          drop-shadow(0 0 80px rgba(197, 168, 128, 0.25));
+}
+
+/* ── Right column: Advantage text ─────────────────────── */
+.home-hero-text-col {
+  position: relative;
+  flex: 1;
+  min-height: clamp(120px, 18vw, 200px);
+  text-align: left;
+}
+
+.home-hero-slide {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(0.6rem, 1.5vw, 1rem);
+  flex-direction: column;
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(18px);
   transition:
     opacity 0.6s ease-in-out,
     transform 0.6s ease-in-out;
   pointer-events: none;
 }
 
-.home-hero-step-group--active {
+.home-hero-slide--active {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-.home-hero-step-zh {
-  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
-  font-weight: 700;
-  letter-spacing: 0.15em;
+.home-hero-title-zh {
+  font-size: clamp(1.8rem, 5vw, 3.2rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.05em !important;
   color: #ffffff;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+  text-shadow:
+    0 0 30px rgba(255, 255, 255, 0.25),
+    0 0 60px rgba(197, 168, 128, 0.15);
+  margin: 0 0 0.4rem;
+  line-height: 1.15;
 }
 
-.home-hero-step-divider {
-  font-size: clamp(0.8rem, 1.5vw, 1.1rem);
-  font-weight: 200;
-  color: rgba(197, 168, 128, 0.4);
-}
-
-.home-hero-step-en {
+.home-hero-title-en {
   font-size: clamp(0.55rem, 1.1vw, 0.8rem);
   font-weight: 200;
-  letter-spacing: 0.30em;
-  color: rgba(197, 168, 128, 0.6);
+  letter-spacing: 0.35em;
+  color: rgba(197, 168, 128, 0.55);
   text-transform: uppercase;
+  margin: 0 0 0.8rem;
 }
 
-/* ── Tagline ─────────────────────────────────────────────────── */
-.home-hero-tagline {
+.home-hero-title-wire {
+  width: clamp(30px, 5vw, 50px);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    #C5A880,
+    rgba(197, 168, 128, 0.20)
+  );
+  box-shadow: 0 0 8px rgba(197, 168, 128, 0.5);
+  margin-bottom: 0.8rem;
+}
+
+.home-hero-desc {
   font-size: clamp(0.82rem, 1.3vw, 1.02rem);
   font-weight: 300;
-  letter-spacing: 0.10em;
-  color: rgba(255, 255, 255, 0.50);
-  line-height: 1.8;
-  max-width: 520px;
-  margin: 0 0 clamp(2rem, 4vw, 3rem);
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.85;
+  max-width: 480px;
+  margin: 0;
 }
 
-/* ── Hero CTA button row ─────────────────────────────────────── */
+
+/* ── Hero CTA button row ─────────────────────────────────── */
 .home-hero-cta-row {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(1.5rem, 3vw, 2rem);
 }
 
 .home-hero-btn {
@@ -291,8 +364,7 @@
   cursor: pointer;
   text-transform: uppercase;
   border-radius: 1px;
-  transition:
-    all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
 }
 
@@ -334,7 +406,7 @@
   transform: translateY(-1px);
 }
 
-/* ── Progress indicator dots ─────────────────────────────────── */
+/* ── Progress indicator dots ─────────────────────────────── */
 .home-hero-dots {
   display: flex;
   align-items: center;
@@ -369,7 +441,7 @@
   transform: scale(1.2);
 }
 
-/* ── Scroll hint ─────────────────────────────────────────────── */
+/* ── Scroll hint ─────────────────────────────────────────── */
 .scroll-hint {
   position: absolute;
   bottom: clamp(1.5rem, 4vh, 2.5rem);
@@ -396,90 +468,9 @@
   font-size: 1rem;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   BLOCK 2 — THREE CORE ADVANTAGES
-═══════════════════════════════════════════════════════════════ */
-.advantages-section {
-  background-color: #0d0d0e;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: clamp(3.5rem, 8vw, 5rem);
-  padding-bottom: clamp(3.5rem, 8vw, 5rem);
-}
-
-.home-advantages-header {
-  text-align: center;
-  margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
-}
-
-.home-advantages-title {
-  font-size: clamp(1.8rem, 5vw, 3.2rem) !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.02em !important;
-  color: #C5A880;
-  text-shadow: 0 0 30px rgba(197, 168, 128, 0.5);
-  margin-bottom: 1rem;
-}
-
-.home-advantages-subtitle {
-  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.5);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.home-advantage-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(197, 168, 128, 0.10);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-  padding: clamp(1.5rem, 3vw, 3rem);
-  height: 100%;
-  transition: all 0.4s ease;
-  will-change: transform;
-}
-
-.home-advantage-card:hover {
-  border-color: #C5A880;
-  background: rgba(197, 168, 128, 0.05);
-  box-shadow: 0 10px 30px rgba(197, 168, 128, 0.15);
-  transform: translateY(-5px);
-}
-
-.home-advantage-icon-wrap {
-  width: 70px;
-  height: 70px;
-  background: rgba(197, 168, 128, 0.10);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-}
-
-.home-advantage-icon-svg {
-  color: #C5A880;
-}
-
-.home-advantage-card-title {
-  font-size: clamp(1.2rem, 2vw, 1.5rem) !important;
-  font-weight: 600 !important;
-  color: #C5A880 !important;
-  text-align: center;
-  margin-bottom: 1rem;
-  letter-spacing: -0.01em !important;
-}
-
-.home-advantage-card-desc {
-  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.8;
-  text-align: justify;
-  margin: 0;
-}
 
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 3 — SIX PROCESS STEPS (Alternating Layout)
+   BLOCK 2: SIX PROCESS STEPS (Alternating Layout)
 ═══════════════════════════════════════════════════════════════ */
 .home-process-section {
   background-color: #050505;
@@ -634,8 +625,9 @@
   margin: 0;
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 4 — RENDER vs REALITY COMPARISON SLIDER
+   BLOCK 3: RENDER vs REALITY COMPARISON SLIDER
    ─────────────────────────────────────────────────────────────
    Left:  設計模擬圖 / RENDER
    Right: 實景完工照 / REALITY
@@ -746,8 +738,9 @@
   font-size: 12px;
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
-   BLOCK 5 — PORTFOLIO WALL
+   BLOCK 4: PORTFOLIO WALL
 ═══════════════════════════════════════════════════════════════ */
 .home-portfolio-section {
   background-color: #0d0d0e;
@@ -845,17 +838,19 @@
   margin: 0;
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
    MOBILE RESPONSIVE — 768px breakpoint
    ─────────────────────────────────────────────────────────────
-   • Hero: reduce brand size, compress CTA row
+   • Hero: cinematic deck stacks vertically
    • Process: single column, hide background number
    • Slider & process images: max-height 240px + object-fit cover
    • Portfolio: constrain card height
+   • Touch acceleration: -webkit-overflow-scrolling + will-change
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* ── Hero mobile adjustments ── */
+  /* ── Hero mobile ── */
   .home-hero-section {
     min-height: 100vh;
     min-height: 100dvh;
@@ -876,6 +871,35 @@
   .home-hero-eyebrow-text {
     font-size: 8px;
     letter-spacing: 0.25em;
+  }
+
+  /* ── Cinematic deck: stack vertically on mobile ── */
+  .home-hero-deck {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .home-hero-number-col {
+    width: 80px;
+    height: 80px;
+  }
+
+  .home-hero-text-col {
+    text-align: center;
+    min-height: 140px;
+  }
+
+  .home-hero-slide {
+    align-items: center;
+  }
+
+  .home-hero-title-wire {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-hero-desc {
+    text-align: center;
   }
 
   .home-hero-cta-row {
@@ -937,7 +961,17 @@
     max-height: 240px;
     object-fit: cover;
   }
+
+  /* ── Touch acceleration ── */
+  .home-page-wrapper,
+  .home-process-section,
+  .home-ba-section,
+  .home-portfolio-section {
+    -webkit-overflow-scrolling: touch !important;
+    will-change: transform;
+  }
 }
+
 
 /* ═══════════════════════════════════════════════════════════════
    SMALL MOBILE — 400px breakpoint
@@ -946,20 +980,20 @@
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
 
-  .home-hero-brand {
-    font-size: clamp(2.2rem, 14vw, 3.5rem) !important;
+  .luxury-number {
+    font-size: clamp(3.5rem, 20vw, 5rem) !important;
   }
 
-  .home-hero-step-zh {
-    font-size: 1rem;
+  .home-hero-title-zh {
+    font-size: clamp(1.4rem, 6vw, 2rem) !important;
   }
 
-  .home-hero-step-en {
+  .home-hero-title-en {
     font-size: 0.5rem;
     letter-spacing: 0.18em;
   }
 
-  .home-hero-tagline {
+  .home-hero-desc {
     font-size: 0.8rem;
   }
 
@@ -977,15 +1011,21 @@
   }
 }
 
+
 /* ═══════════════════════════════════════════════════════════════
    LARGE DESKTOP — 1400px+ refinements
    ─────────────────────────────────────────────────────────────
-   Slightly increase hero breathing room and process image height.
+   Increase hero breathing room and process image height.
 ═══════════════════════════════════════════════════════════════ */
 @media (min-width: 1400px) {
 
   .home-hero-content {
-    max-width: 1000px;
+    max-width: 1200px;
+  }
+
+  .home-hero-number-col {
+    width: 300px;
+    height: 300px;
   }
 
   .home-process-step-img {
