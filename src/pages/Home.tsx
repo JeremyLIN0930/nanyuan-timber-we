@@ -4,7 +4,7 @@ import CTA from '../components/CTA/CTA';
 import './Home.css';
 
 /* ─────────────────────────────────────────────────────────────
-   HERO IMAGES — 4 dedicated hero shots (themed per advantage)
+   HERO IMAGES — 4 dedicated shots, one per advantage
 ───────────────────────────────────────────────────────────── */
 import img01 from '../assets/home-hero-material.jpg';
 import img02 from '../assets/home-hero-craft.jpg';
@@ -110,7 +110,7 @@ const FadeIn: React.FC<{
 
 
 /* ─────────────────────────────────────────────────────────────
-   COMPARISON SLIDER — ref-driven, zero inline style
+   COMPARISON SLIDER — ref-driven clipPath, zero inline style
 ───────────────────────────────────────────────────────────── */
 const ComparisonSlider: React.FC = () => {
   const boxRef     = useRef<HTMLDivElement>(null);
@@ -161,233 +161,212 @@ const ComparisonSlider: React.FC = () => {
 /* ═══════════════════════════════════════════════════════════════
    HOME COMPONENT
    ─────────────────────────────────────────────────────────────
-   INTRO LIFECYCLE:
+   LIFECYCLE:
 
-   0ms     Browser paints page. .global-preloader is ALWAYS in
-           DOM — unconditionally rendered. Gold text-shadow is a
-           BASE CSS property. @keyframes logoGlowImmediate fires
-           at 0ms (no delay). LOGO visible on first paint frame.
+   0ms      Browser paints. .global-brand-preloader is rendered
+            unconditionally. Gold text visible on FIRST frame.
 
-   3000ms  isIntroOver → true → .preloader--scanned added.
-           CSS: translateY(-100vh) 1.2s curtain-up spring.
-           Scroll lock removed.
+   2500ms   isIntroOver → true → .preloader--exit added.
+            CSS: scale(1.05) + opacity:0 dissolve.
 
-   SCROLL THEATRE:
-   progress = clamp(-rect.top / (height - innerHeight), 0, 0.99)
-   activeIdx = floor(progress * 4) → 0, 1, 2, 3
+   3500ms   isIntroRendered → false → preloader removed from DOM.
+            Scroll is NEVER locked. Page scrolls freely at all times.
 
-   ZERO inline styles. ZERO buttons/dots inside the hero.
+   HERO:    100vh full-viewport. setInterval auto-cycles activeIdx
+            every 5 seconds through 0→1→2→3→0...
+            Background images crossfade via opacity.
+            Number and text slide in from right.
+            No buttons. No dots. Clean visual purity.
+
+   ZERO inline styles. ZERO <style> tags.
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  /* ── Single intro control state ── */
-  const [isIntroOver, setIsIntroOver] = useState(false);
+  /* ── Preloader states ── */
+  const [isIntroOver,     setIsIntroOver]     = useState(false);
+  const [isIntroRendered, setIsIntroRendered] = useState(true);
 
-  /* ── Scroll theatre ── */
+  /* ── Hero auto-cycling ── */
   const [activeIdx, setActiveIdx] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  /* ── 3000ms timer: intro curtain rise ── */
+  /* ── Preloader timers ── */
   useEffect(() => {
-    const timer = setTimeout(() => setIsIntroOver(true), 3000);
-    return () => clearTimeout(timer);
+    const t1 = setTimeout(() => setIsIntroOver(true),     2500);
+    const t2 = setTimeout(() => setIsIntroRendered(false), 3500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
-  /* ── Scroll lock: on until intro finishes ── */
+  /* ── Auto-cycle hero slides every 5 seconds ── */
   useEffect(() => {
-    if (!isIntroOver) {
-      document.body.classList.add('scroll-locked');
-    } else {
-      document.body.classList.remove('scroll-locked');
-    }
-    return () => document.body.classList.remove('scroll-locked');
-  }, [isIntroOver]);
-
-  /* ── Scroll-mapped index: 400vh → 4 steps ── */
-  useEffect(() => {
-    const onScroll = () => {
-      const el = containerRef.current;
-      if (!el) return;
-      const rect     = el.getBoundingClientRect();
-      const scrollable = rect.height - window.innerHeight;
-      if (scrollable <= 0) return;
-      const progress = Math.min(Math.max(-rect.top / scrollable, 0), 0.99);
-      const step     = Math.floor(progress * 4);
-      setActiveIdx(prev => prev !== step ? step : prev);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    const interval = setInterval(() => {
+      setActiveIdx(prev => (prev + 1) % ADVANTAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
-
-  /* ── Slide class helper ── */
-  const ss = (i: number) =>
-    i < activeIdx ? 'slide-passed' : i === activeIdx ? 'slide-active' : 'slide-upcoming';
 
 
   return (
     <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════
-          PRELOADER — ALWAYS IN DOM, UNCONDITIONALLY RENDERED
-          Gold text is visible at 0ms (first paint frame).
-          isIntroOver toggles className only — never DOM presence.
+          BRAND PRELOADER — 0ms golden glow, dissolve at 2.5s,
+          removed from DOM at 3.5s. NEVER locks scroll.
       ══════════════════════════════════════════════════════════ */}
-      <div
-        className={`global-preloader${isIntroOver ? ' preloader--scanned' : ''}`}
-        aria-hidden="true"
-      >
-        <div className="preloader-logo-wrap">
-          <h1>南源木材</h1>
-          <p>NANYUAN TIMBER DESIGN</p>
+      {isIntroRendered && (
+        <div
+          className={`global-brand-preloader${isIntroOver ? ' preloader--exit' : ''}`}
+          aria-hidden="true"
+        >
+          <div className="preloader-content-box">
+            <h1>南源木材</h1>
+            <p>NANYUAN TIMBER DESIGN</p>
+          </div>
         </div>
-      </div>
+      )}
 
 
       {/* ══════════════════════════════════════════════════════════
-          MAIN VIEWPORT DECK — floats up when curtain rises
+          HERO — 100vh full-viewport, auto-cycling slides.
+          No sticky. No 400vh. No scroll-lock.
       ══════════════════════════════════════════════════════════ */}
-      <div className={`main-viewport-deck${isIntroOver ? ' deck--revealed' : ''}`}>
+      <section className="hero-section">
 
-        {/* ── 400vh STICKY SCROLL THEATRE ── */}
-        <div className="hero-scroll-container" ref={containerRef}>
-          <div className="hero-sticky-stage">
+        {/* Background images — cinematic crossfade */}
+        {ADVANTAGES.map((adv, i) => (
+          <div
+            key={adv.num}
+            className={`hero-bg${i === activeIdx ? ' hero-bg--active' : ''}`}
+          >
+            <img src={adv.img} alt={`南源木材 ${adv.zh}`} className="hero-bg-img" />
+          </div>
+        ))}
 
-            {/* Background images: three-state slide */}
-            {ADVANTAGES.map((adv, i) => (
-              <div key={adv.num} className={`hero-bg ${ss(i)}`}>
-                <img src={adv.img} alt={`南源木材 ${adv.zh}`} className="hero-bg-img" />
-              </div>
-            ))}
+        <div className="hero-overlay" />
+        <div className="hero-vignette" />
 
-            <div className="hero-overlay" />
-            <div className="hero-vignette" />
+        {/* Bracket frame */}
+        <div className="hero-frame">
+          <div className="hero-corner hero-corner--tl" />
+          <div className="hero-corner hero-corner--tr" />
+          <div className="hero-corner hero-corner--bl" />
+          <div className="hero-corner hero-corner--br" />
+        </div>
 
-            {/* Bracket frame */}
-            <div className="hero-frame">
-              <div className="hero-corner hero-corner--tl" />
-              <div className="hero-corner hero-corner--tr" />
-              <div className="hero-corner hero-corner--bl" />
-              <div className="hero-corner hero-corner--br" />
+        {/* Content deck */}
+        <div className="hero-content">
+          <div className="hero-eyebrow">
+            <span className="hero-eyebrow-line" />
+            <span className="hero-eyebrow-text">NANYUAN TIMBER DESIGN</span>
+            <span className="hero-eyebrow-line" />
+          </div>
+
+          <div className="hero-deck">
+            {/* Left: giant geometric glowing number */}
+            <div className="hero-numbox">
+              {ADVANTAGES.map((a, i) => (
+                <span
+                  key={a.num}
+                  className={`hero-num${i === activeIdx ? ' hero-num--active' : ''}`}
+                >
+                  {a.num}
+                </span>
+              ))}
             </div>
 
-            {/* Crosshair */}
-            <div className={`hero-xhair hero-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
-              <span className="hero-xhair-h" />
-              <span className="hero-xhair-v" />
-              <span className="hero-xhair-dot" />
-            </div>
-
-            {/* Content: number + text deck */}
-            <div className="hero-content">
-              <div className="hero-eyebrow">
-                <span className="hero-eyebrow-line" />
-                <span className="hero-eyebrow-text">NANYUAN TIMBER DESIGN</span>
-                <span className="hero-eyebrow-line" />
-              </div>
-
-              <div className="hero-deck">
-                {/* Left: geometric glowing number */}
-                <div className="hero-numbox">
-                  {ADVANTAGES.map((a, i) => (
-                    <span key={a.num} className={`hero-num ${ss(i)}`}>{a.num}</span>
-                  ))}
+            {/* Right: B2C advantage text cards */}
+            <div className="hero-textbox">
+              {ADVANTAGES.map((a, i) => (
+                <div
+                  key={a.num}
+                  className={`hero-slide${i === activeIdx ? ' hero-slide--active' : ''}`}
+                >
+                  <h2 className="hero-slide-zh">{a.zh}</h2>
+                  <p  className="hero-slide-en">{a.en}</p>
+                  <div className="hero-slide-wire" />
+                  <p  className="hero-slide-desc">{a.desc}</p>
                 </div>
-
-                {/* Right: B2C advantage text cards */}
-                <div className="hero-textbox">
-                  {ADVANTAGES.map((a, i) => (
-                    <div key={a.num} className={`hero-slide ${ss(i)}`}>
-                      <h2 className="hero-slide-zh">{a.zh}</h2>
-                      <p  className="hero-slide-en">{a.en}</p>
-                      <div className="hero-slide-wire" />
-                      <p  className="hero-slide-desc">{a.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
-
-            {/* Scroll cue */}
-            <div className="hero-scroll-cue">
-              <span className="hero-scroll-label">SCROLL</span>
-              <span className="hero-scroll-arrow">↓</span>
-            </div>
-
           </div>
         </div>
 
+        {/* Scroll cue */}
+        <div className="hero-scroll-cue">
+          <span className="hero-scroll-label">SCROLL</span>
+          <span className="hero-scroll-arrow">↓</span>
+        </div>
+      </section>
 
-        {/* ── SIX-STEP PROCESS ── */}
-        <section className="home-process">
-          <div className="container">
-            <FadeIn className="home-section-hdr">
-              <p className="home-eye">NANYUAN TIMBER</p>
-              <h2 className="home-section-h">六大職人服務流程</h2>
-              <p className="home-section-sub">Bespoke Process — From Concept to Flawless Execution</p>
+
+      {/* ── SIX-STEP PROCESS ── */}
+      <section className="home-process">
+        <div className="container">
+          <FadeIn className="home-section-hdr">
+            <p className="home-eye">NANYUAN TIMBER</p>
+            <h2 className="home-section-h">六大職人服務流程</h2>
+            <p className="home-section-sub">Bespoke Process — From Concept to Flawless Execution</p>
+          </FadeIn>
+
+          {PROCESS_STEPS.map((s, i) => (
+            <FadeIn key={s.id} className={`home-step${i % 2 === 1 ? ' home-step--rev' : ''}`}>
+              <div className="home-step-imgbox">
+                <img src={s.img} alt={`南源木材 ${s.zh}`} className="home-step-img" />
+                <span className="home-step-num-bg">{s.id}</span>
+              </div>
+              <div className="home-step-info">
+                <span className="home-step-num">{s.id}</span>
+                <h3 className="home-step-zh">{s.zh}</h3>
+                <p  className="home-step-en">{s.en}</p>
+                <p  className="home-step-desc">{s.desc}</p>
+              </div>
             </FadeIn>
+          ))}
+        </div>
+      </section>
 
-            {PROCESS_STEPS.map((s, i) => (
-              <FadeIn key={s.id} className={`home-step${i % 2 === 1 ? ' home-step--rev' : ''}`}>
-                <div className="home-step-imgbox">
-                  <img src={s.img} alt={`南源木材 ${s.zh}`} className="home-step-img" />
-                  <span className="home-step-num-bg">{s.id}</span>
-                </div>
-                <div className="home-step-info">
-                  <span className="home-step-num">{s.id}</span>
-                  <h3 className="home-step-zh">{s.zh}</h3>
-                  <p  className="home-step-en">{s.en}</p>
-                  <p  className="home-step-desc">{s.desc}</p>
+
+      {/* ── RENDER vs REALITY ── */}
+      <section className="home-compare">
+        <div className="container">
+          <FadeIn>
+            <h2 className="home-section-h">設計與落地的真實對照</h2>
+            <p className="home-compare-p">許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重把關，確保所見即所得。請拖曳滑桿親手驗證。</p>
+          </FadeIn>
+        </div>
+        <ComparisonSlider />
+      </section>
+
+
+      {/* ── PORTFOLIO ── */}
+      <section className="home-folio">
+        <div className="container">
+          <FadeIn className="home-section-hdr home-folio-hdr">
+            <h2 className="home-section-h">極精選作品</h2>
+            <p className="home-section-sub">點擊探索每一個空間的完整故事。</p>
+          </FadeIn>
+          <div className="home-folio-grid">
+            {PORTFOLIO.map((it, i) => (
+              <FadeIn key={i} delay={`${i * 80}ms`}>
+                <div className="home-card" onClick={() => navigate('/projects')}>
+                  <div className="home-card-inner">
+                    <img src={it.img} alt={`南源木材 ${it.zh}`} className="home-card-img" />
+                    <div className="home-card-grad" />
+                    <div className="home-card-meta">
+                      <span className="home-card-type">{it.type}</span>
+                      <h3  className="home-card-name">{it.zh}</h3>
+                    </div>
+                  </div>
                 </div>
               </FadeIn>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
+      {/* ── Unified global CTA — single instance ── */}
+      <CTA />
 
-        {/* ── RENDER vs REALITY ── */}
-        <section className="home-compare">
-          <div className="container">
-            <FadeIn>
-              <h2 className="home-section-h">設計與落地的真實對照</h2>
-              <p className="home-compare-p">許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重把關，確保所見即所得。請拖曳滑桿親手驗證。</p>
-            </FadeIn>
-          </div>
-          <ComparisonSlider />
-        </section>
-
-
-        {/* ── PORTFOLIO ── */}
-        <section className="home-folio">
-          <div className="container">
-            <FadeIn className="home-section-hdr home-folio-hdr">
-              <h2 className="home-section-h">極精選作品</h2>
-              <p className="home-section-sub">點擊探索每一個空間的完整故事。</p>
-            </FadeIn>
-            <div className="home-folio-grid">
-              {PORTFOLIO.map((it, i) => (
-                <FadeIn key={i} delay={`${i * 80}ms`}>
-                  <div className="home-card" onClick={() => navigate('/projects')}>
-                    <div className="home-card-inner">
-                      <img src={it.img} alt={`南源木材 ${it.zh}`} className="home-card-img" />
-                      <div className="home-card-grad" />
-                      <div className="home-card-meta">
-                        <span className="home-card-type">{it.type}</span>
-                        <h3  className="home-card-name">{it.zh}</h3>
-                      </div>
-                    </div>
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Unified global CTA — single instance ── */}
-        <CTA />
-
-      </div>
     </div>
   );
 };

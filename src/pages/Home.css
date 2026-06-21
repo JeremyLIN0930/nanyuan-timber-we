@@ -1,31 +1,27 @@
 /* ═══════════════════════════════════════════════════════════════
-   HOME.CSS — 0ms Instant Glow Preloader + 400vh Sticky Theatre
+   HOME.CSS — Original Proportions Restored + Brand Glow Preloader
    南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
    ARCHITECTURE:
-   1. .global-preloader: fixed full-screen, gold text visible
-      on FIRST PAINT (zero delay). .preloader--scanned slides
-      it up like a theatre curtain at 3000ms.
-   2. .hero-scroll-container (400vh) + .hero-sticky-stage (sticky)
-      locks the viewport through 4 advantage slides.
-   3. All ancestors use overflow-x:clip (NOT hidden) to preserve
-      position:sticky. No overflow:hidden anywhere.
-   4. Three-state slide system: upcoming(right) → active(center)
-      → passed(left) with parallax translateX transitions.
+   1. .global-brand-preloader: fixed full-screen, gold LOGO
+      visible on FIRST paint (0ms, zero delay). .preloader--exit
+      scale-fades it away at 2.5s. Fully removed from DOM at 3.5s.
+   2. Hero: simple 100vh full-viewport with auto-cycling slides
+      (setInterval in TSX). NO 400vh. NO sticky. NO scroll-lock.
+   3. Cinematic crossfade on background images (opacity 0.8s).
+   4. Left: giant glowing geometric number. Right: B2C text cards.
+   5. All clamp() responsive. GPU-accelerated mobile scrolling.
 ═══════════════════════════════════════════════════════════════ */
 
 
 /* ──────────────────────────────────────────────────────────────
    KEYFRAMES
    ────────────────────────────────────────────────────────────── */
-
-/* Logo glow — 0ms delay, fires immediately on first paint */
-@keyframes logoGlowImmediate {
-  0%   { opacity: 0;    filter: drop-shadow(0 0 40px rgba(197, 168, 128, 0.8)); }
-  12%  { opacity: 1;    filter: drop-shadow(0 0 50px rgba(197, 168, 128, 0.9)); }
-  20%  { opacity: 1;    filter: drop-shadow(0 0 60px rgba(197, 168, 128, 1.0)); }
-  80%  { opacity: 1;    filter: drop-shadow(0 0 45px rgba(197, 168, 128, 0.7)); }
-  100% { opacity: 0.35; filter: drop-shadow(0 0 20px rgba(197, 168, 128, 0.3)); }
+@keyframes preloaderGlow {
+  0%   { opacity: 0;   transform: scale(0.96); }
+  15%  { opacity: 1;   transform: scale(1);    }
+  80%  { opacity: 1;   transform: scale(1);    }
+  100% { opacity: 0.6; transform: scale(1.01); }
 }
 
 @keyframes scrollBounce {
@@ -33,56 +29,24 @@
   50%      { transform: translateY(7px); }
 }
 
-@keyframes dotPulseA {
-  0%, 100% { transform: translate(-50%, -50%) scale(1);    box-shadow: 0 0 8px  rgba(197, 168, 128, 0.85); }
-  40%      { transform: translate(-50%, -50%) scale(1.85); box-shadow: 0 0 22px rgba(197, 168, 128, 1.0);  }
-}
-
-@keyframes dotPulseB {
-  0%, 100% { transform: translate(-50%, -50%) scale(1);   box-shadow: 0 0 8px  rgba(197, 168, 128, 0.85); }
-  40%      { transform: translate(-50%, -50%) scale(1.6); box-shadow: 0 0 16px rgba(197, 168, 128, 1.0);  }
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   STICKY-SAFE ANCESTOR RESET
-   overflow-x:clip does NOT create a scroll context,
-   so position:sticky works. overflow:hidden kills sticky.
-   ────────────────────────────────────────────────────────────── */
-html,
-body,
-#root,
-.app-container,
-.main-content {
-  overflow-x: clip !important;
-  overflow-y: visible !important;
-}
-
-body.scroll-locked {
-  overflow: hidden !important;
-  height:   100vh;
-}
-
 
 /* ──────────────────────────────────────────────────────────────
    PAGE SHELL
    ────────────────────────────────────────────────────────────── */
 .home-page {
-  background:     #050505;
-  min-height:     100vh;
-  overflow-x:     clip;
-  overflow-y:     visible;
-  will-change:    transform;
+  background: #050505;
+  min-height: 100vh;
   -webkit-overflow-scrolling: touch !important;
 }
 
 
 /* ═══════════════════════════════════════════════════════════════
-   PRELOADER — FIXED FULL-SCREEN, 0ms INSTANT GLOW
-   Always rendered in DOM. CSS paints gold text on first frame.
-   JS only toggles .preloader--scanned to slide curtain up.
+   BRAND PRELOADER — 0ms INSTANT GOLDEN GLOW
+   Fixed full-screen. Text paints on first frame.
+   .preloader--exit: scale + fade dissolve.
+   Fully removed from DOM by TSX at 3.5s.
 ═══════════════════════════════════════════════════════════════ */
-.global-preloader {
+.global-brand-preloader {
   position:        fixed;
   inset:           0;
   z-index:         9999;
@@ -90,109 +54,80 @@ body.scroll-locked {
   display:         flex;
   justify-content: center;
   align-items:     center;
-  /* Base state: curtain DOWN */
-  transform:       translateY(0);
-  transition:      transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
-  will-change:     transform;
+  /* base state — visible */
+  opacity:         1;
+  transform:       scale(1);
+  transition:      opacity 1s cubic-bezier(0.85, 0, 0.15, 1),
+                   transform 1s cubic-bezier(0.85, 0, 0.15, 1);
+  will-change:     transform, opacity;
 }
 
-/* 3000ms: JS adds .preloader--scanned → curtain slides UP */
-.global-preloader.preloader--scanned {
-  transform:      translateY(-100vh);
+/* 2.5s: JS adds .preloader--exit → dissolve away */
+.global-brand-preloader.preloader--exit {
+  opacity:        0;
+  transform:      scale(1.05);
   pointer-events: none;
 }
 
-/* Logo wrapper — glow animation fires IMMEDIATELY (0 delay) */
-.preloader-logo-wrap {
+/* Logo content box */
+.preloader-content-box {
   display:        flex;
   flex-direction: column;
   align-items:    center;
-  gap:            clamp(10px, 1.6vh, 16px);
+  gap:            clamp(10px, 1.6vh, 18px);
   pointer-events: none;
-  animation:      logoGlowImmediate 3s ease-out forwards;
+  animation:      preloaderGlow 2.5s ease-out forwards;
 }
 
-/* ── Chinese brand name — gold with intense glow ── */
-.preloader-logo-wrap h1 {
-  font-size:      clamp(2.4rem, 7.5vw, 5.2rem);
+/* ── Chinese brand name — white with intense golden glow ── */
+.preloader-content-box h1 {
+  font-size:      clamp(2.5rem, 6vw, 4.5rem);
   font-weight:    900;
-  letter-spacing: 0.2em;
-  color:          #C5A880;
+  letter-spacing: 0.3em;
+  color:          #ffffff;
   line-height:    1;
   margin:         0;
-  /* BASE text-shadow: present on FIRST paint, no JS needed */
+  /* Golden glow — BASE property, visible on first paint */
   text-shadow:
-    0 0 20px rgba(197, 168, 128, 0.55),
-    0 0 45px rgba(197, 168, 128, 0.65),
-    0 0 90px rgba(197, 168, 128, 0.40),
-    0 0 180px rgba(197, 168, 128, 0.18);
+    0 0 30px rgba(197, 168, 128, 0.6),
+    0 0 60px rgba(197, 168, 128, 0.4),
+    0 0 120px rgba(197, 168, 128, 0.2);
 }
 
 /* ── English subtitle ── */
-.preloader-logo-wrap p {
+.preloader-content-box p {
   font-size:      clamp(0.5rem, 1.1vw, 0.84rem);
   font-weight:    200;
   letter-spacing: 0.52em;
-  color:          rgba(197, 168, 128, 0.48);
+  color:          rgba(197, 168, 128, 0.5);
   text-transform: uppercase;
   margin:         0;
 }
 
 
-/* ──────────────────────────────────────────────────────────────
-   MAIN VIEWPORT — float up when curtain rises
-   ────────────────────────────────────────────────────────────── */
-.main-viewport-deck {
-  opacity:    0;
-  transform:  translateY(36px);
-  transition: opacity 0.95s 0.05s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.95s 0.05s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.main-viewport-deck.deck--revealed {
-  opacity:   1;
-  transform: translateY(0);
-}
-
-
 /* ═══════════════════════════════════════════════════════════════
-   400vh SCROLL-ANCHORED HERO THEATRE
-   .hero-scroll-container: 400vh tall scroll runway.
-   .hero-sticky-stage: sticky viewport that locks 4 slides.
-   overflow MUST be visible on both — hidden kills sticky.
+   HERO SECTION — 100vh FULLSCREEN, AUTO-CYCLING SLIDES
+   No sticky. No 400vh. No scroll-lock. Clean and elegant.
 ═══════════════════════════════════════════════════════════════ */
-.hero-scroll-container {
-  position:   relative;
-  height:     400vh;
-  overflow:   visible !important;
-  will-change: transform;
-  -webkit-overflow-scrolling: touch !important;
+.hero-section {
+  position: relative;
+  width:    100%;
+  height:   100vh;
+  overflow: hidden;
 }
 
-.hero-sticky-stage {
-  position:   sticky;
-  top:        0;
-  height:     100vh;
-  width:      100%;
-  overflow:   visible !important;
-  display:    flex;
-  align-items:     center;
-  justify-content: center;
-  background: #050505;
-  will-change: transform;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   THREE-STATE BACKGROUND IMAGES
-   upcoming → right(+100%)  |  active → center(0)  |  passed → left(-100%)
-   ────────────────────────────────────────────────────────────── */
+/* ── Background images: crossfade via opacity ── */
 .hero-bg {
   position:    absolute;
   inset:       0;
   z-index:     0;
-  overflow:    hidden;
-  will-change: transform, opacity;
+  opacity:     0;
+  transition:  opacity 0.8s ease-in-out;
+  will-change: opacity;
+}
+
+.hero-bg.hero-bg--active {
+  opacity: 1;
 }
 
 .hero-bg-img {
@@ -202,29 +137,7 @@ body.scroll-locked {
   display:    block;
 }
 
-.hero-bg.slide-upcoming {
-  transform:  translateX(100%) scale(1.04);
-  opacity:    0;
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hero-bg.slide-active {
-  transform:  translateX(0) scale(1);
-  opacity:    1;
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hero-bg.slide-passed {
-  transform:  translateX(-100%) scale(1.04);
-  opacity:    0;
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-
-/* ── Dark overlays ── */
+/* ── Dark gradient overlays ── */
 .hero-overlay {
   position:       absolute;
   inset:          0;
@@ -248,8 +161,7 @@ body.scroll-locked {
   pointer-events: none;
 }
 
-
-/* ── Bracket frame ── */
+/* ── Bracket frame corners ── */
 .hero-frame {
   position:       absolute;
   inset:          clamp(18px, 3.5vw, 56px);
@@ -258,10 +170,9 @@ body.scroll-locked {
 }
 
 .hero-corner {
-  position:   absolute;
-  width:      clamp(14px, 2.5vw, 34px);
-  height:     clamp(14px, 2.5vw, 34px);
-  transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  position: absolute;
+  width:    clamp(14px, 2.5vw, 34px);
+  height:   clamp(14px, 2.5vw, 34px);
 }
 
 .hero-corner--tl { top: 0;    left: 0;   border-top:    1px solid rgba(197, 168, 128, 0.22); border-left:   1px solid rgba(197, 168, 128, 0.22); }
@@ -270,70 +181,19 @@ body.scroll-locked {
 .hero-corner--br { bottom: 0; right: 0;  border-bottom: 1px solid rgba(197, 168, 128, 0.22); border-right:  1px solid rgba(197, 168, 128, 0.22); }
 
 
-/* ── Crosshair ── */
-.hero-xhair {
-  position:       absolute;
-  top:            50%;
-  left:           50%;
-  transform:      translate(-50%, -50%);
-  z-index:        4;
-  pointer-events: none;
-  width:          clamp(22px, 3vw, 40px);
-  height:         clamp(22px, 3vw, 40px);
-}
-
-.hero-xhair-h {
-  position:   absolute;
-  top:        50%;
-  left:       0;
-  right:      0;
-  height:     1px;
-  background: rgba(197, 168, 128, 0.24);
-  transform:  translateY(-0.5px);
-  display:    block;
-}
-
-.hero-xhair-v {
-  position:   absolute;
-  left:       50%;
-  top:        0;
-  bottom:     0;
-  width:      1px;
-  background: rgba(197, 168, 128, 0.24);
-  transform:  translateX(-0.5px);
-  display:    block;
-}
-
-.hero-xhair-dot {
-  position:      absolute;
-  top:           50%;
-  left:          50%;
-  width:         5px;
-  height:        5px;
-  border-radius: 50%;
-  background:    #C5A880;
-  transform:     translate(-50%, -50%);
-  box-shadow:    0 0 8px rgba(197, 168, 128, 0.85);
-  display:       block;
-}
-
-.hero-xhair--a .hero-xhair-dot { animation: dotPulseA 1s ease-in-out; }
-.hero-xhair--b .hero-xhair-dot { animation: dotPulseB 1s ease-in-out; }
-
-
-/* ──────────────────────────────────────────────────────────────
-   HERO CONTENT — number + text deck
-   ────────────────────────────────────────────────────────────── */
+/* ── Hero content: centred deck ── */
 .hero-content {
   position:       relative;
   z-index:        10;
   display:        flex;
   flex-direction: column;
   align-items:    center;
+  justify-content: center;
+  height:         100%;
   text-align:     center;
   padding:        0 clamp(1rem, 5vw, 4rem);
   max-width:      1080px;
-  width:          100%;
+  margin:         0 auto;
 }
 
 .hero-eyebrow {
@@ -359,7 +219,7 @@ body.scroll-locked {
 }
 
 
-/* ── Number + text deck layout ── */
+/* ── Number + text deck ── */
 .hero-deck {
   display:         flex;
   align-items:     center;
@@ -368,15 +228,14 @@ body.scroll-locked {
   justify-content: center;
 }
 
+/* Left: giant geometric number */
 .hero-numbox {
-  position:   relative;
+  position:    relative;
   flex-shrink: 0;
-  width:      clamp(72px, 13vw, 200px);
-  height:     clamp(72px, 13vw, 200px);
+  width:       clamp(72px, 13vw, 200px);
+  height:      clamp(72px, 13vw, 200px);
 }
 
-
-/* ── THREE-STATE NUMBERS ── */
 .hero-num {
   position:        absolute;
   inset:           0;
@@ -391,17 +250,15 @@ body.scroll-locked {
   -webkit-text-stroke: 1px rgba(197, 168, 128, 0.06);
   pointer-events:  none;
   user-select:     none;
-  will-change:     transform, opacity;
+  will-change:     opacity, transform;
+  /* Default: hidden */
+  opacity:         0;
+  transform:       translateX(40px) scale(0.85);
+  transition:      opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                   transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-num.slide-upcoming {
-  opacity:    0;
-  transform:  translateX(56px) scale(0.84);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hero-num.slide-active {
+.hero-num.hero-num--active {
   opacity:    1;
   transform:  translateX(0) scale(1);
   background: linear-gradient(135deg, #C5A880, rgba(197, 168, 128, 0.26));
@@ -410,19 +267,9 @@ body.scroll-locked {
   -webkit-text-stroke:     1px rgba(197, 168, 128, 0.16);
   filter:     drop-shadow(0 0 36px rgba(197, 168, 128, 0.55))
               drop-shadow(0 0 70px rgba(197, 168, 128, 0.20));
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-num.slide-passed {
-  opacity:    0;
-  transform:  translateX(-56px) scale(0.84);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-
-/* ── THREE-STATE TEXT SLIDES ── */
+/* Right: text cards */
 .hero-textbox {
   position:   relative;
   flex:       1;
@@ -431,35 +278,24 @@ body.scroll-locked {
 }
 
 .hero-slide {
-  position:       absolute;
-  inset:          0;
-  display:        flex;
-  flex-direction: column;
+  position:        absolute;
+  inset:           0;
+  display:         flex;
+  flex-direction:  column;
   justify-content: center;
-  pointer-events: none;
-  will-change:    transform, opacity;
+  pointer-events:  none;
+  will-change:     opacity, transform;
+  /* Default: hidden */
+  opacity:         0;
+  transform:       translateX(60px);
+  transition:      opacity 0.7s 0.1s cubic-bezier(0.16, 1, 0.3, 1),
+                   transform 0.85s 0.1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hero-slide.slide-upcoming {
-  opacity:    0;
-  transform:  translateX(76px) scale(1.02);
-  transition: opacity 0.7s 0.12s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hero-slide.slide-active {
+.hero-slide.hero-slide--active {
   opacity:        1;
-  transform:      translateX(0) scale(1);
+  transform:      translateX(0);
   pointer-events: auto;
-  transition:     opacity 0.7s 0.12s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hero-slide.slide-passed {
-  opacity:    0;
-  transform:  translateX(-76px) scale(1.02);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-slide-zh {
@@ -545,12 +381,12 @@ body.scroll-locked {
 }
 
 .home-section-h {
-  font-size:   clamp(1.75rem, 4.8vw, 3.1rem) !important;
-  font-weight: 900 !important;
-  color:       #C5A880;
-  text-shadow: 0 0 26px rgba(197, 168, 128, 0.5);
-  margin-bottom: 0.5rem;
-  line-height: 1.1;
+  font-size:      clamp(1.75rem, 4.8vw, 3.1rem) !important;
+  font-weight:    900 !important;
+  color:          #C5A880;
+  text-shadow:    0 0 26px rgba(197, 168, 128, 0.5);
+  margin-bottom:  0.5rem;
+  line-height:    1.1;
 }
 
 .home-section-sub {
@@ -681,7 +517,7 @@ body.scroll-locked {
    RENDER vs REALITY COMPARISON SLIDER
 ═══════════════════════════════════════════════════════════════ */
 .home-compare {
-  background: #050505;
+  background:  #050505;
   padding-top: clamp(3.2rem, 7.5vw, 4.8rem);
   border-top:  1px solid rgba(255, 255, 255, 0.04);
 }
@@ -861,29 +697,37 @@ body.scroll-locked {
    RESPONSIVE
 ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .preloader-logo-wrap h1 { font-size: clamp(1.75rem, 8.5vw, 2.6rem); }
+  .preloader-content-box h1 {
+    font-size:      clamp(1.8rem, 8vw, 2.6rem);
+    letter-spacing: 0.18em;
+  }
 
-  .hero-sticky-stage { min-height: 100dvh; }
-  .hero-content      { padding: 0 0.9rem; }
-  .hero-frame        { inset: 11px; }
-  .hero-corner       { width: 12px; height: 12px; }
-  .hero-xhair        { width: 18px; height: 18px; }
+  .hero-content { padding: 0 0.9rem; }
+  .hero-frame   { inset: 11px; }
+  .hero-corner  { width: 12px; height: 12px; }
 
   .hero-deck    { flex-direction: column; gap: 0.35rem; }
   .hero-numbox  { width: 54px; height: 54px; }
   .hero-textbox { text-align: center; min-height: 138px; }
 
-  .hero-slide.slide-upcoming { align-items: center; transform: translateX(36px) scale(1.01); }
-  .hero-slide.slide-active   { align-items: center; }
-  .hero-slide.slide-passed   { align-items: center; transform: translateX(-36px) scale(1.01); }
+  .hero-slide {
+    align-items: center;
+    transform:   translateX(30px);
+  }
+  .hero-slide.hero-slide--active {
+    align-items: center;
+    transform:   translateX(0);
+  }
 
   .hero-slide-wire { margin-left: auto; margin-right: auto; }
   .hero-slide-desc { text-align: center; }
 
-  .hero-bg.slide-upcoming  { transform: translateX(50%) scale(1.02); }
-  .hero-bg.slide-passed    { transform: translateX(-50%) scale(1.02); }
-  .hero-num.slide-upcoming { transform: translateX(28px) scale(0.84); }
-  .hero-num.slide-passed   { transform: translateX(-28px) scale(0.84); }
+  .hero-num {
+    transform: translateX(20px) scale(0.85);
+  }
+  .hero-num.hero-num--active {
+    transform: translateX(0) scale(1);
+  }
 
   .home-step      { grid-template-columns: 1fr; gap: 1.1rem; }
   .home-step--rev { direction: ltr; }
@@ -893,15 +737,8 @@ body.scroll-locked {
   .cmp-box         { height: 220px; }
   .home-folio-grid { grid-template-columns: repeat(2, 1fr); }
 
-  .home-page,
-  .hero-scroll-container {
+  .home-page {
     -webkit-overflow-scrolling: touch !important;
-    will-change: transform;
-  }
-
-  html, body, #root, .app-container, .main-content {
-    overflow-x: clip !important;
-    overflow-y: visible !important;
   }
 }
 
