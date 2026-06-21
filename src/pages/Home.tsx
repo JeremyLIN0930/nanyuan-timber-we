@@ -76,12 +76,12 @@ const PORTFOLIO = [
 
 
 /* ─────────────────────────────────────────────────────────────
-   SCROLL-REVEAL WRAPPER
+   SCROLL-REVEAL WRAPPER (IntersectionObserver)
 ───────────────────────────────────────────────────────────── */
 const FadeIn: React.FC<{
-  children: React.ReactNode;
+  children:   React.ReactNode;
   className?: string;
-  delay?: string;
+  delay?:     string;
 }> = ({ children, className = '', delay }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -163,60 +163,53 @@ const ComparisonSlider: React.FC = () => {
    ─────────────────────────────────────────────────────────────
    INTRO LIFECYCLE:
 
-   0 ms    Browser paints the page. .intro-viewport is ALWAYS
-           in the DOM — no conditional render, no JS gate.
-           CSS renders gold text-shadow as a BASE property
-           (not animated-in). Visible on the very first frame.
-           @keyframes logoGlow fires immediately (0 delay).
+   0ms     Browser paints page. .global-preloader is ALWAYS in
+           DOM — unconditionally rendered. Gold text-shadow is a
+           BASE CSS property. @keyframes logoGlowImmediate fires
+           at 0ms (no delay). LOGO visible on first paint frame.
 
-   2500 ms isIntroFadeOut → true  →  .fade-out added
-           CSS: translateY(-100vh) 1s spring curtain-up
-           body.scroll-locked removed
-
-   3500 ms isIntroDone → true  →  .intro-done added
-           CSS: display:none — fully out of paint tree,
-           scroll chain completely clear.
+   3000ms  isIntroOver → true → .preloader--scanned added.
+           CSS: translateY(-100vh) 1.2s curtain-up spring.
+           Scroll lock removed.
 
    SCROLL THEATRE:
    progress = clamp(-rect.top / (height - innerHeight), 0, 0.99)
-   activeIdx = floor(progress * 4)  →  0, 1, 2, 3
+   activeIdx = floor(progress * 4) → 0, 1, 2, 3
 
-   ZERO inline styles. ZERO setInterval. ZERO buttons/dots.
+   ZERO inline styles. ZERO buttons/dots inside the hero.
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  /* ── Intro: three CSS-class states ── */
-  const [isIntroFadeOut, setIsIntroFadeOut] = useState(false);
-  const [isIntroDone,    setIsIntroDone]    = useState(false);
+  /* ── Single intro control state ── */
+  const [isIntroOver, setIsIntroOver] = useState(false);
 
   /* ── Scroll theatre ── */
   const [activeIdx, setActiveIdx] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /* ── Intro timers (start at 0ms, no async dependency) ── */
+  /* ── 3000ms timer: intro curtain rise ── */
   useEffect(() => {
-    const t1 = setTimeout(() => setIsIntroFadeOut(true),  2500);
-    const t2 = setTimeout(() => setIsIntroDone(true),     3500);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const timer = setTimeout(() => setIsIntroOver(true), 3000);
+    return () => clearTimeout(timer);
   }, []);
 
-  /* ── Scroll lock: on until fade begins ── */
+  /* ── Scroll lock: on until intro finishes ── */
   useEffect(() => {
-    if (!isIntroFadeOut) {
+    if (!isIntroOver) {
       document.body.classList.add('scroll-locked');
     } else {
       document.body.classList.remove('scroll-locked');
     }
     return () => document.body.classList.remove('scroll-locked');
-  }, [isIntroFadeOut]);
+  }, [isIntroOver]);
 
-  /* ── Scroll-mapped index ── */
+  /* ── Scroll-mapped index: 400vh → 4 steps ── */
   useEffect(() => {
     const onScroll = () => {
       const el = containerRef.current;
       if (!el) return;
-      const rect       = el.getBoundingClientRect();
+      const rect     = el.getBoundingClientRect();
       const scrollable = rect.height - window.innerHeight;
       if (scrollable <= 0) return;
       const progress = Math.min(Math.max(-rect.top / scrollable, 0), 0.99);
@@ -232,47 +225,36 @@ const Home: React.FC = () => {
   const ss = (i: number) =>
     i < activeIdx ? 'slide-passed' : i === activeIdx ? 'slide-active' : 'slide-upcoming';
 
-  /* ── Intro class string ── */
-  const introClass = [
-    'intro-viewport',
-    isIntroFadeOut ? 'fade-out'   : '',
-    isIntroDone    ? 'intro-done' : '',
-  ].filter(Boolean).join(' ');
-
 
   return (
     <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════
-          INTRO VIEWPORT — ALWAYS IN DOM, NO CONDITIONAL RENDER
-          ─────────────────────────────────────────────────────────
-          Rendered unconditionally so the browser paints it on
-          the very first frame — zero JS latency on visibility.
-          State controls only className, never DOM presence.
-
-          isIntroFadeOut=false           → .intro-viewport
-          isIntroFadeOut=true  (2500ms)  → .intro-viewport .fade-out
-          isIntroDone=true     (3500ms)  → .intro-viewport .fade-out .intro-done
+          PRELOADER — ALWAYS IN DOM, UNCONDITIONALLY RENDERED
+          Gold text is visible at 0ms (first paint frame).
+          isIntroOver toggles className only — never DOM presence.
       ══════════════════════════════════════════════════════════ */}
-      <div className={introClass} aria-hidden="true">
-        <div className="intro-logo-box">
-          <h1 className="intro-logo-zh">南源木材</h1>
-          <span className="intro-logo-sep" />
-          <p className="intro-logo-en">NANYUAN TIMBER DESIGN</p>
+      <div
+        className={`global-preloader${isIntroOver ? ' preloader--scanned' : ''}`}
+        aria-hidden="true"
+      >
+        <div className="preloader-logo-wrap">
+          <h1>南源木材</h1>
+          <p>NANYUAN TIMBER DESIGN</p>
         </div>
       </div>
 
 
       {/* ══════════════════════════════════════════════════════════
-          MAIN CONTENT — always in DOM behind the intro overlay
-          .content-ready triggers float-up when curtain rises
+          MAIN VIEWPORT DECK — floats up when curtain rises
       ══════════════════════════════════════════════════════════ */}
-      <div className={`main-content-wrap${isIntroFadeOut ? ' content-ready' : ''}`}>
+      <div className={`main-viewport-deck${isIntroOver ? ' deck--revealed' : ''}`}>
 
         {/* ── 400vh STICKY SCROLL THEATRE ── */}
         <div className="hero-scroll-container" ref={containerRef}>
           <div className="hero-sticky-stage">
 
+            {/* Background images: three-state slide */}
             {ADVANTAGES.map((adv, i) => (
               <div key={adv.num} className={`hero-bg ${ss(i)}`}>
                 <img src={adv.img} alt={`南源木材 ${adv.zh}`} className="hero-bg-img" />
@@ -282,6 +264,7 @@ const Home: React.FC = () => {
             <div className="hero-overlay" />
             <div className="hero-vignette" />
 
+            {/* Bracket frame */}
             <div className="hero-frame">
               <div className="hero-corner hero-corner--tl" />
               <div className="hero-corner hero-corner--tr" />
@@ -289,12 +272,14 @@ const Home: React.FC = () => {
               <div className="hero-corner hero-corner--br" />
             </div>
 
+            {/* Crosshair */}
             <div className={`hero-xhair hero-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
               <span className="hero-xhair-h" />
               <span className="hero-xhair-v" />
               <span className="hero-xhair-dot" />
             </div>
 
+            {/* Content: number + text deck */}
             <div className="hero-content">
               <div className="hero-eyebrow">
                 <span className="hero-eyebrow-line" />
@@ -303,12 +288,14 @@ const Home: React.FC = () => {
               </div>
 
               <div className="hero-deck">
+                {/* Left: geometric glowing number */}
                 <div className="hero-numbox">
                   {ADVANTAGES.map((a, i) => (
                     <span key={a.num} className={`hero-num ${ss(i)}`}>{a.num}</span>
                   ))}
                 </div>
 
+                {/* Right: B2C advantage text cards */}
                 <div className="hero-textbox">
                   {ADVANTAGES.map((a, i) => (
                     <div key={a.num} className={`hero-slide ${ss(i)}`}>
@@ -322,6 +309,7 @@ const Home: React.FC = () => {
               </div>
             </div>
 
+            {/* Scroll cue */}
             <div className="hero-scroll-cue">
               <span className="hero-scroll-label">SCROLL</span>
               <span className="hero-scroll-arrow">↓</span>
@@ -396,6 +384,7 @@ const Home: React.FC = () => {
           </div>
         </section>
 
+        {/* ── Unified global CTA — single instance ── */}
         <CTA />
 
       </div>
