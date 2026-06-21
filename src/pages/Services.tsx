@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import './Services.css';
 
+import servicesHeroBg from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+
 const GOLD      = '#C5A880';
 const GOLD_GLOW = 'rgba(197,168,128,0.85)';
 const GOLD_WIRE = 'rgba(197,168,128,0.30)';
@@ -92,7 +94,7 @@ const ProcessItem: React.FC<{ step: typeof PROCESS_STEPS[0]; delay: number; isLe
 const Services: React.FC = () => {
   return (
     <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} style={{ backgroundColor: BG, minHeight: '100vh', color: '#fff', overflowX: 'hidden' }}>
-      <section className="services-hero" style={{ backgroundImage: "url('/images/style_luxury_dark_1779301949701.png')" }}>
+      <section className="services-hero" style={{ backgroundImage: `url(${servicesHeroBg})` }}>
         <div className="services-hero-overlay" />
         <div className="services-hero-content">
           <div className="services-hero-eyebrow">

@@ -2,6 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import './About.css';
 
+import aboutSlide01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+import aboutSlide02 from '../assets/LINE_ALBUM_2026.6.17_260621_70.jpg';
+import aboutSlide03 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
+import aboutDetail from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
+
 /* ═══════════════════════════════════════════════════════════════
    DESIGN TOKENS
 ═══════════════════════════════════════════════════════════════ */
@@ -20,9 +25,9 @@ const TEXT_MID  = 'rgba(255,255,255,0.62)';
    DATA
 ═══════════════════════════════════════════════════════════════ */
 const HERO_SLIDES = [
-  { src: '/images/luxury_tianmu_home_1779301841564.png', caption: '天母森光 — 全屋統包典範'   },
-  { src: '/images/style_luxury_dark_1779301949701.png',  caption: '奢華暗灰 — 精品格柵工藝'  },
-  { src: '/images/japanese_wabi_sabi_1779301881798.png', caption: '侘寂茶韻 — 礦物手刷美學'  },
+  { src: aboutSlide01, caption: '天母森光 — 全屋統包典範'   },
+  { src: aboutSlide02, caption: '奢華暗灰 — 精品格柵工藝'  },
+  { src: aboutSlide03, caption: '侘寂茶韻 — 礦物手刷美學'  },
 ];
 
 const STATS = [
@@ -621,7 +626,7 @@ const PhilosophySection: React.FC = () => (
           <Reveal from="left">
             <div style={{ position: 'relative', overflow: 'hidden' }}>
               <img
-                src="/images/renovation_detail.png"
+                src={aboutDetail}
                 alt="南源職人現場工藝"
                 style={{ width: '100%', height: 'clamp(280px,40vw,500px)', objectFit: 'cover', display: 'block', filter: 'brightness(0.72)', transition: 'filter 0.5s' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.filter = 'brightness(0.9)')}

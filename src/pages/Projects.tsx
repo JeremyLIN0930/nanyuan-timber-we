@@ -3,6 +3,23 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
 import './Projects.css';
 
+/* ── Real project photos via Vite import ── */
+import projPhoto01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+import projPhoto02 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
+import projPhoto03 from '../assets/LINE_ALBUM_2026.6.17_260621_70.jpg';
+import projPhoto04 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
+import projPhoto05 from '../assets/LINE_ALBUM_2026.6.17_260621_50.jpg';
+import projPhoto06 from '../assets/LINE_ALBUM_2026.6.17_260621_10.jpg';
+import projPhoto07 from '../assets/LINE_ALBUM_2026.6.17_260621_1.jpg';
+import projPhoto08 from '../assets/LINE_ALBUM_2026.6.17_260621_30.jpg';
+import projPhoto09 from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
+import projPhoto10 from '../assets/LINE_ALBUM_2026.6.17_260621_60.jpg';
+import projPhoto11 from '../assets/LINE_ALBUM_2026.6.17_260621_90.jpg';
+import projPhoto12 from '../assets/LINE_ALBUM_2026.6.17_260621_3.jpg';
+import projPhoto13 from '../assets/LINE_ALBUM_2026.6.17_260621_7.jpg';
+import projPhoto14 from '../assets/LINE_ALBUM_2026.6.17_260621_14.jpg';
+import projPhoto15 from '../assets/LINE_ALBUM_2026.6.17_260621_22.jpg';
+
 /* ═══════════════════════════════════════════════════════════════
    DESIGN CONSTANTS
 ═══════════════════════════════════════════════════════════════ */
@@ -65,13 +82,13 @@ const PROJECTS: Project[] = [
     designFocus: '全室格局打通、北美胡桃木實木地板、奢華暗灰石材融合',
     materials:   '北美黑胡桃木實木地板、高級無毒環保塗料、進口三層防水系統',
     highlight:   '全室格局打通 × 北美胡桃木實木地板 × 奢華暗灰石材',
-    img:         '/images/luxury_tianmu_home_1779301841564.png',
+    img:         projPhoto01,
     altText:     '南源木材 天母森光 台北天母奢華住宅 三代同堂原木室內設計案實景',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto05,
     beforeAlt:   '南源木材 老屋翻新施工前 天母住宅漏水與舊格局拆除工程',
-    afterImg:    '/images/old_house_after.png',
+    afterImg:    projPhoto01,
     afterAlt:    '南源木材 天母豪宅老屋改裝完工後 北美胡桃木地板實景',
-    galleryImgs: ['/images/renovation_detail.png', '/images/luxury_tianmu_home_1779301841564.png'],
+    galleryImgs: [projPhoto08, projPhoto02],
     description: [
       '全室格局打通，引入大面積天然採光，將原本陰暗封閉的三房格局，重塑為光線流動、視野開闊的現代開放式公領域。',
       '地板選用北美黑胡桃木實木地板（含水率嚴控 8-12%），以「人字拼」工法鋪設，每一片木料皆經過南源自有工坊的紋理配對與預處理，確保色澤一致、質感頂級。',
@@ -91,13 +108,13 @@ const PROJECTS: Project[] = [
     designFocus: '頂級大理石客廳、客製化格柵木作、現代奢華大器落地',
     materials:   '義大利進口卡拉拉大理石、定製鍍鈦黃銅格柵、天花隱藏式冷氣系統',
     highlight:   '頂級大理石 × 客製化格柵木作 × 精工落地高階美學',
-    img:         '/images/style_luxury_dark_1779301949701.png',
+    img:         projPhoto03,
     altText:     '南源木材 竹北奢華現代 台灣竹北現代大氣客廳 頂級大理石格柵設計案',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto10,
     beforeAlt:   '南源木材 竹北客廳裝修前 水電基礎工程現場診斷',
-    afterImg:    '/images/style_luxury_dark_1779301949701.png',
+    afterImg:    projPhoto03,
     afterAlt:    '南源木材 竹北客廳大理石主牆與鈦金格柵完工實拍',
-    galleryImgs: ['/images/style_luxury_dark_1779301949701.png', '/images/modern_office_1779301899552.png'],
+    galleryImgs: [projPhoto04, projPhoto06],
     description: [
       '現代奢華大器客廳，以義大利進口卡拉拉大理石大板為主視覺，搭配客製化鍍鈦黃銅格柵木作，完美落地高階精緻美學。',
       '60坪的空間以「雙軸對稱」為設計語彙，電視主牆與沙發背牆各自以大理石書牆呈現，形成莊嚴而不失溫度的對話關係。',
@@ -117,13 +134,13 @@ const PROJECTS: Project[] = [
     designFocus: '40年老屋壁癌根治、全室電線重拉、智能家居整合',
     materials:   '無鹵低煙阻燃電線、不銹鋼熱浸鍍鋅明管、Cat6A 資訊線路',
     highlight:   '壁癌漏水根治 × 全室電線重拉 × 智能家居整合',
-    img:         '/images/renovation_detail.png',
+    img:         projPhoto05,
     altText:     '南源木材 青埔弱電安全宅 青埔老屋翻新工程 水電電線管線重拉配置實景',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto10,
     beforeAlt:   '南源木材 青埔老屋原狀 陰暗漏水壁癌嚴重的舊廚衛浴水電管線',
-    afterImg:    '/images/renovation_detail.png',
+    afterImg:    projPhoto05,
     afterAlt:    '南源木材 青埔水電管路重拉完成 甲級弱電箱排線實景',
-    galleryImgs: ['/images/renovation_detail.png', '/images/style_industrial_1779301976370.png'],
+    galleryImgs: [projPhoto10, projPhoto12],
     description: [
       '40年屋齡老公寓，原始屋況嚴峻——主臥壁癌面積達牆面 40%、浴室長年漏水滲透至樓下、全室老舊電線超載嚴重。',
       '南源甲級水電職人從「安全工程」做起：全室電線重拉採用無鹵低煙阻燃線材，配電箱全面升級為 200A 雙迴路設計，並同步暗埋 Cat6A 資訊線路至每個房間。',
@@ -143,13 +160,13 @@ const PROJECTS: Project[] = [
     designFocus: 'DALI智能照明、聲學天花板、電控霧化玻璃弱電整合',
     materials:   '進口電控霧化玻璃、DALI 智能照明系統、光纖超高速網路佈線',
     highlight:   'DALI 智能照明 × 電控霧化玻璃 × 聲學天花板整合',
-    img:         '/images/modern_office_1779301899552.png',
+    img:         projPhoto06,
     altText:     '南源木材 曜石辦公 台北金融科技總部 弱電工程智慧整合案實景',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto05,
     beforeAlt:   '南源木材 商業空間水電交班 複雜線路重新理線工程',
-    afterImg:    '/images/modern_office_1779301899552.png',
+    afterImg:    projPhoto06,
     afterAlt:    '南源木材 商業辦公室完工後 電控玻璃與智能燈光控制',
-    galleryImgs: ['/images/modern_office_1779301899552.png', '/images/style_industrial_1779301976370.png'],
+    galleryImgs: [projPhoto06, projPhoto12],
     description: [
       '為一間金融科技公司 200 坪辦公總部打造全面弱電智能化系統，是南源迄今最複雜的智能整合工程。',
       '全區導入 DALI 智能照明系統，可依據日照自動調節色溫與亮度；主管辦公室採用電控霧化玻璃隔間，一鍵切換透明與隱私模式。',
@@ -169,13 +186,13 @@ const PROJECTS: Project[] = [
     designFocus: '義大利礦物塗料手工堆疊、珪藻土手刷紋理、無主燈光影層次',
     materials:   '義大利進口無縫微水泥、手刷珪藻土塗料、碳化防潮橡木地板',
     highlight:   '義大利礦物塗料 × 手工堆疊批土 × 光影漸層牆面藝術',
-    img:         '/images/japanese_wabi_sabi_1779301881798.png',
+    img:         projPhoto09,
     altText:     '南源木材 侘寂茶韻 台北日式空間裝潢 職人手工刷塗義大利礦物漆牆面',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto10,
     beforeAlt:   '南源木材 牆面批土打磨前 粗糙水泥底層診斷',
-    afterImg:    '/images/japanese_wabi_sabi_1779301881798.png',
+    afterImg:    projPhoto09,
     afterAlt:    '南源木材 手刷塗料完工 微水泥斑駁質感牆面與榻榻米',
-    galleryImgs: ['/images/japanese_wabi_sabi_1779301881798.png', '/images/style_wabi_sabi_1779301962644.png'],
+    galleryImgs: [projPhoto09, projPhoto11],
     description: [
       '精選環保無毒義大利頂級特殊礦物塗料，由資深職人純手工層層堆疊批土、噴漆，刻劃出具備細膩紋理與光影漸層的牆面藝術。',
       '客廳主牆以 3 層手工塗抹的微水泥打造，每一道刮痕都是工匠手作的獨一無二紋理，在不同時段的自然光線下呈現出截然不同的光影肌理。',
@@ -195,13 +212,13 @@ const PROJECTS: Project[] = [
     designFocus: '品牌調色手工噴漆、台灣檜木烤漆吧台、暖金光影整合',
     materials:   '台灣檜木原木大板、訂製黃銅管金屬件、頂級調光暖色 LED 燈具',
     highlight:   '品牌色調手工噴漆 × 檜木烤漆吧台 × 暖金光影整合',
-    img:         '/images/high_end_cafe_1779301868615.png',
+    img:         projPhoto04,
     altText:     '南源木材 琥珀香醇 職人手工噴漆 台灣檜木烤漆吧台 奢華咖啡廳空間',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto10,
     beforeAlt:   '南源木材 商業空間木作框架打底 現場打磨工序',
-    afterImg:    '/images/high_end_cafe_1779301868615.png',
+    afterImg:    projPhoto04,
     afterAlt:    '南源木材 台灣檜木吧台手工噴漆保護漆完工光澤',
-    galleryImgs: ['/images/high_end_cafe_1779301868615.png', '/images/style_luxury_dark_1779301949701.png'],
+    galleryImgs: [projPhoto04, projPhoto03],
     description: [
       '為精品咖啡旗艦店打造品牌專屬調色系統——從牆面的深琥珀棕到天花板的煙燻黑，每一個色彩均依據品牌 Pantone 色號現場精密調配。',
       '8 米長一體成型台灣檜木吧台，經過 8 道手工打磨與 5 層木蠟油塗裝，保留最原始的木紋肌理，同時賦予耐磨防水的長效保護。',
@@ -221,13 +238,13 @@ const PROJECTS: Project[] = [
     designFocus: '隱藏式收納、多功能架高木質地坪、系統櫃與手作木件混搭',
     materials:   '高級樺木合板、雙面塗裝板、低甲醛全室系統櫃、LED 線性燈',
     highlight:   '隱藏式收納 × 多功能木質地坪 × 小資精品感落地',
-    img:         '/images/budget_smart_home.png',
+    img:         projPhoto07,
     altText:     '南源木材 機能極大化小宅 隱藏式收納 多功能木質地坪 系統櫃與手作木件',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto05,
     beforeAlt:   '南源木材 小宅改裝前格局 陰暗老舊天花板拆除現場',
-    afterImg:    '/images/budget_smart_home.png',
+    afterImg:    projPhoto07,
     afterAlt:    '南源木材 架高木地板收納地坪與多功能隱藏桌面完工實景',
-    galleryImgs: ['/images/budget_smart_home.png', '/images/style_minimal_wood_1779301932325.png'],
+    galleryImgs: [projPhoto07, projPhoto13],
     description: [
       '22 坪小宅需同時滿足臥室、書房、客廳與大量收納，總預算嚴格控制在 60 萬以內。南源以「有限預算混搭系統櫃與職人手作木件」為核心策略。',
       '以「多功能木質架高地坪」為核心設計：客廳區域架高 40 公分，地坪下方全面規劃為抽屜式收納，地坪上方搭配可掀式桌板，白天是工作區、晚上攤平即為客臥。',
@@ -247,13 +264,13 @@ const PROJECTS: Project[] = [
     designFocus: '大理石對花貼附、浮懸木質浴櫃、德國恆溫花灑系統',
     materials:   '義大利 Nero Marquina 黑色大理石、北美白橡木、德國 Hansgrohe 恆溫花灑',
     highlight:   '大理石對花 × 浮懸木質浴櫃 × 無框淋浴屏',
-    img:         '/images/luxury_bathroom_1779301913582.png',
+    img:         projPhoto14,
     altText:     '南源木材 沐光水域 大理石對花 懸浮木質浴櫃 台北天母奢華住宅衛浴改裝',
-    beforeImg:   '/images/old_house_before.png',
+    beforeImg:   projPhoto10,
     beforeAlt:   '南源木材 舊浴室壁磚敲除及水泥粗胚打底工程',
-    afterImg:    '/images/luxury_bathroom_1779301913582.png',
+    afterImg:    projPhoto14,
     afterAlt:    '南源木材 Nero Marquina 大理石對花主牆與無框淋浴門完工實景',
-    galleryImgs: ['/images/luxury_bathroom_1779301913582.png', '/images/renovation_detail.png'],
+    galleryImgs: [projPhoto14, projPhoto15],
     description: [
       '僅 10 坪的衛浴空間，打造如同精品飯店般的沐浴體驗。主牆面選用義大利 Nero Marquina 黑色大理石大板，以 bookmatching 對花工法呈現鏡面對稱的自然紋理。',
       '浴櫃以北美白橡木搭配黃銅拉手，底部懸浮設計配合 LED 地腳燈，營造出輕盈漂浮感。淋浴區採用無框超白玻璃屏風，搭配德國 Hansgrohe 恆溫花灑系統。',

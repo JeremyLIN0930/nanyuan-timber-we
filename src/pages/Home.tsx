@@ -21,6 +21,14 @@ import process04 from '../assets/process-04.jpg';
 import process05 from '../assets/process-05.jpg';
 import process06 from '../assets/process-06.jpg';
 
+/* ── Real project photos for portfolio ── */
+import realPhoto01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+import realPhoto02 from '../assets/LINE_ALBUM_2026.6.17_260621_70.jpg';
+import realPhoto03 from '../assets/LINE_ALBUM_2026.6.17_260621_30.jpg';
+import realPhoto04 from '../assets/LINE_ALBUM_2026.6.17_260621_10.jpg';
+import realPhoto05 from '../assets/LINE_ALBUM_2026.6.17_260621_1.jpg';
+import realPhoto06 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
+
 gsap.registerPlugin(ScrollTrigger);
 
 /* ═══════════════════════════════════════════════════════════════
@@ -83,12 +91,12 @@ const PROCESS_STEPS = [
    PORTFOLIO ITEMS
 ═══════════════════════════════════════════════════════════════ */
 const portfolioItems = [
-  { title: '天母森光', type: '頂級住宅', img: '/images/luxury_tianmu_home_1779301841564.png' },
-  { title: '侘寂茶韻', type: '日式空間', img: '/images/japanese_wabi_sabi_1779301881798.png' },
-  { title: '極簡廚境', type: '廚房改裝', img: '/images/minimal_wood_kitchen_1779301855424.png' },
-  { title: '曜石辦公', type: '企業總部', img: '/images/modern_office_1779301899552.png' },
-  { title: '沐光水域', type: '衛浴翻新', img: '/images/luxury_bathroom_1779301913582.png' },
-  { title: '琥珀香醇', type: '商業空間', img: '/images/high_end_cafe_1779301868615.png' },
+  { title: '木光雅居', type: '全屋統包', img: realPhoto01 },
+  { title: '奢韻臥室', type: '主臥設計', img: realPhoto02 },
+  { title: '原木廚域', type: '廚房木作', img: realPhoto03 },
+  { title: '迎賓大廳', type: '公設工程', img: realPhoto04 },
+  { title: '雲杉寢閣', type: '系統收納', img: realPhoto05 },
+  { title: '織錦牆面', type: '繃布壁飾', img: realPhoto06 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
