@@ -28,8 +28,8 @@ import portfolio06 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 
 
 /* ═══════════════════════════════════════════════════════════════
-   DATA — B2C Advantage Matrix (4 slides × 100vh scroll-depth each)
-   ZERO auto-play. Scroll-position-mapped only.
+   DATA — B2C Advantage Matrix (4 slides × 100vh scroll each)
+   ZERO auto-play. ZERO setInterval. Scroll-position-mapped only.
 ═══════════════════════════════════════════════════════════════ */
 const ADVANTAGES = [
   { num: '01', zh: '嚴選頂級建材', en: 'PREMIUM ECO-MATERIALS', desc: '採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',       img: heroSlide01 },
@@ -144,66 +144,71 @@ const ComparisonSlider: React.FC = () => {
 /* ═══════════════════════════════════════════════════════════════
    HOME — MAIN COMPONENT
    ─────────────────────────────────────────────────────────────
-   ZERO JS STATE LOCKS. Page renders INSTANTLY.
-
-   Intro ceremony = pure CSS overlay (.intro-veil) that auto-
-   animates away and sets pointer-events:none. Zero JS gating.
+   ZERO JS STATE LOCKS. No isIntro, isOpening, curtainOpen.
+   Page renders INSTANTLY.
 
    SCROLL-MAPPING ARCHITECTURE:
      .hero-scroll-container  → height: 400vh (CSS)
        .hero-sticky-stage    → position: sticky; top: 0; height: 100vh (CSS)
-         [backgrounds, frames, content slides]
 
-   scroll listener → calculate progress 0–1 through container
-                   → derive activeIndex 0–3
-                   → toggle .slide-active className on correct slide
-                   → CSS handles ALL visual transitions
+   Scroll listener:
+     1. Get container rect via getBoundingClientRect()
+     2. progress = clamp(-rect.top / (rect.height - innerHeight), 0, 0.99)
+     3. activeIndex = floor(progress * 4)  →  0, 1, 2, 3
+     4. Toggle className: .slide-active / .slide-passed
+     5. CSS handles ALL visual transitions
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  /* ── activeIndex: driven ONLY by scroll position ── */
+  /* ── activeIndex driven ONLY by scroll position ── */
   const [activeIdx, setActiveIdx] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   /* ══════════════════════════════════════════════════════════
-     SCROLL-MAPPED INDEX CALCULATION
-     Divides the 400vh container into 4 equal zones (100vh each).
-     activeIndex = floor(progress × 4), clamped to [0, 3].
+     SCROLL-MAPPED INDEX — THE PRECISE MATH
+     Container = 400vh. Scrollable depth = 400vh - 100vh = 300vh.
+     progress = -rect.top / (rect.height - window.innerHeight)
+     Clamped to [0, 0.99], then floor(progress * 4) → 0,1,2,3
   ══════════════════════════════════════════════════════════ */
   useEffect(() => {
-    const onScroll = () => {
-      const container = scrollContainerRef.current;
-      if (!container) return;
+    const handleScroll = () => {
+      const el = containerRef.current;
+      if (!el) return;
 
-      const rect = container.getBoundingClientRect();
-      const containerTop = -rect.top;
-      const scrollableHeight = container.offsetHeight - window.innerHeight;
+      const rect = el.getBoundingClientRect();
+      const scrollable = rect.height - window.innerHeight;
+      if (scrollable <= 0) return;
 
-      if (scrollableHeight <= 0) return;
+      const progress = Math.min(Math.max(-rect.top / scrollable, 0), 0.99);
+      const step = Math.floor(progress * 4);
 
-      const progress = Math.max(0, Math.min(1, containerTop / scrollableHeight));
-      const newIdx = Math.min(ADVANTAGES.length - 1, Math.floor(progress * ADVANTAGES.length));
-
-      setActiveIdx(prev => (prev !== newIdx ? newIdx : prev));
+      setActiveIdx(prev => (prev !== step ? step : prev));
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  /* ── Derive per-slide state: 'upcoming', 'active', or 'passed' ── */
+  const getSlideState = (i: number): string => {
+    if (i < activeIdx) return 'slide-passed';
+    if (i === activeIdx) return 'slide-active';
+    return 'slide-upcoming';
+  };
 
 
   return (
     <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════
-          PURE CSS INTRO VEIL — ceremonial overlay
-          Auto-fades via CSS @keyframes, then pointer-events: none.
-          ZERO JS state gating. Page is ALWAYS rendered underneath.
+          PURE CSS INTRO VEIL — ceremonial overlay.
+          Auto-fades via @keyframes. ZERO JS gating.
+          Page always rendered underneath — no black screen ever.
       ══════════════════════════════════════════════════════════ */}
-      <div className="intro-veil">
-        <div className="intro-veil-geometry">
+      <div className="intro-veil" aria-hidden="true">
+        <div className="intro-veil-geo">
           <div className="intro-geo-roof" />
           <div className="intro-geo-body" />
           <div className="intro-geo-door" />
@@ -219,19 +224,17 @@ const Home: React.FC = () => {
       {/* ══════════════════════════════════════════════════════════
           400vh SCROLL-ANCHORED HERO THEATRE
           ─────────────────────────────────────────────────────────
-          Outer: hero-scroll-container (400vh — 4 slides × 100vh)
-          Inner: hero-sticky-stage (sticky, 100vh viewport lock)
-          User MUST scroll through all 4 advantages to pass.
+          Outer: hero-scroll-container (400vh)
+          Inner: hero-sticky-stage (sticky top:0, 100vh)
+          Scroll maps to activeIndex 0→3.
+          User MUST scroll through all 4 to proceed past.
       ══════════════════════════════════════════════════════════ */}
-      <div className="hero-scroll-container" ref={scrollContainerRef}>
+      <div className="hero-scroll-container" ref={containerRef}>
         <div className="hero-sticky-stage">
 
-          {/* Full-bleed background images — slide-in per activeIndex */}
+          {/* Full-bleed background images */}
           {ADVANTAGES.map((adv, i) => (
-            <div
-              key={adv.num}
-              className={`hero-bg${i === activeIdx ? ' slide-active' : ''}`}
-            >
+            <div key={adv.num} className={`hero-bg ${getSlideState(i)}`}>
               <img src={adv.img} alt={`南源木材 ${adv.zh}`} className="hero-bg-img" />
             </div>
           ))}
@@ -248,14 +251,14 @@ const Home: React.FC = () => {
             <div className="hero-corner hero-corner--br" />
           </div>
 
-          {/* Center crosshair — micro-contracts on slide change */}
+          {/* Center crosshair */}
           <div className={`hero-xhair hero-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
             <span className="hero-xhair-h" />
             <span className="hero-xhair-v" />
             <span className="hero-xhair-dot" />
           </div>
 
-          {/* Hero content: left number + right text deck */}
+          {/* Hero content: left number + right text */}
           <div className="hero-content">
 
             <div className="hero-eyebrow">
@@ -268,16 +271,16 @@ const Home: React.FC = () => {
               {/* Left: giant geometric number */}
               <div className="hero-numbox">
                 {ADVANTAGES.map((a, i) => (
-                  <span key={a.num} className={`hero-num${i === activeIdx ? ' hero-num--on' : ''}`}>
+                  <span key={a.num} className={`hero-num ${getSlideState(i)}`}>
                     {a.num}
                   </span>
                 ))}
               </div>
 
-              {/* Right: text cards — slide-in from right */}
+              {/* Right: text cards — slide-in / slide-out */}
               <div className="hero-textbox">
                 {ADVANTAGES.map((a, i) => (
-                  <div key={a.num} className={`hero-slide${i === activeIdx ? ' slide-active' : ''}`}>
+                  <div key={a.num} className={`hero-slide ${getSlideState(i)}`}>
                     <h2 className="hero-slide-zh">{a.zh}</h2>
                     <p  className="hero-slide-en">{a.en}</p>
                     <div className="hero-slide-wire" />
@@ -289,7 +292,7 @@ const Home: React.FC = () => {
 
           </div>
 
-          {/* Scroll cue — bottom center */}
+          {/* Scroll cue */}
           <div className="hero-scroll-cue">
             <span className="hero-scroll-text">SCROLL</span>
             <span className="hero-scroll-arrow">↓</span>
@@ -364,7 +367,7 @@ const Home: React.FC = () => {
       </section>
 
 
-      {/* ── GLOBAL CTA — single shared component, zero duplication ── */}
+      {/* ── GLOBAL CTA — single shared component ── */}
       <CTA />
 
     </div>

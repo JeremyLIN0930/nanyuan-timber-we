@@ -1,27 +1,40 @@
 /* ═══════════════════════════════════════════════════════════════
-   HOME PAGE — 400vh Sticky Scroll-Mapping Theatre
+   HOME PAGE — 400vh Sticky Scroll-Linked Deck Theatre
    南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
    ARCHITECTURE:
 
-   .hero-scroll-container  (400vh — 4 advantage slides × 100vh)
-     └─ .hero-sticky-stage (sticky, top:0, 100vh viewport lock)
-          ├─ .hero-bg          (full-bleed images, slide-in)
-          ├─ .hero-overlay     (dark gradient)
-          ├─ .hero-vignette    (radial shadow)
-          ├─ .hero-frame       (four-corner bracket decoration)
-          ├─ .hero-xhair       (center crosshair, breathing)
-          └─ .hero-content     (number + text deck, slide-in)
+   .hero-scroll-container  (400vh tall — 4 slides × 100vh)
+     └─ .hero-sticky-stage (sticky top:0, 100vh viewport lock)
 
-   TRANSITION MODEL:
-     Hidden:  translateX(100%) scale(1.05) opacity(0)
-     Active:  translateX(0) scale(1) opacity(1)
-     Easing:  cubic-bezier(0.16, 1, 0.3, 1) — Apple-tier spring
+   THREE-STATE SLIDE MODEL:
+     .slide-upcoming  → parked RIGHT:  translateX(+100%)  opacity(0)
+     .slide-active    → CENTER:        translateX(0)      opacity(1)
+     .slide-passed    → exited LEFT:   translateX(-100%)  opacity(0)
 
-   INTRO VEIL:
-     Pure CSS @keyframes — auto-fades, then pointer-events: none.
-     ZERO JavaScript gating. Page always rendered underneath.
+   CRITICAL STICKY FIX:
+     html, body, #root, .app-container, .main-content —
+     ALL must have overflow: visible (or unset) for sticky to work!
+     Only overflow-x: clip is safe (doesn't create scroll context).
 ═══════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════
+   STICKY-SAFE ANCESTOR RESET
+   ─────────────────────────────────────────────
+   overflow: hidden / auto / scroll on ANY ancestor
+   creates a new scroll context and KILLS sticky.
+   We use overflow-x: clip which hides overflow
+   WITHOUT creating a scroll container.
+════════════════════════════════════════════════════ */
+html,
+body,
+#root,
+.app-container,
+.main-content {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+}
 
 
 /* ════════════════════════════════════════════════════
@@ -30,7 +43,8 @@
 .home-page {
   background: #050505;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch !important;
   will-change: transform;
 }
@@ -63,9 +77,8 @@
 /* ════════════════════════════════════════════════════
    PURE CSS INTRO VEIL
    ─────────────────────────────────────────────
-   Auto-animates from opaque → transparent in 2.5s.
-   Then pointer-events:none so it never blocks.
-   ZERO JavaScript involvement.
+   Auto-fades from opaque → transparent.
+   Then pointer-events:none. ZERO JS involvement.
 ════════════════════════════════════════════════════ */
 .intro-veil {
   position: fixed;
@@ -76,19 +89,18 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  /* Auto-fade out: hold 0.8s, then fade over 1.2s */
-  animation: veilFadeOut 2.0s 0.8s ease-out forwards;
+  animation: veilOut 2.0s 0.8s ease-out forwards;
   pointer-events: auto;
 }
 
-@keyframes veilFadeOut {
+@keyframes veilOut {
   0%   { opacity: 1; pointer-events: auto; }
-  85%  { opacity: 0; pointer-events: auto; }
+  85%  { opacity: 0; }
   100% { opacity: 0; pointer-events: none; }
 }
 
 /* Geometry decoration */
-.intro-veil-geometry {
+.intro-veil-geo {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -97,10 +109,10 @@
   height: clamp(160px, 24vw, 320px);
   pointer-events: none;
   opacity: 0;
-  animation: geoReveal 2s 0.3s ease-out forwards;
+  animation: geoIn 2s 0.3s ease-out forwards;
 }
 
-@keyframes geoReveal {
+@keyframes geoIn {
   from { opacity: 0; transform: translate(-50%, -52%); }
   to   { opacity: 1; transform: translate(-50%, -55%); }
 }
@@ -150,10 +162,10 @@
   gap: clamp(10px, 1.6vh, 16px);
   pointer-events: none;
   opacity: 0;
-  animation: brandFadeIn 1.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: brandIn 1.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes brandFadeIn {
+@keyframes brandIn {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -189,13 +201,14 @@
 /* ════════════════════════════════════════════════════
    400vh SCROLL-ANCHORED HERO THEATRE
    ─────────────────────────────────────────────
-   Outer container = 400vh (4 slides × 100vh).
-   Inner stage = sticky 100vh, locked to viewport top.
-   User must scroll through all 4 to proceed.
+   .hero-scroll-container = 400vh tall scroll runway
+   .hero-sticky-stage     = sticky 100vh viewport lock
+   overflow: visible is MANDATORY for sticky to work!
 ════════════════════════════════════════════════════ */
 .hero-scroll-container {
   position: relative;
   height: 400vh;
+  overflow: visible !important;
   -webkit-overflow-scrolling: touch !important;
   will-change: transform;
 }
@@ -205,7 +218,7 @@
   top: 0;
   height: 100vh;
   width: 100%;
-  overflow: hidden;
+  overflow: visible !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -214,25 +227,46 @@
 }
 
 
-/* ── Full-bleed background images — SLIDE-IN from right ── */
+/* ════════════════════════════════════════════════════
+   THREE-STATE SLIDE SYSTEM — BACKGROUND IMAGES
+   ─────────────────────────────────────────────
+   .slide-upcoming  → RIGHT (waiting to enter)
+   .slide-active    → CENTER (current)
+   .slide-passed    → LEFT (already scrolled past)
+════════════════════════════════════════════════════ */
 .hero-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  /* HIDDEN: parked off-screen to the right */
+  will-change: transform, opacity;
+}
+
+/* UPCOMING: parked off-screen to the right */
+.hero-bg.slide-upcoming {
   transform: translateX(100%) scale(1.05);
   opacity: 0;
   transition:
     transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
     opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
 }
 
 /* ACTIVE: slides in from right to center */
 .hero-bg.slide-active {
   transform: translateX(0) scale(1);
   opacity: 1;
+  transition:
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* PASSED: exits to the left */
+.hero-bg.slide-passed {
+  transform: translateX(-100%) scale(1.05);
+  opacity: 0;
+  transition:
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-bg-img {
@@ -291,7 +325,7 @@
 .hero-corner--br { bottom: 0; right: 0;  border-bottom: 1px solid rgba(197,168,128,0.2); border-right:  1px solid rgba(197,168,128,0.2); }
 
 
-/* ── Center crosshair — breathing + micro-contraction ── */
+/* ── Center crosshair ── */
 .hero-xhair {
   position: absolute;
   top: 50%;
@@ -343,15 +377,15 @@
 
 .hero-xhair--a {
   transform: translate(-50%, -50%) scale(0.92);
-  animation: xhairRestore 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: xhRestore 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hero-xhair--b {
   transform: translate(-50%, -50%) scale(0.88);
-  animation: xhairRestore 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: xhRestore 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes xhairRestore {
+@keyframes xhRestore {
   to { transform: translate(-50%, -50%) scale(1); }
 }
 
@@ -368,7 +402,7 @@
 }
 
 
-/* ── Hero content — number + text deck ── */
+/* ── Hero content ── */
 .hero-content {
   position: relative;
   z-index: 10;
@@ -420,6 +454,10 @@
   height: clamp(75px, 14vw, 210px);
 }
 
+
+/* ════════════════════════════════════════════════════
+   THREE-STATE SLIDE SYSTEM — NUMBERS
+════════════════════════════════════════════════════ */
 .hero-num {
   position: absolute;
   inset: 0;
@@ -432,17 +470,22 @@
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1px rgba(197,168,128,0.06);
-  /* HIDDEN: shifted left (counter-parallax) */
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+/* UPCOMING: shifted right */
+.hero-num.slide-upcoming {
   opacity: 0;
-  transform: translateX(-60px) scale(0.85);
+  transform: translateX(60px) scale(0.85);
   transition:
     opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
-  user-select: none;
 }
 
-.hero-num--on {
+/* ACTIVE: centered with gold gradient */
+.hero-num.slide-active {
   opacity: 1;
   transform: translateX(0) scale(1);
   background: linear-gradient(135deg, #C5A880 0%, rgba(197,168,128,0.28) 100%);
@@ -452,7 +495,20 @@
   filter:
     drop-shadow(0 0 38px rgba(197,168,128,0.55))
     drop-shadow(0 0 75px rgba(197,168,128,0.2));
+  transition:
+    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* PASSED: exited left */
+.hero-num.slide-passed {
+  opacity: 0;
+  transform: translateX(-60px) scale(0.85);
+  transition:
+    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 
 .hero-textbox {
   position: relative;
@@ -462,27 +518,46 @@
 }
 
 
-/* ── Text slides — SLIDE-IN from right (parallax offset from image) ── */
+/* ════════════════════════════════════════════════════
+   THREE-STATE SLIDE SYSTEM — TEXT CARDS
+   Delayed 0.12s vs image for parallax effect.
+════════════════════════════════════════════════════ */
 .hero-slide {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* HIDDEN: parked right */
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* UPCOMING: parked right */
+.hero-slide.slide-upcoming {
   opacity: 0;
   transform: translateX(80px) scale(1.02);
   transition:
     opacity   0.7s 0.12s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
-  pointer-events: none;
 }
 
-/* ACTIVE: slide in (delayed vs image = parallax) */
+/* ACTIVE: slide in center */
 .hero-slide.slide-active {
   opacity: 1;
   transform: translateX(0) scale(1);
   pointer-events: auto;
+  transition:
+    opacity   0.7s 0.12s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* PASSED: exit left */
+.hero-slide.slide-passed {
+  opacity: 0;
+  transform: translateX(-80px) scale(1.02);
+  transition:
+    opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-slide-zh {
@@ -522,7 +597,7 @@
 }
 
 
-/* ── Scroll cue with bounce ── */
+/* ── Scroll cue ── */
 .hero-scroll-cue {
   position: absolute;
   bottom: clamp(1rem, 3.5vh, 2.2rem);
@@ -859,63 +934,75 @@
 
 
 /* ════════════════════════════════════════════════════
-   RESPONSIVE — 768px mobile
+   RESPONSIVE — mobile
 ════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
 
   /* Intro veil */
-  .intro-brand-zh    { font-size: clamp(1.8rem, 9vw, 2.8rem); }
-  .intro-veil-geometry { width: clamp(120px, 40vw, 220px); height: clamp(120px, 40vw, 220px); }
+  .intro-brand-zh     { font-size: clamp(1.8rem, 9vw, 2.8rem); }
+  .intro-veil-geo     { width: clamp(120px, 40vw, 220px); height: clamp(120px, 40vw, 220px); }
 
   /* Hero */
-  .hero-sticky-stage { min-height: 100dvh; }
-  .hero-content      { padding: 0 1rem; }
-  .hero-frame        { inset: 12px; }
-  .hero-corner       { width: 13px; height: 13px; }
-  .hero-xhair        { width: 20px; height: 20px; }
+  .hero-sticky-stage  { min-height: 100dvh; }
+  .hero-content       { padding: 0 1rem; }
+  .hero-frame         { inset: 12px; }
+  .hero-corner        { width: 13px; height: 13px; }
+  .hero-xhair         { width: 20px; height: 20px; }
 
   /* Deck stacks vertically */
-  .hero-deck         { flex-direction: column; gap: 0.4rem; }
-  .hero-numbox       { width: 56px; height: 56px; }
-  .hero-textbox      { text-align: center; min-height: 145px; }
-  .hero-slide        { align-items: center; }
-  .hero-slide-wire   { margin-left: auto; margin-right: auto; }
-  .hero-slide-desc   { text-align: center; }
+  .hero-deck          { flex-direction: column; gap: 0.4rem; }
+  .hero-numbox        { width: 56px; height: 56px; }
+  .hero-textbox       { text-align: center; min-height: 145px; }
 
-  /* Slide-in on mobile: reduce travel distance */
-  .hero-bg           { transform: translateX(50%) scale(1.02); }
-  .hero-slide        { transform: translateX(40px) scale(1.01); }
-  .hero-num          { transform: translateX(-30px) scale(0.85); }
+  .hero-slide.slide-upcoming { align-items: center; transform: translateX(40px) scale(1.01); }
+  .hero-slide.slide-active   { align-items: center; }
+  .hero-slide.slide-passed   { align-items: center; transform: translateX(-40px) scale(1.01); }
 
-  /* Process — single column */
-  .home-step         { grid-template-columns: 1fr; gap: 1.2rem; }
-  .home-step--rev    { direction: ltr; }
-  .home-step-img     { max-height: 230px; }
+  .hero-slide-wire    { margin-left: auto; margin-right: auto; }
+  .hero-slide-desc    { text-align: center; }
+
+  /* Reduce travel distance for mobile GPU */
+  .hero-bg.slide-upcoming { transform: translateX(50%) scale(1.02); }
+  .hero-bg.slide-passed   { transform: translateX(-50%) scale(1.02); }
+
+  .hero-num.slide-upcoming { transform: translateX(30px) scale(0.85); }
+  .hero-num.slide-passed   { transform: translateX(-30px) scale(0.85); }
+
+  /* Process single column */
+  .home-step          { grid-template-columns: 1fr; gap: 1.2rem; }
+  .home-step--rev     { direction: ltr; }
+  .home-step-img      { max-height: 230px; }
   .home-step-watermark { display: none; }
 
   /* Slider */
-  .cmp-box           { height: 230px; }
+  .cmp-box            { height: 230px; }
 
-  /* Portfolio — 2 columns */
-  .home-folio-grid   { grid-template-columns: repeat(2, 1fr); }
+  /* Portfolio 2 columns */
+  .home-folio-grid    { grid-template-columns: repeat(2, 1fr); }
 
   /* GPU hardening */
   .home-page, .hero-scroll-container, .home-process, .home-compare, .home-folio {
     -webkit-overflow-scrolling: touch !important;
     will-change: transform;
   }
+
+  /* CRITICAL: ensure sticky ancestors stay clean on mobile */
+  html, body, #root, .app-container, .main-content {
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+  }
 }
 
 @media (max-width: 480px) {
-  .home-folio-grid   { grid-template-columns: 1fr; }
-  .hero-slide-zh     { font-size: clamp(1.25rem, 6vw, 1.7rem) !important; }
-  .cmp-box           { height: 190px; }
-  .home-step-img     { max-height: 190px; }
+  .home-folio-grid    { grid-template-columns: 1fr; }
+  .hero-slide-zh      { font-size: clamp(1.25rem, 6vw, 1.7rem) !important; }
+  .cmp-box            { height: 190px; }
+  .home-step-img      { max-height: 190px; }
 }
 
 @media (min-width: 1400px) {
-  .hero-content      { max-width: 1200px; }
-  .hero-numbox       { width: 250px; height: 250px; }
-  .cmp-box           { height: 70vh; }
-  .hero-frame        { inset: 80px; }
+  .hero-content       { max-width: 1200px; }
+  .hero-numbox        { width: 250px; height: 250px; }
+  .cmp-box            { height: 70vh; }
+  .hero-frame         { inset: 80px; }
 }
