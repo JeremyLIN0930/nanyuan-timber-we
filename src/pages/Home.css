@@ -1,31 +1,33 @@
 /* ═══════════════════════════════════════════════════════════════
-   HOME PAGE — 400vh Sticky Scroll-Linked Deck Theatre
+   HOME PAGE — Brand Glow Intro → 400vh Sticky Scroll-Linked Deck
    南源木材 · NANYUAN TIMBER DESIGN
    ─────────────────────────────────────────────────────────────
-   ARCHITECTURE:
+   THREE-PHASE LIFECYCLE:
 
-   .hero-scroll-container  (400vh tall — 4 slides × 100vh)
-     └─ .hero-sticky-stage (sticky top:0, 100vh viewport lock)
+   Phase 1 (0–3s):  .intro-viewport visible
+                    Gold glow @keyframes on brand text
+                    Body scroll locked via .scroll-locked
 
-   THREE-STATE SLIDE MODEL:
-     .slide-upcoming  → parked RIGHT:  translateX(+100%)  opacity(0)
-     .slide-active    → CENTER:        translateX(0)      opacity(1)
-     .slide-passed    → exited LEFT:   translateX(-100%)  opacity(0)
+   Phase 2 (3s):    .intro-viewport.fade-out
+                    translateY(-100vh) curtain slide-up 1.2s
+                    pointer-events: none after transition
 
-   CRITICAL STICKY FIX:
-     html, body, #root, .app-container, .main-content —
-     ALL must have overflow: visible (or unset) for sticky to work!
-     Only overflow-x: clip is safe (doesn't create scroll context).
+   Phase 3 (4.4s):  .main-homepage-content.content-ready
+                    translateY(40px→0) opacity(0→1) float-up
+                    400vh sticky scroll theatre fully active
+
+   CSS FAILSAFE:    @keyframes introFailsafe auto-hides intro
+                    after 5s even if JS fails completely.
+
+   STICKY SAFETY:   All ancestors use overflow-x: clip (not hidden)
+                    to preserve position: sticky.
 ═══════════════════════════════════════════════════════════════ */
 
 
 /* ════════════════════════════════════════════════════
    STICKY-SAFE ANCESTOR RESET
-   ─────────────────────────────────────────────
-   overflow: hidden / auto / scroll on ANY ancestor
-   creates a new scroll context and KILLS sticky.
-   We use overflow-x: clip which hides overflow
-   WITHOUT creating a scroll container.
+   overflow: clip hides overflow WITHOUT creating a
+   scroll context — sticky positioning is preserved.
 ════════════════════════════════════════════════════ */
 html,
 body,
@@ -36,9 +38,14 @@ body,
   overflow-y: visible !important;
 }
 
+/* ── Scroll lock during intro ── */
+body.scroll-locked {
+  overflow: hidden !important;
+}
+
 
 /* ════════════════════════════════════════════════════
-   PAGE WRAPPER + GPU HARDENING
+   PAGE WRAPPER
 ════════════════════════════════════════════════════ */
 .home-page {
   background: #050505;
@@ -74,13 +81,14 @@ body,
 .fadein[data-delay="400ms"] { transition-delay: 400ms; }
 
 
-/* ════════════════════════════════════════════════════
-   PURE CSS INTRO VEIL
-   ─────────────────────────────────────────────
-   Auto-fades from opaque → transparent.
-   Then pointer-events:none. ZERO JS involvement.
-════════════════════════════════════════════════════ */
-.intro-veil {
+/* ════════════════════════════════════════════════════════════════
+   PHASE 1: BRAND GLOW INTRO VIEWPORT
+   ─────────────────────────────────────────────────────────────
+   100vh fixed black overlay with gold-glowing brand text.
+   Pure CSS @keyframes for the gold breathe + glow effect.
+   CSS failsafe: auto-hides at 5s even without JS.
+════════════════════════════════════════════════════════════════ */
+.intro-viewport {
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -88,122 +96,168 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  animation: veilOut 2.0s 0.8s ease-out forwards;
-  pointer-events: auto;
+
+  /* Curtain slide-up transition — triggered by .fade-out */
+  transform: translateY(0);
+  transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+  will-change: transform;
+
+  /* CSS FAILSAFE: even if JS never fires, hide after 5s */
+  animation: introFailsafe 0.01s 5s forwards;
 }
 
-@keyframes veilOut {
-  0%   { opacity: 1; pointer-events: auto; }
-  85%  { opacity: 0; }
-  100% { opacity: 0; pointer-events: none; }
-}
-
-/* Geometry decoration */
-.intro-veil-geo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -55%);
-  width: clamp(160px, 24vw, 320px);
-  height: clamp(160px, 24vw, 320px);
+/* Phase 2: JS adds .fade-out → curtain slides up */
+.intro-viewport.fade-out {
+  transform: translateY(-100vh);
   pointer-events: none;
-  opacity: 0;
-  animation: geoIn 2s 0.3s ease-out forwards;
 }
 
-@keyframes geoIn {
-  from { opacity: 0; transform: translate(-50%, -52%); }
-  to   { opacity: 1; transform: translate(-50%, -55%); }
+/* Failsafe: if JS never toggles .fade-out, force hide at 5s */
+@keyframes introFailsafe {
+  to {
+    transform: translateY(-100vh);
+    pointer-events: none;
+    visibility: hidden;
+  }
 }
 
-.intro-geo-roof {
-  position: absolute;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(90px, 15vw, 200px);
-  height: clamp(50px, 8vw, 100px);
-  border-left: 1px solid rgba(197, 168, 128, 0.12);
-  border-right: 1px solid rgba(197, 168, 128, 0.12);
-  border-top: 1px solid rgba(197, 168, 128, 0.12);
-  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-}
 
-.intro-geo-body {
-  position: absolute;
-  top: clamp(55px, 8vw, 100px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(90px, 15vw, 200px);
-  height: clamp(65px, 10vw, 140px);
-  border: 1px solid rgba(197, 168, 128, 0.08);
-  border-top: none;
-}
-
-.intro-geo-door {
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(24px, 4vw, 50px);
-  height: clamp(40px, 6vw, 80px);
-  border: 1px solid rgba(197, 168, 128, 0.12);
-  border-bottom: none;
-}
-
-/* Brand text */
-.intro-veil-brand {
-  position: relative;
-  z-index: 2;
+/* ── LOGO container ── */
+.intro-logo-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(10px, 1.6vh, 16px);
+  gap: clamp(12px, 1.8vh, 18px);
   pointer-events: none;
-  opacity: 0;
-  animation: brandIn 1.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  /* 3-second lifecycle: fade-in → glow → fade-out */
+  animation: logoLifecycle 3s ease-in-out forwards;
 }
 
-@keyframes brandIn {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes logoLifecycle {
+  /* 0–10%: invisible */
+  0% {
+    opacity: 0;
+    transform: scale(1.06);
+    filter: blur(6px);
+  }
+  /* 10–50%: fade in with glow expansion */
+  25% {
+    opacity: 1;
+    transform: scale(1.03);
+    filter: blur(0px);
+  }
+  /* 50–75%: hold with subtle breathing */
+  60% {
+    opacity: 1;
+    transform: scale(1.0);
+    filter: blur(0px);
+  }
+  /* 75–100%: glow intensifies then dissolves */
+  85% {
+    opacity: 0.8;
+    transform: scale(0.98);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+    filter: blur(8px);
+  }
 }
 
-.intro-brand-zh {
-  font-size: clamp(2.2rem, 7.5vw, 5rem);
+
+/* ── Brand text ── */
+.intro-logo-zh {
+  font-size: clamp(2.6rem, 8vw, 5.5rem);
   font-weight: 900;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   color: #C5A880;
   line-height: 1;
+  margin: 0;
   text-shadow:
-    0 0 50px rgba(197, 168, 128, 0.8),
-    0 0 120px rgba(197, 168, 128, 0.35),
-    0 0 220px rgba(197, 168, 128, 0.12);
+    0 0 20px rgba(197, 168, 128, 0.4),
+    0 0 40px rgba(197, 168, 128, 0.6),
+    0 0 80px rgba(197, 168, 128, 0.4),
+    0 0 160px rgba(197, 168, 128, 0.2),
+    0 0 280px rgba(197, 168, 128, 0.1);
+
+  /* Independent glow pulse */
+  animation: zhGlowPulse 3s ease-in-out forwards;
 }
 
-.intro-brand-sep {
+@keyframes zhGlowPulse {
+  0% {
+    text-shadow:
+      0 0 10px rgba(197, 168, 128, 0.0),
+      0 0 20px rgba(197, 168, 128, 0.0);
+  }
+  30% {
+    text-shadow:
+      0 0 30px rgba(197, 168, 128, 0.5),
+      0 0 60px rgba(197, 168, 128, 0.7),
+      0 0 120px rgba(197, 168, 128, 0.4),
+      0 0 240px rgba(197, 168, 128, 0.15);
+  }
+  60% {
+    text-shadow:
+      0 0 40px rgba(197, 168, 128, 0.6),
+      0 0 80px rgba(197, 168, 128, 0.8),
+      0 0 160px rgba(197, 168, 128, 0.5),
+      0 0 300px rgba(197, 168, 128, 0.2);
+  }
+  100% {
+    text-shadow:
+      0 0 60px rgba(197, 168, 128, 0.2),
+      0 0 120px rgba(197, 168, 128, 0.1);
+  }
+}
+
+.intro-logo-sep {
   display: block;
-  width: clamp(28px, 5vw, 56px);
+  width: clamp(30px, 5vw, 60px);
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(197, 168, 128, 0.5), transparent);
+  animation: logoLifecycle 3s ease-in-out forwards;
 }
 
-.intro-brand-en {
-  font-size: clamp(0.55rem, 1.2vw, 0.88rem);
+.intro-logo-en {
+  font-size: clamp(0.55rem, 1.2vw, 0.9rem);
   font-weight: 200;
-  letter-spacing: 0.5em;
-  color: rgba(197, 168, 128, 0.45);
+  letter-spacing: 0.55em;
+  color: rgba(197, 168, 128, 0.5);
   text-transform: uppercase;
+  margin: 0;
+  animation: logoLifecycle 3s ease-in-out forwards;
+}
+
+
+/* ════════════════════════════════════════════════════
+   PHASE 3: MAIN CONTENT FLOAT-UP
+   ─────────────────────────────────────────────
+   Starts at opacity:0 translateY(40px).
+   .content-ready triggers the float-up reveal.
+════════════════════════════════════════════════════ */
+.main-homepage-content {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity   1.0s 0.1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.0s 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.main-homepage-content.content-ready {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 
 /* ════════════════════════════════════════════════════
    400vh SCROLL-ANCHORED HERO THEATRE
    ─────────────────────────────────────────────
-   .hero-scroll-container = 400vh tall scroll runway
+   .hero-scroll-container = 400vh scroll runway
    .hero-sticky-stage     = sticky 100vh viewport lock
-   overflow: visible is MANDATORY for sticky to work!
+   overflow: visible is MANDATORY for sticky!
 ════════════════════════════════════════════════════ */
 .hero-scroll-container {
   position: relative;
@@ -229,10 +283,9 @@ body,
 
 /* ════════════════════════════════════════════════════
    THREE-STATE SLIDE SYSTEM — BACKGROUND IMAGES
-   ─────────────────────────────────────────────
-   .slide-upcoming  → RIGHT (waiting to enter)
-   .slide-active    → CENTER (current)
-   .slide-passed    → LEFT (already scrolled past)
+   .slide-upcoming → RIGHT (waiting to enter)
+   .slide-active   → CENTER (current)
+   .slide-passed   → LEFT (already scrolled past)
 ════════════════════════════════════════════════════ */
 .hero-bg {
   position: absolute;
@@ -242,7 +295,6 @@ body,
   will-change: transform, opacity;
 }
 
-/* UPCOMING: parked off-screen to the right */
 .hero-bg.slide-upcoming {
   transform: translateX(100%) scale(1.05);
   opacity: 0;
@@ -251,7 +303,6 @@ body,
     opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ACTIVE: slides in from right to center */
 .hero-bg.slide-active {
   transform: translateX(0) scale(1);
   opacity: 1;
@@ -260,7 +311,6 @@ body,
     opacity   0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* PASSED: exits to the left */
 .hero-bg.slide-passed {
   transform: translateX(-100%) scale(1.05);
   opacity: 0;
@@ -304,7 +354,7 @@ body,
 }
 
 
-/* ── Bracket corner frame — four corners [ ] ── */
+/* ── Bracket corner frame [ ] ── */
 .hero-frame {
   position: absolute;
   inset: clamp(20px, 4vw, 60px);
@@ -438,7 +488,7 @@ body,
 }
 
 
-/* ── Deck: giant number left + text right ── */
+/* ── Deck: number left + text right ── */
 .hero-deck {
   display: flex;
   align-items: center;
@@ -455,9 +505,7 @@ body,
 }
 
 
-/* ════════════════════════════════════════════════════
-   THREE-STATE SLIDE SYSTEM — NUMBERS
-════════════════════════════════════════════════════ */
+/* ── THREE-STATE NUMBERS ── */
 .hero-num {
   position: absolute;
   inset: 0;
@@ -475,7 +523,6 @@ body,
   will-change: transform, opacity;
 }
 
-/* UPCOMING: shifted right */
 .hero-num.slide-upcoming {
   opacity: 0;
   transform: translateX(60px) scale(0.85);
@@ -484,7 +531,6 @@ body,
     transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ACTIVE: centered with gold gradient */
 .hero-num.slide-active {
   opacity: 1;
   transform: translateX(0) scale(1);
@@ -500,7 +546,6 @@ body,
     transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* PASSED: exited left */
 .hero-num.slide-passed {
   opacity: 0;
   transform: translateX(-60px) scale(0.85);
@@ -518,10 +563,7 @@ body,
 }
 
 
-/* ════════════════════════════════════════════════════
-   THREE-STATE SLIDE SYSTEM — TEXT CARDS
-   Delayed 0.12s vs image for parallax effect.
-════════════════════════════════════════════════════ */
+/* ── THREE-STATE TEXT SLIDES ── */
 .hero-slide {
   position: absolute;
   inset: 0;
@@ -532,7 +574,6 @@ body,
   will-change: transform, opacity;
 }
 
-/* UPCOMING: parked right */
 .hero-slide.slide-upcoming {
   opacity: 0;
   transform: translateX(80px) scale(1.02);
@@ -541,7 +582,6 @@ body,
     transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ACTIVE: slide in center */
 .hero-slide.slide-active {
   opacity: 1;
   transform: translateX(0) scale(1);
@@ -551,7 +591,6 @@ body,
     transform 0.85s 0.12s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* PASSED: exit left */
 .hero-slide.slide-passed {
   opacity: 0;
   transform: translateX(-80px) scale(1.02);
@@ -934,22 +973,15 @@ body,
 
 
 /* ════════════════════════════════════════════════════
-   RESPONSIVE — mobile
+   RESPONSIVE
 ════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-
-  /* Intro veil */
-  .intro-brand-zh     { font-size: clamp(1.8rem, 9vw, 2.8rem); }
-  .intro-veil-geo     { width: clamp(120px, 40vw, 220px); height: clamp(120px, 40vw, 220px); }
-
-  /* Hero */
+  .intro-logo-zh      { font-size: clamp(1.8rem, 9vw, 2.8rem); }
   .hero-sticky-stage  { min-height: 100dvh; }
   .hero-content       { padding: 0 1rem; }
   .hero-frame         { inset: 12px; }
   .hero-corner        { width: 13px; height: 13px; }
   .hero-xhair         { width: 20px; height: 20px; }
-
-  /* Deck stacks vertically */
   .hero-deck          { flex-direction: column; gap: 0.4rem; }
   .hero-numbox        { width: 56px; height: 56px; }
   .hero-textbox       { text-align: center; min-height: 145px; }
@@ -961,32 +993,23 @@ body,
   .hero-slide-wire    { margin-left: auto; margin-right: auto; }
   .hero-slide-desc    { text-align: center; }
 
-  /* Reduce travel distance for mobile GPU */
   .hero-bg.slide-upcoming { transform: translateX(50%) scale(1.02); }
   .hero-bg.slide-passed   { transform: translateX(-50%) scale(1.02); }
-
   .hero-num.slide-upcoming { transform: translateX(30px) scale(0.85); }
   .hero-num.slide-passed   { transform: translateX(-30px) scale(0.85); }
 
-  /* Process single column */
   .home-step          { grid-template-columns: 1fr; gap: 1.2rem; }
   .home-step--rev     { direction: ltr; }
   .home-step-img      { max-height: 230px; }
   .home-step-watermark { display: none; }
-
-  /* Slider */
   .cmp-box            { height: 230px; }
-
-  /* Portfolio 2 columns */
   .home-folio-grid    { grid-template-columns: repeat(2, 1fr); }
 
-  /* GPU hardening */
   .home-page, .hero-scroll-container, .home-process, .home-compare, .home-folio {
     -webkit-overflow-scrolling: touch !important;
     will-change: transform;
   }
 
-  /* CRITICAL: ensure sticky ancestors stay clean on mobile */
   html, body, #root, .app-container, .main-content {
     overflow-x: clip !important;
     overflow-y: visible !important;
