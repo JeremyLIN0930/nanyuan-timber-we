@@ -28,7 +28,8 @@ import portfolio06 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 
 
 /* ═══════════════════════════════════════════════════════════════
-   DATA — B2C Advantage Matrix (NO auto-play — user-interaction only)
+   DATA — B2C Advantage Matrix (4 slides × 100vh scroll-depth each)
+   ZERO auto-play. Scroll-position-mapped only.
 ═══════════════════════════════════════════════════════════════ */
 const ADVANTAGES = [
   { num: '01', zh: '嚴選頂級建材', en: 'PREMIUM ECO-MATERIALS', desc: '採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',       img: heroSlide01 },
@@ -90,8 +91,7 @@ const FadeIn: React.FC<{ children: React.ReactNode; className?: string; delay?: 
 
 /* ═══════════════════════════════════════════════════════════════
    COMPARISON SLIDER
-   Dynamic clipPath + left position applied via refs only.
-   Zero style={{ }} in JSX.
+   Dynamic clipPath + left applied via refs (zero inline style).
 ═══════════════════════════════════════════════════════════════ */
 const ComparisonSlider: React.FC = () => {
   const boxRef     = useRef<HTMLDivElement>(null);
@@ -144,307 +144,228 @@ const ComparisonSlider: React.FC = () => {
 /* ═══════════════════════════════════════════════════════════════
    HOME — MAIN COMPONENT
    ─────────────────────────────────────────────────────────────
-   STATE MACHINE:
-     curtainOpen=false  → Obsidian-black curtain covering 100vh
-     curtainOpen=true   → .curtain-stage--open triggers CSS
-                          translateY(-100vh) slide-up to dismiss
+   ZERO JS STATE LOCKS. Page renders INSTANTLY.
 
-   ADVANTAGE MATRIX:
-     NO setInterval / auto-play!
-     activeIndex changes ONLY via:
-       1. Clicking progress dots
-       2. Mouse-wheel delta inside the hero section
+   Intro ceremony = pure CSS overlay (.intro-veil) that auto-
+   animates away and sets pointer-events:none. Zero JS gating.
+
+   SCROLL-MAPPING ARCHITECTURE:
+     .hero-scroll-container  → height: 400vh (CSS)
+       .hero-sticky-stage    → position: sticky; top: 0; height: 100vh (CSS)
+         [backgrounds, frames, content slides]
+
+   scroll listener → calculate progress 0–1 through container
+                   → derive activeIndex 0–3
+                   → toggle .slide-active className on correct slide
+                   → CSS handles ALL visual transitions
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  /* ── Curtain state ── */
-  const [curtainOpen, setCurtainOpen] = useState(false);
-  const [curtainGone, setCurtainGone] = useState(false);
-
-  /* ── Advantage slide index (NO auto-play) ── */
+  /* ── activeIndex: driven ONLY by scroll position ── */
   const [activeIdx, setActiveIdx] = useState(0);
-  const heroRef = useRef<HTMLElement>(null);
-  const wheelCooldown = useRef(false);
-
-  /* ── Apply background images via ref (zero inline style) ── */
-  const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   /* ══════════════════════════════════════════════════════════
-     CURTAIN OPEN — triggered by scroll / click / touch
-     Once only. Adds .curtain-stage--open to outermost div.
-  ══════════════════════════════════════════════════════════ */
-  const triggerCurtain = useCallback(() => {
-    if (curtainOpen) return;
-    setCurtainOpen(true);
-    /* After CSS transition completes (1.2s + buffer), remove curtain from DOM */
-    setTimeout(() => setCurtainGone(true), 1500);
-  }, [curtainOpen]);
-
-  /* ── Attach wheel/click/touch listeners (one-shot) ── */
-  useEffect(() => {
-    if (curtainOpen) return;
-
-    const handler = () => triggerCurtain();
-
-    window.addEventListener('wheel',      handler, { passive: true, once: true });
-    window.addEventListener('click',      handler, { once: true });
-    window.addEventListener('touchstart', handler, { passive: true, once: true });
-
-    return () => {
-      window.removeEventListener('wheel',      handler);
-      window.removeEventListener('click',      handler);
-      window.removeEventListener('touchstart', handler);
-    };
-  }, [curtainOpen, triggerCurtain]);
-
-  /* ── Lock body scroll while curtain is up ── */
-  useEffect(() => {
-    document.body.style.overflow = curtainGone ? '' : 'hidden';
-    return () => { document.body.style.overflow = ''; };
-  }, [curtainGone]);
-
-  /* ══════════════════════════════════════════════════════════
-     WHEEL-DRIVEN SLIDE INDEX (replaces carousel setInterval)
-     Only fires when hero section is in viewport.
+     SCROLL-MAPPED INDEX CALCULATION
+     Divides the 400vh container into 4 equal zones (100vh each).
+     activeIndex = floor(progress × 4), clamped to [0, 3].
   ══════════════════════════════════════════════════════════ */
   useEffect(() => {
-    if (!curtainGone) return;
+    const onScroll = () => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
 
-    const onWheel = (e: WheelEvent) => {
-      if (wheelCooldown.current) return;
-      const heroEl = heroRef.current;
-      if (!heroEl) return;
+      const rect = container.getBoundingClientRect();
+      const containerTop = -rect.top;
+      const scrollableHeight = container.offsetHeight - window.innerHeight;
 
-      const rect = heroEl.getBoundingClientRect();
-      /* Only respond when hero is mostly in viewport */
-      if (rect.bottom < 100 || rect.top > window.innerHeight - 100) return;
+      if (scrollableHeight <= 0) return;
 
-      wheelCooldown.current = true;
-      setTimeout(() => { wheelCooldown.current = false; }, 900);
+      const progress = Math.max(0, Math.min(1, containerTop / scrollableHeight));
+      const newIdx = Math.min(ADVANTAGES.length - 1, Math.floor(progress * ADVANTAGES.length));
 
-      if (e.deltaY > 0) {
-        setActiveIdx(p => (p + 1) % ADVANTAGES.length);
-      } else if (e.deltaY < 0) {
-        setActiveIdx(p => (p - 1 + ADVANTAGES.length) % ADVANTAGES.length);
-      }
+      setActiveIdx(prev => (prev !== newIdx ? newIdx : prev));
     };
 
-    window.addEventListener('wheel', onWheel, { passive: true });
-    return () => window.removeEventListener('wheel', onWheel);
-  }, [curtainGone]);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-
-  /* ── Stage class computation ── */
-  const stageClass = `curtain-stage${curtainOpen ? ' curtain-stage--open' : ''}`;
 
   return (
-    <div className={`home-page ${stageClass}`}>
+    <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════
-          CINEMA CURTAIN — Obsidian black, 100vh overlay
-          Slides UP via translateY(-100vh) when .curtain-stage--open
-          is applied on the parent. All transforms in CSS.
+          PURE CSS INTRO VEIL — ceremonial overlay
+          Auto-fades via CSS @keyframes, then pointer-events: none.
+          ZERO JS state gating. Page is ALWAYS rendered underneath.
       ══════════════════════════════════════════════════════════ */}
-      {!curtainGone && (
-        <div className="cinema-curtain">
-          {/* Geometric house outline decoration */}
-          <div className="curtain-geometry">
-            <div className="curtain-geo-roof" />
-            <div className="curtain-geo-body" />
-            <div className="curtain-geo-door" />
-            <div className="curtain-geo-window curtain-geo-window--l" />
-            <div className="curtain-geo-window curtain-geo-window--r" />
-          </div>
-
-          {/* Brand text — gold micro-glow */}
-          <div className="curtain-brand">
-            <span className="curtain-brand-zh">南源木材</span>
-            <span className="curtain-brand-sep" />
-            <span className="curtain-brand-en">NANYUAN TIMBER DESIGN</span>
-          </div>
-
-          {/* Enter prompt (pulses) */}
-          <p className="curtain-cue">
-            ◇&nbsp; SCROLL OR CLICK TO ENTER &nbsp;◇
-          </p>
+      <div className="intro-veil">
+        <div className="intro-veil-geometry">
+          <div className="intro-geo-roof" />
+          <div className="intro-geo-body" />
+          <div className="intro-geo-door" />
         </div>
-      )}
+        <div className="intro-veil-brand">
+          <span className="intro-brand-zh">南源木材</span>
+          <span className="intro-brand-sep" />
+          <span className="intro-brand-en">NANYUAN TIMBER DESIGN</span>
+        </div>
+      </div>
 
 
       {/* ══════════════════════════════════════════════════════════
-          MAIN BODY — Fades in after curtain slides away
+          400vh SCROLL-ANCHORED HERO THEATRE
+          ─────────────────────────────────────────────────────────
+          Outer: hero-scroll-container (400vh — 4 slides × 100vh)
+          Inner: hero-sticky-stage (sticky, 100vh viewport lock)
+          User MUST scroll through all 4 advantages to pass.
       ══════════════════════════════════════════════════════════ */}
-      <div className={`home-body${curtainGone ? ' home-body--on' : ''}`}>
+      <div className="hero-scroll-container" ref={scrollContainerRef}>
+        <div className="hero-sticky-stage">
 
-        {/* ── HERO: ADVANTAGE SLIDE-IN MATRIX — 100vh ── */}
-        <section className="home-hero" ref={heroRef}>
-
-          {/* Full-bleed images — slide-in transition driven by className */}
+          {/* Full-bleed background images — slide-in per activeIndex */}
           {ADVANTAGES.map((adv, i) => (
             <div
               key={adv.num}
-              className={`hero-img-wrap${i === activeIdx ? ' slide-active' : ''}`}
+              className={`hero-bg${i === activeIdx ? ' slide-active' : ''}`}
             >
-              <img
-                ref={el => { imgRefs.current[i] = el; }}
-                src={adv.img}
-                alt={`南源木材 ${adv.zh}`}
-                className="hero-img"
-              />
+              <img src={adv.img} alt={`南源木材 ${adv.zh}`} className="hero-bg-img" />
             </div>
           ))}
 
           {/* Dark overlays */}
-          <div className="home-overlay" />
-          <div className="home-vignette" />
+          <div className="hero-overlay" />
+          <div className="hero-vignette" />
 
-          {/* Geometric bracket frame — four corners */}
-          <div className="home-frame">
-            <div className="home-corner home-corner--tl" />
-            <div className="home-corner home-corner--tr" />
-            <div className="home-corner home-corner--bl" />
-            <div className="home-corner home-corner--br" />
+          {/* Geometric bracket frame — four corners [ ] */}
+          <div className="hero-frame">
+            <div className="hero-corner hero-corner--tl" />
+            <div className="hero-corner hero-corner--tr" />
+            <div className="hero-corner hero-corner--bl" />
+            <div className="hero-corner hero-corner--br" />
           </div>
 
-          {/* Center crosshair — breathing animation on slide change */}
-          <div className={`home-xhair home-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
-            <span className="home-xhair-h" />
-            <span className="home-xhair-v" />
-            <span className="home-xhair-dot" />
+          {/* Center crosshair — micro-contracts on slide change */}
+          <div className={`hero-xhair hero-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
+            <span className="hero-xhair-h" />
+            <span className="hero-xhair-v" />
+            <span className="hero-xhair-dot" />
           </div>
 
-          {/* Hero content */}
-          <div className="home-hero-inner">
+          {/* Hero content: left number + right text deck */}
+          <div className="hero-content">
 
-            <div className="home-eyebrow">
-              <span className="home-eyebrow-line" />
-              <span className="home-eyebrow-text">NANYUAN TIMBER DESIGN</span>
-              <span className="home-eyebrow-line" />
+            <div className="hero-eyebrow">
+              <span className="hero-eyebrow-line" />
+              <span className="hero-eyebrow-text">NANYUAN TIMBER DESIGN</span>
+              <span className="hero-eyebrow-line" />
             </div>
 
-            {/* Giant number + text deck — SLIDE-IN, not fade */}
-            <div className="home-deck">
-              {/* Left: huge slide number */}
-              <div className="home-numbox">
+            <div className="hero-deck">
+              {/* Left: giant geometric number */}
+              <div className="hero-numbox">
                 {ADVANTAGES.map((a, i) => (
-                  <span key={a.num} className={`home-num${i === activeIdx ? ' home-num--on' : ''}`}>
+                  <span key={a.num} className={`hero-num${i === activeIdx ? ' hero-num--on' : ''}`}>
                     {a.num}
                   </span>
                 ))}
               </div>
 
-              {/* Right: text slides — slide-in from right */}
-              <div className="home-textbox">
+              {/* Right: text cards — slide-in from right */}
+              <div className="hero-textbox">
                 {ADVANTAGES.map((a, i) => (
-                  <div key={a.num} className={`home-slide${i === activeIdx ? ' slide-active' : ''}`}>
-                    <h2 className="home-slide-zh">{a.zh}</h2>
-                    <p  className="home-slide-en">{a.en}</p>
-                    <div className="home-slide-wire" />
-                    <p  className="home-slide-desc">{a.desc}</p>
+                  <div key={a.num} className={`hero-slide${i === activeIdx ? ' slide-active' : ''}`}>
+                    <h2 className="hero-slide-zh">{a.zh}</h2>
+                    <p  className="hero-slide-en">{a.en}</p>
+                    <div className="hero-slide-wire" />
+                    <p  className="hero-slide-desc">{a.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* CTA row */}
-            <div className="home-actions">
-              <button className="home-btn home-btn--gold"  onClick={() => navigate('/contact')}>立即預約諮詢 ➜</button>
-              <button className="home-btn home-btn--ghost" onClick={() => document.querySelector('.home-process')?.scrollIntoView({ behavior: 'smooth' })}>探索南源工藝</button>
-            </div>
-
-            {/* Progress dots — click-driven index change (NO auto-play) */}
-            <div className="home-dots">
-              {ADVANTAGES.map((a, i) => (
-                <button
-                  key={a.num}
-                  className={`home-dot${i === activeIdx ? ' home-dot--on' : ''}`}
-                  onClick={() => setActiveIdx(i)}
-                  aria-label={a.zh}
-                />
-              ))}
-            </div>
-
           </div>
 
-          {/* Scroll cue */}
-          <div className="home-scroll-cue">
-            <span className="home-scroll-text">SCROLL</span>
-            <span className="home-scroll-arrow">↓</span>
+          {/* Scroll cue — bottom center */}
+          <div className="hero-scroll-cue">
+            <span className="hero-scroll-text">SCROLL</span>
+            <span className="hero-scroll-arrow">↓</span>
           </div>
 
-        </section>
+        </div>
+      </div>
 
 
-        {/* ── PROCESS STEPS ── */}
-        <section className="home-process">
-          <div className="container">
-            <FadeIn className="home-process-hdr">
-              <p className="home-process-eye">NANYUAN TIMBER</p>
-              <h2 className="home-process-h">六大職人服務流程</h2>
-              <p className="home-process-sub">Bespoke Process — From Concept to Flawless Execution</p>
+      {/* ── PROCESS STEPS ── */}
+      <section className="home-process">
+        <div className="container">
+          <FadeIn className="home-process-hdr">
+            <p className="home-process-eye">NANYUAN TIMBER</p>
+            <h2 className="home-process-h">六大職人服務流程</h2>
+            <p className="home-process-sub">Bespoke Process — From Concept to Flawless Execution</p>
+          </FadeIn>
+          {PROCESS_STEPS.map((s, i) => (
+            <FadeIn key={s.id} className={`home-step${i % 2 === 1 ? ' home-step--rev' : ''}`}>
+              <div className="home-step-imgbox">
+                <img src={s.img} alt={`南源木材 ${s.zh}`} className="home-step-img" />
+                <span className="home-step-watermark">{s.id}</span>
+              </div>
+              <div className="home-step-info">
+                <span className="home-step-num">{s.id}</span>
+                <h3 className="home-step-h">{s.zh}</h3>
+                <p  className="home-step-en">{s.en}</p>
+                <p  className="home-step-p">{s.desc}</p>
+              </div>
             </FadeIn>
-            {PROCESS_STEPS.map((s, i) => (
-              <FadeIn key={s.id} className={`home-step${i % 2 === 1 ? ' home-step--rev' : ''}`}>
-                <div className="home-step-imgbox">
-                  <img src={s.img} alt={`南源木材 ${s.zh}`} className="home-step-img" />
-                  <span className="home-step-watermark">{s.id}</span>
-                </div>
-                <div className="home-step-info">
-                  <span className="home-step-num">{s.id}</span>
-                  <h3 className="home-step-h">{s.zh}</h3>
-                  <p  className="home-step-en">{s.en}</p>
-                  <p  className="home-step-p">{s.desc}</p>
+          ))}
+        </div>
+      </section>
+
+
+      {/* ── RENDER vs REALITY ── */}
+      <section className="home-compare">
+        <div className="container">
+          <FadeIn>
+            <h2 className="home-compare-h">設計與落地的真實對照</h2>
+            <p className="home-compare-p">許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重把關，確保所見即所得。請左右拖曳滑桿，親手驗證精準差距。</p>
+          </FadeIn>
+        </div>
+        <ComparisonSlider />
+      </section>
+
+
+      {/* ── PORTFOLIO WALL ── */}
+      <section className="home-folio">
+        <div className="container">
+          <FadeIn className="home-folio-hdr">
+            <h2 className="home-folio-h">極精選作品</h2>
+            <p className="home-folio-sub">點擊探索每一個空間的完整故事。</p>
+          </FadeIn>
+          <div className="home-folio-grid">
+            {PORTFOLIO.map((it, i) => (
+              <FadeIn key={i} delay={`${i * 80}ms`}>
+                <div className="home-card" onClick={() => navigate('/projects')}>
+                  <div className="home-card-inner">
+                    <img src={it.img} alt={`南源木材作品 ${it.zh}`} className="home-card-img" />
+                    <div className="home-card-grad" />
+                    <div className="home-card-meta">
+                      <span className="home-card-type">{it.type}</span>
+                      <h3 className="home-card-name">{it.zh}</h3>
+                    </div>
+                  </div>
                 </div>
               </FadeIn>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
 
-        {/* ── RENDER vs REALITY ── */}
-        <section className="home-compare">
-          <div className="container">
-            <FadeIn>
-              <h2 className="home-compare-h">設計與落地的真實對照</h2>
-              <p className="home-compare-p">許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重把關，確保所見即所得。請左右拖曳滑桿，親手驗證精準差距。</p>
-            </FadeIn>
-          </div>
-          <ComparisonSlider />
-        </section>
-
-
-        {/* ── PORTFOLIO WALL ── */}
-        <section className="home-folio">
-          <div className="container">
-            <FadeIn className="home-folio-hdr">
-              <h2 className="home-folio-h">極精選作品</h2>
-              <p className="home-folio-sub">點擊探索每一個空間的完整故事。</p>
-            </FadeIn>
-            <div className="home-folio-grid">
-              {PORTFOLIO.map((it, i) => (
-                <FadeIn key={i} delay={`${i * 80}ms`}>
-                  <div className="home-card" onClick={() => navigate('/projects')}>
-                    <div className="home-card-inner">
-                      <img src={it.img} alt={`南源木材作品 ${it.zh}`} className="home-card-img" />
-                      <div className="home-card-grad" />
-                      <div className="home-card-meta">
-                        <span className="home-card-type">{it.type}</span>
-                        <h3 className="home-card-name">{it.zh}</h3>
-                      </div>
-                    </div>
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-
-
-        {/* ── GLOBAL CTA — single shared component, zero duplication ── */}
-        <CTA />
-
-      </div>{/* end .home-body */}
+      {/* ── GLOBAL CTA — single shared component, zero duplication ── */}
+      <CTA />
 
     </div>
   );
