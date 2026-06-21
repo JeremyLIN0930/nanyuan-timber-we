@@ -4,33 +4,24 @@ import CTA from '../components/CTA/CTA';
 import './Home.css';
 
 /* ─────────────────────────────────────────────────────────────
-   HERO IMAGES — 4 dedicated hero shots from src/assets/
-   Each matched to its B2C advantage theme.
+   HERO IMAGES — 4 dedicated hero shots (themed per advantage)
 ───────────────────────────────────────────────────────────── */
-import img01 from '../assets/home-hero-material.jpg';      // 嚴選頂級建材
-import img02 from '../assets/home-hero-craft.jpg';         // 精細職人工藝
-import img03 from '../assets/home-hero-transparency.jpg';  // 透明報價零隱藏
-import img04 from '../assets/home-hero-realization.jpg';   // 一條龍完美成家
+import img01 from '../assets/home-hero-material.jpg';
+import img02 from '../assets/home-hero-craft.jpg';
+import img03 from '../assets/home-hero-transparency.jpg';
+import img04 from '../assets/home-hero-realization.jpg';
 
 /* ─────────────────────────────────────────────────────────────
-   COMPARISON SLIDER IMAGES
+   SUPPORTING IMAGES
 ───────────────────────────────────────────────────────────── */
 import compareRender  from '../assets/compare-render.jpg';
 import compareReality from '../assets/compare-reality.jpg';
-
-/* ─────────────────────────────────────────────────────────────
-   PROCESS STEP IMAGES
-───────────────────────────────────────────────────────────── */
 import process01 from '../assets/process-01.jpg';
 import process02 from '../assets/process-02.jpg';
 import process03 from '../assets/process-03.jpg';
 import process04 from '../assets/process-04.jpg';
 import process05 from '../assets/process-05.jpg';
 import process06 from '../assets/process-06.jpg';
-
-/* ─────────────────────────────────────────────────────────────
-   PORTFOLIO IMAGES — varied picks from project album
-───────────────────────────────────────────────────────────── */
 import port01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
 import port02 from '../assets/LINE_ALBUM_2026.6.17_260621_50.jpg';
 import port03 from '../assets/LINE_ALBUM_2026.6.17_260621_70.jpg';
@@ -40,35 +31,27 @@ import port06 from '../assets/LINE_ALBUM_2026.6.17_260621_30.jpg';
 
 
 /* ─────────────────────────────────────────────────────────────
-   STATIC DATA
+   DATA
 ───────────────────────────────────────────────────────────── */
 const ADVANTAGES = [
   {
-    num: '01',
-    zh:  '嚴選頂級建材',
-    en:  'PREMIUM ECO-MATERIALS',
-    desc:'採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',
+    num: '01', zh: '嚴選頂級建材', en: 'PREMIUM ECO-MATERIALS',
+    desc: '採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',
     img: img01,
   },
   {
-    num: '02',
-    zh:  '精細職人工藝',
-    en:  'ARTISAN PRECISION',
-    desc:'三十年資深木作老師傅手工微調，接合收口精度嚴控於 ±1mm 誤差內。匠心鑄就每一個傳世細節。',
+    num: '02', zh: '精細職人工藝', en: 'ARTISAN PRECISION',
+    desc: '三十年資深木作老師傅手工微調，接合收口精度嚴控於 ±1mm 誤差內。匠心鑄就每一個傳世細節。',
     img: img02,
   },
   {
-    num: '03',
-    zh:  '透明報價零隱藏',
-    en:  'TOTAL TRANSPARENCY',
-    desc:'報價單逐項逐料公開透明，白紙黑字簽約承諾——工程中絕不惡意追加任何費用，安心施工。',
+    num: '03', zh: '透明報價零隱藏', en: 'TOTAL TRANSPARENCY',
+    desc: '報價單逐項逐料公開透明，白紙黑字簽約承諾——工程中絕不惡意追加任何費用，安心施工。',
     img: img03,
   },
   {
-    num: '04',
-    zh:  '一條龍完美成家',
-    en:  'TURNKEY DREAM HOME',
-    desc:'從高精度 3D 設計模擬到自有工班落地，現場總監全程監督控管，讓您輕鬆入住夢想居所。',
+    num: '04', zh: '一條龍完美成家', en: 'TURNKEY DREAM HOME',
+    desc: '從高精度 3D 設計模擬到自有工班落地，現場總監全程監督控管，讓您輕鬆入住夢想居所。',
     img: img04,
   },
 ] as const;
@@ -93,7 +76,7 @@ const PORTFOLIO = [
 
 
 /* ─────────────────────────────────────────────────────────────
-   FADE-IN WRAPPER — IntersectionObserver, zero inline style
+   SCROLL-REVEAL WRAPPER
 ───────────────────────────────────────────────────────────── */
 const FadeIn: React.FC<{
   children: React.ReactNode;
@@ -127,9 +110,7 @@ const FadeIn: React.FC<{
 
 
 /* ─────────────────────────────────────────────────────────────
-   COMPARISON SLIDER — DOM refs only, zero inline style on render
-   (clipPath and left are set via ref.style after mount — the
-    only acceptable DOM mutation outside of CSS classes)
+   COMPARISON SLIDER — ref-driven, zero inline style
 ───────────────────────────────────────────────────────────── */
 const ComparisonSlider: React.FC = () => {
   const boxRef     = useRef<HTMLDivElement>(null);
@@ -158,7 +139,7 @@ const ComparisonSlider: React.FC = () => {
         onMouseDown={e => onX(e.clientX)}
         onMouseMove={e => { if (e.buttons === 1) onX(e.clientX); }}
         onTouchStart={e => onX(e.touches[0].clientX)}
-        onTouchMove={e => onX(e.touches[0].clientX)}
+        onTouchMove={e  => onX(e.touches[0].clientX)}
       >
         <div className="cmp-layer cmp-layer--reality">
           <img src={compareReality} alt="實景完工照" className="cmp-img" />
@@ -178,56 +159,57 @@ const ComparisonSlider: React.FC = () => {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   HOME PAGE COMPONENT
+   HOME COMPONENT
    ─────────────────────────────────────────────────────────────
-   INTRO LIFECYCLE (all timings from mount at 0 ms):
+   INTRO LIFECYCLE:
 
-     0 ms      React renders .intro-viewport + .intro-logo-box
-               CSS @keyframes logoFadeIn fires immediately.
-               Gold text visible within ~200 ms (8 % of 2.5 s).
-               body.scroll-locked added → prevents scrolling.
+   0 ms    Browser paints the page. .intro-viewport is ALWAYS
+           in the DOM — no conditional render, no JS gate.
+           CSS renders gold text-shadow as a BASE property
+           (not animated-in). Visible on the very first frame.
+           @keyframes logoGlow fires immediately (0 delay).
 
-     2 500 ms  isIntroFadeOut = true
-               → .fade-out class → translateY(-100vh) curtain up
-               → body.scroll-locked removed
-               → .content-ready on main → float-up reveals content
+   2500 ms isIntroFadeOut → true  →  .fade-out added
+           CSS: translateY(-100vh) 1s spring curtain-up
+           body.scroll-locked removed
 
-     3 500 ms  isIntroActive = false
-               → .intro-viewport removed from DOM entirely
+   3500 ms isIntroDone → true  →  .intro-done added
+           CSS: display:none — fully out of paint tree,
+           scroll chain completely clear.
 
    SCROLL THEATRE:
-     .hero-scroll-container  height: 400vh  (see Home.css)
-     .hero-sticky-stage      position: sticky; top: 0; height: 100vh
+   progress = clamp(-rect.top / (height - innerHeight), 0, 0.99)
+   activeIdx = floor(progress * 4)  →  0, 1, 2, 3
 
-     progress = clamp(-rect.top / (height − innerHeight), 0, 0.99)
-     activeIdx = floor(progress × 4)  →  0, 1, 2, 3
-
-   ZERO inline styles. ZERO setInterval. ZERO buttons. ZERO dots.
+   ZERO inline styles. ZERO setInterval. ZERO buttons/dots.
 ═══════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  /* ── Intro state ── */
-  const [isIntroActive,  setIsIntroActive]  = useState(true);
+  /* ── Intro: three CSS-class states ── */
   const [isIntroFadeOut, setIsIntroFadeOut] = useState(false);
+  const [isIntroDone,    setIsIntroDone]    = useState(false);
 
   /* ── Scroll theatre ── */
   const [activeIdx, setActiveIdx] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /* ── Intro timers — start at 0 ms ── */
+  /* ── Intro timers (start at 0ms, no async dependency) ── */
   useEffect(() => {
     const t1 = setTimeout(() => setIsIntroFadeOut(true),  2500);
-    const t2 = setTimeout(() => setIsIntroActive(false),  3500);
+    const t2 = setTimeout(() => setIsIntroDone(true),     3500);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
-  /* ── Scroll lock: on during intro, off the moment fade begins ── */
+  /* ── Scroll lock: on until fade begins ── */
   useEffect(() => {
-    const shouldLock = isIntroActive && !isIntroFadeOut;
-    document.body.classList.toggle('scroll-locked', shouldLock);
+    if (!isIntroFadeOut) {
+      document.body.classList.add('scroll-locked');
+    } else {
+      document.body.classList.remove('scroll-locked');
+    }
     return () => document.body.classList.remove('scroll-locked');
-  }, [isIntroActive, isIntroFadeOut]);
+  }, [isIntroFadeOut]);
 
   /* ── Scroll-mapped index ── */
   useEffect(() => {
@@ -246,35 +228,44 @@ const Home: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* ── Slide state helper ── */
+  /* ── Slide class helper ── */
   const ss = (i: number) =>
     i < activeIdx ? 'slide-passed' : i === activeIdx ? 'slide-active' : 'slide-upcoming';
+
+  /* ── Intro class string ── */
+  const introClass = [
+    'intro-viewport',
+    isIntroFadeOut ? 'fade-out'   : '',
+    isIntroDone    ? 'intro-done' : '',
+  ].filter(Boolean).join(' ');
 
 
   return (
     <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════
-          INTRO VIEWPORT
-          Pure-black fixed overlay. Renders at 0 ms.
-          CSS @keyframes logoFadeIn handles the gold glow.
-          .fade-out → translateY(-100vh) curtain slide-up.
-          isIntroActive guard removes it from DOM after 3.5 s.
+          INTRO VIEWPORT — ALWAYS IN DOM, NO CONDITIONAL RENDER
+          ─────────────────────────────────────────────────────────
+          Rendered unconditionally so the browser paints it on
+          the very first frame — zero JS latency on visibility.
+          State controls only className, never DOM presence.
+
+          isIntroFadeOut=false           → .intro-viewport
+          isIntroFadeOut=true  (2500ms)  → .intro-viewport .fade-out
+          isIntroDone=true     (3500ms)  → .intro-viewport .fade-out .intro-done
       ══════════════════════════════════════════════════════════ */}
-      {isIntroActive && (
-        <div className={`intro-viewport${isIntroFadeOut ? ' fade-out' : ''}`}>
-          <div className="intro-logo-box">
-            <h1 className="intro-logo-zh">南源木材</h1>
-            <span className="intro-logo-sep" />
-            <p className="intro-logo-en">NANYUAN TIMBER DESIGN</p>
-          </div>
+      <div className={introClass} aria-hidden="true">
+        <div className="intro-logo-box">
+          <h1 className="intro-logo-zh">南源木材</h1>
+          <span className="intro-logo-sep" />
+          <p className="intro-logo-en">NANYUAN TIMBER DESIGN</p>
         </div>
-      )}
+      </div>
 
 
       {/* ══════════════════════════════════════════════════════════
-          MAIN CONTENT — always in DOM
-          .content-ready triggers float-up when intro fades.
+          MAIN CONTENT — always in DOM behind the intro overlay
+          .content-ready triggers float-up when curtain rises
       ══════════════════════════════════════════════════════════ */}
       <div className={`main-content-wrap${isIntroFadeOut ? ' content-ready' : ''}`}>
 
@@ -282,18 +273,15 @@ const Home: React.FC = () => {
         <div className="hero-scroll-container" ref={containerRef}>
           <div className="hero-sticky-stage">
 
-            {/* Background images — three-state */}
             {ADVANTAGES.map((adv, i) => (
               <div key={adv.num} className={`hero-bg ${ss(i)}`}>
                 <img src={adv.img} alt={`南源木材 ${adv.zh}`} className="hero-bg-img" />
               </div>
             ))}
 
-            {/* Overlays */}
             <div className="hero-overlay" />
             <div className="hero-vignette" />
 
-            {/* Corner bracket frame */}
             <div className="hero-frame">
               <div className="hero-corner hero-corner--tl" />
               <div className="hero-corner hero-corner--tr" />
@@ -301,14 +289,12 @@ const Home: React.FC = () => {
               <div className="hero-corner hero-corner--br" />
             </div>
 
-            {/* Centre crosshair */}
             <div className={`hero-xhair hero-xhair--${activeIdx % 2 === 0 ? 'a' : 'b'}`}>
               <span className="hero-xhair-h" />
               <span className="hero-xhair-v" />
               <span className="hero-xhair-dot" />
             </div>
 
-            {/* Hero text deck */}
             <div className="hero-content">
               <div className="hero-eyebrow">
                 <span className="hero-eyebrow-line" />
@@ -317,14 +303,12 @@ const Home: React.FC = () => {
               </div>
 
               <div className="hero-deck">
-                {/* Giant number — left */}
                 <div className="hero-numbox">
                   {ADVANTAGES.map((a, i) => (
                     <span key={a.num} className={`hero-num ${ss(i)}`}>{a.num}</span>
                   ))}
                 </div>
 
-                {/* Text card — right */}
                 <div className="hero-textbox">
                   {ADVANTAGES.map((a, i) => (
                     <div key={a.num} className={`hero-slide ${ss(i)}`}>
@@ -338,7 +322,6 @@ const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* Scroll cue */}
             <div className="hero-scroll-cue">
               <span className="hero-scroll-label">SCROLL</span>
               <span className="hero-scroll-arrow">↓</span>
@@ -380,7 +363,7 @@ const Home: React.FC = () => {
           <div className="container">
             <FadeIn>
               <h2 className="home-section-h">設計與落地的真實對照</h2>
-              <p className="home-compare-p">許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重把關，確保所見即所得。請拖曳滑桿，親手驗證精準差距。</p>
+              <p className="home-compare-p">許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重把關，確保所見即所得。請拖曳滑桿親手驗證。</p>
             </FadeIn>
           </div>
           <ComparisonSlider />
@@ -403,7 +386,7 @@ const Home: React.FC = () => {
                       <div className="home-card-grad" />
                       <div className="home-card-meta">
                         <span className="home-card-type">{it.type}</span>
-                        <h3 className="home-card-name">{it.zh}</h3>
+                        <h3  className="home-card-name">{it.zh}</h3>
                       </div>
                     </div>
                   </div>
