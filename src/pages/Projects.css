@@ -2,8 +2,8 @@
    PROJECTS PAGE — LUXURY PORTFOLIO GRID & CINEMATIC DETAIL MODAL
    ─────────────────────────────────────────────────────────────
    100% external CSS — zero inline styles in TSX.
-   GPU-accelerated animations, clamp() responsive type,
-   backdrop-filter frosted glass, @keyframes cinematic reveal.
+   Card grid, hover micro-animations, frosted-glass modal,
+   @keyframes cinematic reveal, capsule filter tabs, responsive.
 ═══════════════════════════════════════════════════════════════ */
 
 
@@ -11,23 +11,13 @@
    KEYFRAMES
    ────────────────────────────────────────────────────────────── */
 @keyframes modalScaleUp {
-  0%   { opacity: 0; transform: scale(0.92) translateY(20px); }
+  0%   { opacity: 0; transform: scale(0.95) translateY(12px); }
   100% { opacity: 1; transform: scale(1)    translateY(0);    }
 }
 
-@keyframes modalFadeIn {
+@keyframes modalOverlayIn {
   0%   { opacity: 0; }
   100% { opacity: 1; }
-}
-
-@keyframes shimmerGold {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
-}
-
-@keyframes cardReveal {
-  0%   { opacity: 0; transform: translateY(28px) scale(0.97); }
-  100% { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
 
@@ -37,12 +27,12 @@
 .projects-page {
   background-color: #050505;
   min-height:       100vh;
-  overflow-x:       hidden;
 }
 
 
 /* ──────────────────────────────────────────────────────────────
-   PAGE HEADER — NAVBAR CLEARANCE + GOLD GRADIENT TITLE
+   PAGE HEADER — NAVBAR CLEARANCE + GOLD TITLE
+   padding-top: 140px = 72px navbar + 68px breathing room.
    ────────────────────────────────────────────────────────────── */
 .projects-header {
   padding-top:    140px;
@@ -62,13 +52,10 @@
   letter-spacing: 0.15em;
   line-height:    1.05;
   margin:         0 0 0.6rem;
-  /* warm-gold gradient text */
   background:     linear-gradient(135deg, #dfc9a0 0%, #c5a880 40%, #a88d60 100%);
   -webkit-background-clip: text;
   background-clip:         text;
   -webkit-text-fill-color: transparent;
-  text-shadow:    none;
-  /* glow aura via filter */
   filter:         drop-shadow(0 0 22px rgba(197, 168, 128, 0.35))
                   drop-shadow(0 0 60px rgba(197, 168, 128, 0.12));
 }
@@ -170,13 +157,11 @@
   transform: translateY(0);
 }
 
-/* Chinese label */
 .filter-pill-zh {
   font-size:      clamp(0.8rem, 1.2vw, 0.92rem);
   font-weight:    300;
   letter-spacing: 0.08em;
   color:          rgba(255, 255, 255, 0.42);
-  text-shadow:    none;
   transition:     color 0.35s, font-weight 0.35s, text-shadow 0.35s;
 }
 
@@ -192,7 +177,6 @@
                0 0 6px rgba(255, 255, 255, 0.3) !important;
 }
 
-/* English sub-label */
 .filter-pill-en {
   font-size:      8px;
   font-weight:    300;
@@ -210,7 +194,6 @@
   color: rgba(197, 168, 128, 0.75) !important;
 }
 
-/* Gold wire underline */
 .filter-pill-wire {
   display:          block;
   position:         absolute;
@@ -244,14 +227,14 @@
 
 
 /* ──────────────────────────────────────────────────────────────
-   LUXURY CARD GRID
+   LUXURY CARD GRID — auto-fill multi-column
    ────────────────────────────────────────────────────────────── */
 .projects-grid {
   display:               grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap:                   32px;
   padding:               40px 0;
-  max-width:             1400px;
+  max-width:             1440px;
   margin:                0 auto;
 }
 
@@ -259,13 +242,8 @@
   .projects-grid {
     grid-template-columns: 1fr;
     gap:                   24px;
-    padding:               24px 16px;
+    padding:               24px 0;
   }
-}
-
-.projects-grid-item {
-  will-change: transform;
-  animation:   cardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 
@@ -273,20 +251,20 @@
    PROJECT CARD — LUXURY OBSIDIAN STYLE
    ────────────────────────────────────────────────────────────── */
 .project-card {
-  position:         relative;
-  background:       rgba(13, 13, 14, 0.55);
-  border:           1px solid rgba(255, 255, 255, 0.06);
-  border-radius:    6px;
-  overflow:         hidden;
-  cursor:           pointer;
-  display:          flex;
-  flex-direction:   column;
-  height:           100%;
-  box-shadow:       0 8px 32px rgba(0, 0, 0, 0.45);
-  transition:       transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-                    border-color 0.45s ease,
-                    box-shadow 0.55s ease,
-                    background 0.45s ease;
+  position:       relative;
+  background:     rgba(13, 13, 14, 0.55);
+  border:         1px solid rgba(255, 255, 255, 0.06);
+  border-radius:  6px;
+  overflow:       hidden;
+  cursor:         pointer;
+  display:        flex;
+  flex-direction: column;
+  height:         100%;
+  box-shadow:     0 8px 32px rgba(0, 0, 0, 0.45);
+  transition:     transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.45s ease,
+                  box-shadow 0.55s ease,
+                  background 0.45s ease;
 }
 
 .project-card:hover {
@@ -297,7 +275,7 @@
                 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-/* ── Card image container ── */
+/* Card image */
 .project-card-img-wrap {
   position:     relative;
   aspect-ratio: 16 / 10;
@@ -311,12 +289,12 @@
   object-fit: cover;
   display:    block;
   opacity:    0.82;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
               opacity 0.5s ease;
 }
 
 .project-card:hover .project-card-img {
-  transform: scale(1.05);
+  transform: scale(1.04);
   opacity:   0.95;
 }
 
@@ -327,39 +305,39 @@
   pointer-events: none;
 }
 
-/* ── Badges on image ── */
+/* Badges */
 .project-card-badge-cat {
-  position:         absolute;
-  top:              12px;
-  left:             12px;
-  font-size:        9px;
-  font-weight:      700;
-  letter-spacing:   0.18em;
-  color:            #050505;
-  background-color: #C5A880;
-  padding:          4px 10px;
-  text-transform:   uppercase;
-  border-radius:    2px;
-  z-index:          2;
+  position:       absolute;
+  top:            12px;
+  left:           12px;
+  font-size:      9px;
+  font-weight:    700;
+  letter-spacing: 0.18em;
+  color:          #050505;
+  background:     #C5A880;
+  padding:        4px 10px;
+  text-transform: uppercase;
+  border-radius:  2px;
+  z-index:        2;
 }
 
-.project-card-badge-year {
-  position:         absolute;
-  top:              12px;
-  right:            12px;
-  font-size:        9px;
-  font-weight:      300;
-  letter-spacing:   0.15em;
-  color:            #ffffff;
-  background:       rgba(5, 5, 5, 0.7);
-  backdrop-filter:  blur(6px);
+.project-card-badge-size {
+  position:        absolute;
+  top:             12px;
+  right:           12px;
+  font-size:       9px;
+  font-weight:     300;
+  letter-spacing:  0.15em;
+  color:           #ffffff;
+  background:      rgba(5, 5, 5, 0.7);
+  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  padding:          4px 10px;
-  border-radius:    2px;
-  z-index:          2;
+  padding:         4px 10px;
+  border-radius:   2px;
+  z-index:         2;
 }
 
-/* ── Card body ── */
+/* Card body */
 .project-card-body {
   padding:        clamp(16px, 2.5vw, 24px);
   flex-grow:      1;
@@ -378,7 +356,6 @@
 .project-card-title {
   font-size:      clamp(1rem, 1.8vw, 1.2rem);
   font-weight:    700;
-  letter-spacing: 0;
   color:          #ffffff;
   margin:         0;
   line-height:    1.25;
@@ -402,7 +379,7 @@
   flex-shrink:    0;
 }
 
-.project-card-badge-size {
+.project-card-meta-badge {
   font-size:      10px;
   font-weight:    300;
   letter-spacing: 0.1em;
@@ -413,7 +390,7 @@
   border-radius:  2px;
 }
 
-.project-card-badge-loc {
+.project-card-meta-loc {
   font-size:      9px;
   font-weight:    300;
   letter-spacing: 0.1em;
@@ -421,7 +398,7 @@
   white-space:    nowrap;
 }
 
-/* ── Card specs ── */
+/* Card specs */
 .project-card-specs {
   display:        flex;
   flex-direction: column;
@@ -441,7 +418,7 @@
   color:          rgba(255, 255, 255, 0.38);
   flex-shrink:    0;
   padding-top:    1px;
-  min-width:      58px;
+  min-width:      42px;
 }
 
 .project-card-spec-val {
@@ -452,7 +429,7 @@
   line-height:    1.55;
 }
 
-/* ── Highlight bar ── */
+/* Highlight bar */
 .project-card-highlight-bar {
   margin-top:  auto;
   padding-top: 10px;
@@ -468,7 +445,7 @@
   line-height:    1.6;
 }
 
-/* ── Card action link ── */
+/* Card action */
 .project-card-action {
   display:         flex;
   justify-content: flex-end;
@@ -493,60 +470,50 @@
    PROJECT DETAIL MODAL — CINEMATIC FROSTED GLASS
    ────────────────────────────────────────────────────────────── */
 
-/* Overlay backdrop — obsidian + frost */
+/* Overlay backdrop */
 .project-detail-overlay {
-  position:         fixed;
-  inset:            0;
-  z-index:          9999;
-  background:       rgba(10, 10, 10, 0.8);
-  backdrop-filter:  blur(20px);
+  position:        fixed;
+  inset:           0;
+  z-index:         9999;
+  background:      rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  display:          flex;
-  align-items:      center;
-  justify-content:  center;
-  padding:          clamp(16px, 3vw, 48px);
-  animation:        modalFadeIn 0.35s ease both;
-  will-change:      transform;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         clamp(16px, 3vw, 48px);
+  animation:       modalOverlayIn 0.35s ease both;
+  will-change:     transform;
 }
 
-/* Block background scroll when modal is open */
 body.modal-open {
   overflow: hidden;
 }
 
-/* Modal panel — obsidian metallic card */
+/* Modal panel */
 .project-detail-modal {
-  position:       relative;
-  width:          100%;
-  max-width:      1100px;
-  max-height:     92vh;
-  overflow-y:     auto;
-  overflow-x:     hidden;
-  background:     linear-gradient(160deg, #111113 0%, #0a0a0b 50%, #0e0e10 100%);
-  border:         1px solid rgba(255, 255, 255, 0.06);
-  border-radius:  12px;
-  box-shadow:     0 32px 80px rgba(0, 0, 0, 0.65),
-                  0 0 60px rgba(197, 168, 128, 0.06);
-  animation:      modalScaleUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change:    transform;
+  position:        relative;
+  width:           100%;
+  max-width:       1100px;
+  max-height:      92vh;
+  overflow-y:      auto;
+  overflow-x:      hidden;
+  background:      linear-gradient(160deg, #111113 0%, #0a0a0b 50%, #0e0e10 100%);
+  border:          1px solid rgba(255, 255, 255, 0.06);
+  border-radius:   12px;
+  box-shadow:      0 32px 80px rgba(0, 0, 0, 0.65),
+                   0 0 60px rgba(197, 168, 128, 0.06);
+  animation:       modalScaleUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change:     transform;
   scrollbar-width: thin;
   scrollbar-color: rgba(197, 168, 128, 0.25) transparent;
 }
 
-.project-detail-modal::-webkit-scrollbar {
-  width: 5px;
-}
+.project-detail-modal::-webkit-scrollbar       { width: 5px; }
+.project-detail-modal::-webkit-scrollbar-thumb  { background: rgba(197, 168, 128, 0.3); border-radius: 10px; }
+.project-detail-modal::-webkit-scrollbar-track  { background: transparent; }
 
-.project-detail-modal::-webkit-scrollbar-thumb {
-  background:    rgba(197, 168, 128, 0.3);
-  border-radius: 10px;
-}
-
-.project-detail-modal::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* ── Close button ── */
+/* Close button */
 .project-detail-close {
   position:        absolute;
   top:             16px;
@@ -576,7 +543,7 @@ body.modal-open {
   transform:    scale(1.08);
 }
 
-/* ── Modal split layout: left image + right content ── */
+/* Split layout: left image + right content */
 .project-detail-split {
   display:               grid;
   grid-template-columns: 1fr 1fr;
@@ -589,7 +556,7 @@ body.modal-open {
   }
 }
 
-/* Left side — hero image */
+/* Left — hero image */
 .project-detail-img-side {
   position: relative;
   overflow: hidden;
@@ -616,13 +583,12 @@ body.modal-open {
     min-height: 220px;
     max-height: 300px;
   }
-
   .project-detail-img-gradient {
     background: linear-gradient(to top, rgba(17, 17, 19, 0.6) 0%, transparent 50%);
   }
 }
 
-/* Right side — text content */
+/* Right — text content */
 .project-detail-content-side {
   padding:        clamp(24px, 3vw, 48px);
   display:        flex;
@@ -631,7 +597,6 @@ body.modal-open {
   overflow-y:     auto;
 }
 
-/* ── Detail header ── */
 .project-detail-title {
   font-size:      clamp(1.6rem, 3vw, 2.4rem);
   font-weight:    700;
@@ -651,7 +616,7 @@ body.modal-open {
   text-shadow:    0 0 12px rgba(197, 168, 128, 0.2);
 }
 
-/* ── Detail meta tags ── */
+/* Meta tags */
 .project-detail-tags {
   display:   flex;
   flex-wrap: wrap;
@@ -675,7 +640,7 @@ body.modal-open {
   background:   rgba(197, 168, 128, 0.06);
 }
 
-/* ── Detail spec grid ── */
+/* Spec grid */
 .project-detail-specs {
   display:        flex;
   flex-direction: column;
@@ -709,7 +674,7 @@ body.modal-open {
   line-height:    1.6;
 }
 
-/* ── Design story / description ── */
+/* Design story */
 .project-detail-story {
   display:        flex;
   flex-direction: column;
@@ -733,7 +698,7 @@ body.modal-open {
   margin:         0;
 }
 
-/* ── Detail highlight box ── */
+/* Highlight box */
 .project-detail-highlight-box {
   border-left:  3px solid #C5A880;
   padding-left: 16px;
@@ -751,7 +716,7 @@ body.modal-open {
 
 
 /* ──────────────────────────────────────────────────────────────
-   CONTAINER UTILITY — mirrors index.css
+   CONTAINER UTILITY
    ────────────────────────────────────────────────────────────── */
 .projects-container {
   max-width:     1440px;
@@ -762,7 +727,7 @@ body.modal-open {
 
 
 /* ──────────────────────────────────────────────────────────────
-   MOBILE HARDWARE ACCELERATION & POLISH
+   MOBILE RESPONSIVE
    ────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .projects-title {
@@ -771,12 +736,9 @@ body.modal-open {
   }
 
   .projects-grid {
+    grid-template-columns: 1fr;
     gap:     20px;
     padding: 24px 0;
-  }
-
-  .project-card {
-    will-change: transform;
   }
 
   .project-detail-modal {
