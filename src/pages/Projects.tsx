@@ -1,21 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useCallback } from 'react';
 import './Projects.css';
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Projects.tsx — 作品案例頁完全體（Complete Rewrite from Scratch）
+   ═══════════════════════════════════════════════════════════════════════════
+   雙視態架構：
+     §1  List View — 分類膠囊 + 多列卡片網格
+     §2  Detail View — 全頁滿版深度開箱專題（Hero / Story / Gallery）
 
-/* ═══════════════════════════════════════════════════════════════
-   REAL PROJECT PHOTOS — semantic picks from src/assets/ album
-   Each photo is carefully matched to a project's content theme.
-═══════════════════════════════════════════════════════════════ */
-import photoSmallHome    from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
-import photoLuxuryLiving from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
-import photoKitchen      from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
-import photoZenBedroom   from '../assets/LINE_ALBUM_2026.6.17_260621_10.jpg';
+   ⚠ 鐵律：零行內 style / 零 <style> 標籤 / 100% 樣式在 Projects.css
+   ⚠ CTA 由 Footer.tsx 全局統一掛載，此處不 import
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 
-/* ═══════════════════════════════════════════════════════════════
-   FILTER CATEGORIES
-═══════════════════════════════════════════════════════════════ */
+/* ─── 案例 1：機能小宅改造（局部改造系列照片） ─── */
+import photo1A from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
+import photo1B from '../assets/LINE_ALBUM_2026.6.17_260621_6.jpg';
+import photo1C from '../assets/LINE_ALBUM_2026.6.17_260621_7.jpg';
+import photo1D from '../assets/LINE_ALBUM_2026.6.17_260621_8.jpg';
+
+/* ─── 案例 2：曜石黑金大器邸（豪宅系列照片） ─── */
+import photo2A from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
+import photo2B from '../assets/LINE_ALBUM_2026.6.17_260621_83.jpg';
+import photo2C from '../assets/LINE_ALBUM_2026.6.17_260621_84.jpg';
+import photo2D from '../assets/LINE_ALBUM_2026.6.17_260621_85.jpg';
+
+/* ─── 案例 3：暖心交誼輕食區（木作廚房系列照片） ─── */
+import photo3A from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+import photo3B from '../assets/LINE_ALBUM_2026.6.17_260621_21.jpg';
+import photo3C from '../assets/LINE_ALBUM_2026.6.17_260621_22.jpg';
+import photo3D from '../assets/LINE_ALBUM_2026.6.17_260621_23.jpg';
+
+/* ─── 案例 4：隱世侘寂睡眠艙（臥室系列照片） ─── */
+import photo4A from '../assets/LINE_ALBUM_2026.6.17_260621_10.jpg';
+import photo4B from '../assets/LINE_ALBUM_2026.6.17_260621_11.jpg';
+import photo4C from '../assets/LINE_ALBUM_2026.6.17_260621_12.jpg';
+import photo4D from '../assets/LINE_ALBUM_2026.6.17_260621_13.jpg';
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TYPES & DATA — 分類
+   ═══════════════════════════════════════════════════════════════════════════ */
 type CategoryId = 'all' | 'all-house' | 'wood-craft' | 'partial';
 
 interface Category {
@@ -25,17 +50,16 @@ interface Category {
 }
 
 const CATEGORIES: Category[] = [
-  { id: 'all',        label: '全部作品', en: 'ALL'          },
+  { id: 'all',        label: '全部作品', en: 'ALL' },
   { id: 'all-house',  label: '全屋統包', en: 'FULL REMODEL' },
-  { id: 'wood-craft', label: '高級木作', en: 'WOOD CRAFT'   },
+  { id: 'wood-craft', label: '高級木作', en: 'WOOD CRAFT' },
   { id: 'partial',    label: '局部改造', en: 'PARTIAL RENO' },
 ];
 
 
-/* ═══════════════════════════════════════════════════════════════
-   PROJECT DATA — 4 COMPLETE CASES WITH B2C SEMANTIC FIELDS
-   Each project is mapped to a real photo from the album.
-═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   TYPES & DATA — 案例（多圖陣列）
+   ═══════════════════════════════════════════════════════════════════════════ */
 interface Project {
   id:        string;
   category:  CategoryId;
@@ -48,8 +72,8 @@ interface Project {
   style:     string;
   materials: string;
   story:     string[];
-  img:       string;
-  altText:   string;
+  images:    string[];
+  captions:  string[];
 }
 
 const PROJECTS: Project[] = [
@@ -69,8 +93,8 @@ const PROJECTS: Project[] = [
       '核心設計以「多功能架高木質地坪」展開：客廳區域架高 40 公分，地坪下方全面規劃為抽屜式收納，白天是工作區、晚上攤平即為客臥，單一空間同時承擔三種生活功能。',
       '「小預算不等於妥協品質」——透過南源精準的選材配置與機能設計思維，22 坪擁有了超越坪數三倍的視覺開闊感與生活機能，完美實現小資業主的精品居住夢想。',
     ],
-    img:       photoSmallHome,
-    altText:   '南源木材 機能小宅改造 架高木地坪隱藏收納完工實景',
+    images:   [photo1A, photo1B, photo1C, photo1D],
+    captions: ['客廳主景全覽', '架高地坪收納細節', '多功能書桌區', '自然光廊道'],
   },
   {
     id:        '2',
@@ -88,8 +112,8 @@ const PROJECTS: Project[] = [
       '三十年木作老師傅手工微調，格柵間距與拼花紋理完全對齊，收口精度嚴控在 ±1mm 以內。每一片木皮的色澤、走向都經過嚴格配對，確保視覺上無縫連續、質感統一。',
       '結合電視牆大理石的冷冽質地與木質天花的溫潤呼吸，冷暖對話間為高奢住宅奠定沉穩、大氣且健康的空間基底，完整體現南源「匠心鑄就傳世細節」的品牌承諾。',
     ],
-    img:       photoLuxuryLiving,
-    altText:   '南源木材 曜石黑金大器邸 頂奢豪宅大廳木作完工實景',
+    images:   [photo2A, photo2B, photo2C, photo2D],
+    captions: ['大廳全景', '天花板木作格柵細節', '電視牆冷暖對話', '玄關延伸視角'],
   },
   {
     id:        '3',
@@ -107,8 +131,8 @@ const PROJECTS: Project[] = [
       '針對廚房高濕度環境，特選高規防水防蛀底料與耐磨塗層，所有接縫以德國全效防水密封膠條處理，即便長年接觸水蒸氣也不翹邊、不發霉。',
       '微米級的拼花工藝與隱藏式暗扣收納系統，打造兼具機能與視覺溫度的核心餐廚空間。完工後業主邀請親友舉辦首場家宴，全場驚嘆「根本在飯店主廚廚房做菜」。',
     ],
-    img:       photoKitchen,
-    altText:   '南源木材 暖心交誼輕食區 職人木作中島餐廳完工實景',
+    images:   [photo3A, photo3B, photo3C, photo3D],
+    captions: ['中島餐廳全景', '木作櫃體收邊細節', '吧檯區採光面', '開放式動線俯視'],
   },
   {
     id:        '4',
@@ -126,291 +150,222 @@ const PROJECTS: Project[] = [
       '全室塗料選用珪藻土調濕壁材，配合 F1 級低甲醛系統板材，從源頭為業主的呼吸道健康嚴格把關。落地 60 天後甲醛濃度低於國家標準四倍以上。',
       '純粹、無毒、零壓迫感——還原生活本質的極致靜謐儀式感，打造一座讓身心真正卸下防備、進入最深層修復睡眠的隱世睡眠艙。',
     ],
-    img:       photoZenBedroom,
-    altText:   '南源木材 隱世侘寂睡眠艙 靜謐禪風臥室完工實景',
+    images:   [photo4A, photo4B, photo4C, photo4D],
+    captions: ['床頭格柵主視覺', '側面光影韻律', '衣櫃隱藏系統', '窗邊閱讀角'],
   },
 ];
 
 
-/* ═══════════════════════════════════════════════════════════════
-   FILTER TABS COMPONENT
-═══════════════════════════════════════════════════════════════ */
-const FilterTabs: React.FC<{
-  active:   CategoryId;
-  onChange: (id: CategoryId) => void;
-}> = ({ active, onChange }) => (
-  <div className="filter-track">
-    <div className="filter-track-inner">
-      {CATEGORIES.map(cat => {
-        const isActive = active === cat.id;
-        return (
-          <div key={cat.id} className="filter-pill-slot">
-            {isActive && (
-              <motion.div
-                layoutId="filter-pill"
-                className="filter-pill-bg"
-                transition={{ type: 'spring', stiffness: 380, damping: 34, mass: 0.9 }}
-              />
-            )}
-            <button
-              onClick={() => onChange(cat.id)}
-              className={`filter-pill-btn${isActive ? ' filter-pill-btn--active' : ''}`}
-              aria-label={`篩選 ${cat.label}`}
-            >
-              <span className={`filter-pill-zh${isActive ? ' filter-pill-zh--active' : ''}`}>
-                {cat.label}
-              </span>
-              <span className={`filter-pill-en${isActive ? ' filter-pill-en--active' : ''}`}>
-                {cat.en}
-              </span>
-              <AnimatePresence>
-                {isActive && (
-                  <motion.span
-                    key="wire"
-                    initial={{ scaleX: 0, opacity: 0 }}
-                    animate={{ scaleX: 1, opacity: 1 }}
-                    exit={{   scaleX: 0, opacity: 0 }}
-                    transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1], delay: 0.06 }}
-                    className="filter-pill-wire"
-                  />
-                )}
-              </AnimatePresence>
-            </button>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-);
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPONENT
+   ═══════════════════════════════════════════════════════════════════════════ */
+const Projects: React.FC = () => {
 
+  /* ─── 視態狀態機 ─── */
+  const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [activeCategory, setActiveCategory] = useState<CategoryId>('all');
 
-/* ═══════════════════════════════════════════════════════════════
-   PROJECT DETAIL MODAL
-   Left-right split: hero image | rich text info.
-   className-driven, zero inline styles.
-═══════════════════════════════════════════════════════════════ */
-const ProjectDetailModal: React.FC<{
-  project: Project;
-  onClose: () => void;
-}> = ({ project, onClose }) => {
-
-  /* Lock body scroll while modal is open */
-  useEffect(() => {
-    document.body.classList.add('modal-open');
-    return () => { document.body.classList.remove('modal-open'); };
+  /* ─── 進入全頁專題 ─── */
+  const openProject = useCallback((project: Project) => {
+    setActiveProject(project);
+    setCurrentView('detail');
+    window.scrollTo(0, 0);
   }, []);
 
-  /* Close on Escape key */
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, [onClose]);
+  /* ─── 返回列表 ─── */
+  const backToList = useCallback(() => {
+    setCurrentView('list');
+    setActiveProject(null);
+    window.scrollTo(0, 0);
+  }, []);
 
-  return (
-    <div className="project-detail-overlay" onClick={onClose}>
-      <div
-        className="project-detail-modal"
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`${project.title} 作品詳情`}
-      >
-        {/* Close button */}
+  /* ─── 分類篩選 ─── */
+  const filteredProjects = activeCategory === 'all'
+    ? PROJECTS
+    : PROJECTS.filter(p => p.category === activeCategory);
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     RENDER — LIST VIEW（分類膠囊 + 卡片網格）
+     ═══════════════════════════════════════════════════════════════════════ */
+  if (currentView === 'list') {
+    return (
+      <div className="projects-page">
+
+        {/* ── 頁面大標題 ── */}
+        <div className="projects-page-header">
+          <p className="projects-page-eyebrow">OUR PROJECTS</p>
+          <h1 className="projects-page-title">匠心落地，經典案例</h1>
+          <p className="projects-page-subtitle">
+            從北歐極簡小宅到現代奢華大宅，南源以木為魂，將每一個空間雕琢成獨一無二的生活藝術品。
+          </p>
+        </div>
+
+        {/* ── 分類膠囊列 ── */}
+        <div className="filter-bar">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.id}
+              className={
+                activeCategory === cat.id
+                  ? 'filter-pill filter-pill--active'
+                  : 'filter-pill'
+              }
+              onClick={() => setActiveCategory(cat.id)}
+              aria-label={`篩選 ${cat.label}`}
+            >
+              <span className="filter-pill-zh">{cat.label}</span>
+              <span className="filter-pill-en">{cat.en}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* ── 卡片網格 ── */}
+        <div className="projects-grid">
+          {filteredProjects.map(project => (
+            <div
+              key={project.id}
+              className="projects-grid-card"
+              onClick={() => openProject(project)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter') openProject(project); }}
+              aria-label={`查看案例：${project.title}`}
+            >
+              <img
+                className="projects-grid-card-img"
+                src={project.images[0]}
+                alt={project.title}
+                loading="lazy"
+              />
+              <div className="projects-grid-card-overlay">
+                <span className="projects-grid-card-type">{project.type}</span>
+                <h2 className="projects-grid-card-title">{project.title}</h2>
+                <p className="projects-grid-card-sub">{project.subtitle} · {project.size}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA 由 Footer.tsx 全局統一掛載 */}
+      </div>
+    );
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     RENDER — DETAIL VIEW（全頁滿版深度開箱專題）
+     ═══════════════════════════════════════════════════════════════════════ */
+  if (currentView === 'detail' && activeProject) {
+    const p = activeProject;
+    const heroImage = p.images[0];
+    const galleryImages = p.images.slice(1);
+
+    return (
+      <div className="project-full-page">
+
+        {/* ── 返回按鈕 ── */}
         <button
-          className="project-detail-close"
-          onClick={onClose}
-          aria-label="關閉作品詳情"
+          className="project-back-btn"
+          onClick={backToList}
+          aria-label="返回作品列表"
         >
-          ✕
+          ⟪ 返回作品列表
         </button>
 
-        {/* Split layout */}
-        <div className="project-detail-split">
-
-          {/* LEFT — Hero image */}
-          <div className="project-detail-img-side">
-            <img
-              src={project.img}
-              alt={project.altText}
-              className="project-detail-hero-img"
-            />
-            <div className="project-detail-img-gradient" />
-          </div>
-
-          {/* RIGHT — Text content */}
-          <div className="project-detail-content-side">
-
-            {/* Title */}
-            <div>
-              <h2 className="project-detail-title">{project.title}</h2>
-              <p className="project-detail-subtitle">{project.subtitle}</p>
-            </div>
-
-            {/* Meta tags */}
-            <div className="project-detail-tags">
-              <span className="project-detail-tag project-detail-tag--primary">{project.type}</span>
-              <span className="project-detail-tag">{project.location}</span>
-              <span className="project-detail-tag">{project.size}</span>
-              <span className="project-detail-tag">{project.layout}</span>
-            </div>
-
-            {/* Specs */}
-            <div className="project-detail-specs">
-              <div className="project-detail-spec-row">
-                <span className="project-detail-spec-label">風格</span>
-                <span className="project-detail-spec-val">{project.style}</span>
-              </div>
-              <div className="project-detail-spec-row">
-                <span className="project-detail-spec-label">建材</span>
-                <span className="project-detail-spec-val">{project.materials}</span>
-              </div>
-            </div>
-
-            {/* Design story */}
-            <div className="project-detail-story">
-              <h3 className="project-detail-story-title">設計理念</h3>
-              {project.story.map((para, i) => (
-                <p key={i} className="project-detail-story-para">{para}</p>
-              ))}
-            </div>
-
-            {/* Highlight */}
-            <div className="project-detail-highlight-box">
-              <p className="project-detail-highlight-text">
-                {project.style} — {project.materials.split('、')[0]}
-              </p>
-            </div>
-
+        {/* ══════════════════════════════════════════════════════════
+            HERO — 滿版主視覺
+        ══════════════════════════════════════════════════════════ */}
+        <div className="project-hero">
+          <img
+            className="project-hero-img"
+            src={heroImage}
+            alt={p.title}
+            loading="eager"
+          />
+          <div className="project-hero-overlay">
+            <span className="project-hero-type">{p.type} · {p.location}</span>
+            <h1 className="project-hero-title">{p.title}</h1>
+            <p className="project-hero-subtitle">{p.subtitle}</p>
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
 
+        {/* ══════════════════════════════════════════════════════════
+            STORY — 雙列故事 + 規格表
+        ══════════════════════════════════════════════════════════ */}
+        <div className="project-story">
 
-/* ═══════════════════════════════════════════════════════════════
-   PROJECTS PAGE — MAIN COMPONENT
-═══════════════════════════════════════════════════════════════ */
-const Projects: React.FC = () => {
-  const [activeFilter, setActiveFilter]     = useState<CategoryId>('all');
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+          {/* 左側：設計理念 */}
+          <div className="project-story-left">
+            <p className="project-story-eyebrow">DESIGN CONCEPT</p>
+            <h2 className="project-story-heading">設計理念</h2>
+            {p.story.map((paragraph, i) => (
+              <p key={i} className="project-story-paragraph">{paragraph}</p>
+            ))}
+          </div>
 
-  const filtered = activeFilter === 'all'
-    ? PROJECTS
-    : PROJECTS.filter(p => p.category === activeFilter);
+          {/* 右側：曜石黑規格表 */}
+          <div className="project-story-right">
+            <div className="project-specs-card">
+              <p className="project-specs-title">PROJECT SPECIFICATIONS</p>
+              <div className="project-spec-row">
+                <span className="project-spec-label">案例類型</span>
+                <span className="project-spec-value">{p.type}</span>
+              </div>
+              <div className="project-spec-row">
+                <span className="project-spec-label">所在區域</span>
+                <span className="project-spec-value">{p.location}</span>
+              </div>
+              <div className="project-spec-row">
+                <span className="project-spec-label">坪數</span>
+                <span className="project-spec-value">{p.size}</span>
+              </div>
+              <div className="project-spec-row">
+                <span className="project-spec-label">格局</span>
+                <span className="project-spec-value">{p.layout}</span>
+              </div>
+              <div className="project-spec-row">
+                <span className="project-spec-label">設計風格</span>
+                <span className="project-spec-value">{p.style}</span>
+              </div>
+              <div className="project-spec-row">
+                <span className="project-spec-label">核心建材</span>
+                <span className="project-spec-value">{p.materials}</span>
+              </div>
+            </div>
+          </div>
 
-  return (
-    <main className="projects-page">
-      <div className="projects-container">
-
-        {/* ── Page header ── */}
-        <header className="projects-header">
-          <h1 className="projects-title">作品案例</h1>
-          <p className="projects-subtitle">
-            南源木材高端住宅、職人木作與老屋翻修精工作品。全屋統包翻新設計案例一覽。
-          </p>
-        </header>
-
-        {/* ── Filter tabs ── */}
-        <section>
-          <FilterTabs active={activeFilter} onChange={setActiveFilter} />
-        </section>
-
-        {/* ── Count ── */}
-        <div className="projects-count-bar">
-          <span className="projects-count-text">
-            顯示 {filtered.length} / {PROJECTS.length} 件作品
-          </span>
         </div>
 
-        {/* ── Card grid ── */}
-        <section>
-          <motion.div layout className="projects-grid">
-            <AnimatePresence mode="popLayout">
-              {filtered.map((project, i) => (
-                <motion.div
-                  key={project.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                  animate={{ opacity: 1, scale: 1,    y: 0  }}
-                  exit={{    opacity: 0, scale: 0.96, y: 20 }}
-                  transition={{ duration: 0.45, delay: i * 0.06 }}
-                >
-                  <article
-                    className="project-card"
-                    onClick={() => setSelectedProject(project)}
-                  >
-                    {/* Card image */}
-                    <div className="project-card-img-wrap">
-                      <img
-                        src={project.img}
-                        alt={project.altText}
-                        className="project-card-img"
-                        loading="lazy"
-                      />
-                      <div className="project-card-badge-cat">
-                        {CATEGORIES.find(c => c.id === project.category)?.en ?? ''}
-                      </div>
-                      <div className="project-card-badge-size">{project.size}</div>
-                      <div className="project-card-img-gradient" />
-                    </div>
+        {/* ══════════════════════════════════════════════════════════
+            GALLERY — 多圖藝廊牆
+        ══════════════════════════════════════════════════════════ */}
+        <div className="project-gallery">
+          <p className="project-gallery-eyebrow">SPACE GALLERY</p>
+          <div className="project-gallery-grid">
+            {galleryImages.map((img, i) => (
+              <div key={i} className="project-gallery-item">
+                <img
+                  className="project-gallery-img"
+                  src={img}
+                  alt={p.captions[i + 1] || `${p.title} 空間細節 ${i + 1}`}
+                  loading="lazy"
+                />
+                <span className="project-gallery-caption">
+                  {p.captions[i + 1] || `Detail ${i + 1}`}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-                    {/* Card body */}
-                    <div className="project-card-body">
-                      <div className="project-card-header">
-                        <div>
-                          <h3 className="project-card-title">{project.title}</h3>
-                          <p className="project-card-sub">{project.subtitle}</p>
-                        </div>
-                        <div className="project-card-meta-col">
-                          <span className="project-card-meta-badge">{project.size}</span>
-                          <span className="project-card-meta-loc">{project.location}</span>
-                        </div>
-                      </div>
-
-                      <div className="project-card-specs">
-                        <div className="project-card-spec-row">
-                          <span className="project-card-spec-label">風格</span>
-                          <span className="project-card-spec-val">{project.style}</span>
-                        </div>
-                        <div className="project-card-spec-row">
-                          <span className="project-card-spec-label">建材</span>
-                          <span className="project-card-spec-val">{project.materials}</span>
-                        </div>
-                      </div>
-
-                      <div className="project-card-highlight-bar">
-                        <p className="project-card-highlight">{project.layout} ｜ {project.style}</p>
-                      </div>
-
-                      <div className="project-card-action">
-                        <span className="project-card-action-text">查看完整案例 ➔</span>
-                      </div>
-                    </div>
-                  </article>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </section>
-
+        {/* CTA 由 Footer.tsx 全局統一掛載 */}
       </div>
+    );
+  }
 
-
-
-      {/* ── Detail modal ── */}
-      {selectedProject && (
-        <ProjectDetailModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
-    </main>
-  );
+  return null;
 };
 
 export default Projects;

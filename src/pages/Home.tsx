@@ -2,38 +2,43 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-/* ═══════════════════════════════════════════════════════════════════════
-   Home.tsx — 南源木材首頁完全體（From-Scratch Rewrite）
-   ═══════════════════════════════════════════════════════════════════════
-   五大版塊：
-     §1  Brand Intro Viewport — 0ms 瞬間發光序幕（2.5s 退場 → 3.5s 銷毀）
-     §2  Hero Scroll Theatre  — 400vh sticky 優點鎖定劇場
-     §3  Comparison Section   — 設計模擬圖 vs. 實景完工照
-     §4  Page Teasers         — 關於南源 / 服務流程 / 作品案例
-     §5  公共底座             — <CTA /> 由 Footer.tsx 全局統一掛載
+/* ═══════════════════════════════════════════════════════════════════════════
+   Home.tsx — 南源木材首頁完全體 v3（Complete Rewrite from Scratch）
+   ═══════════════════════════════════════════════════════════════════════════
+   七大劇場版塊：
+     §1  Brand Intro Viewport     — 0ms 瞬間發光序幕（2.5s 退場 → 3.5s 銷毀）
+     §2  Hero Scroll Theatre      — 400vh sticky 優點鎖定劇場（4 張）
+     §3  About Nanyuan             — 滿版職人背景品牌介紹
+     §4  Process Timeline          — 圖形化六大流程軸（Hover 互動）
+     §5  Comparison Slider         — 推拉式前後對照滑桿
+     §6  Projects Wall             — 精選案例卡片牆
+     §7  CTA                       — 由 Footer.tsx 全局統一掛載
 
    ⚠ 鐵律：零行內 style / 零 <style> 標籤 / 100% 樣式在 Home.css
-   ═══════════════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ─── HERO IMAGES — 每張對應一個優點 ─── */
+/* ─── §2 HERO IMAGES — 每張對應一個優點 ─── */
 import heroImg01 from '../assets/home-hero-material.jpg';
 import heroImg02 from '../assets/home-hero-craft.jpg';
 import heroImg03 from '../assets/home-hero-transparency.jpg';
 import heroImg04 from '../assets/home-hero-realization.jpg';
 
-/* ─── COMPARISON IMAGES ─── */
+/* ─── §3 ABOUT BACKGROUND ─── */
+import aboutBrandBg from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
+
+/* ─── §5 COMPARISON IMAGES ─── */
 import compareRender  from '../assets/compare-render.jpg';
 import compareReality from '../assets/compare-reality.jpg';
 
-/* ─── PROJECTS TEASER THUMBNAILS ─── */
+/* ─── §6 PROJECTS THUMBNAILS ─── */
 import projectThumb01 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
 import projectThumb02 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 import projectThumb03 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
 
 
-/* ═══════════════════════════════════════════════════════════════════════
-   DATA — 四大優點資料陣列
-   ═══════════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   DATA — 四大優點
+   ═══════════════════════════════════════════════════════════════════════════ */
 interface Advantage {
   number: string;
   title: string;
@@ -68,21 +73,74 @@ const ADVANTAGES: Advantage[] = [
   },
 ];
 
-const PROJECT_TEASERS = [
-  { name: '北歐極簡小宅', image: projectThumb01 },
-  { name: '現代奢華大宅', image: projectThumb02 },
-  { name: '暖木系廚房', image: projectThumb03 },
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DATA — 六大流程
+   ═══════════════════════════════════════════════════════════════════════════ */
+interface ProcessStep {
+  number: string;
+  title: string;
+  desc: string;
+}
+
+const PROCESS_STEPS: ProcessStep[] = [
+  {
+    number: '01',
+    title: '初步諮詢',
+    desc: '深入了解您的生活方式、空間需求與風格偏好，建立專案的核心設計方向。',
+  },
+  {
+    number: '02',
+    title: '現場丈量',
+    desc: '專業團隊到府實地丈量，精確記錄每一寸空間尺度、管線位置與採光條件。',
+  },
+  {
+    number: '03',
+    title: '方案設計',
+    desc: '依據丈量數據與諮詢結論，打造量身訂製的3D設計方案與完整材料計畫書。',
+  },
+  {
+    number: '04',
+    title: '材料精選',
+    desc: '帶領業主親赴建材展廳，逐一精選木種、五金與板材，確認每項材料的品牌與規格。',
+  },
+  {
+    number: '05',
+    title: '精工施作',
+    desc: '資深職人團隊進場施工，每日回報進度照片，全程接受業主巡場與即時溝通。',
+  },
+  {
+    number: '06',
+    title: '驗收售後',
+    desc: '逐項清點驗收每一處工藝細節，提供完善的保固服務與長期售後維護支持。',
+  },
 ];
 
 
-/* ═══════════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════════════════
+   DATA — 精選作品
+   ═══════════════════════════════════════════════════════════════════════════ */
+interface ProjectCard {
+  name: string;
+  category: string;
+  image: string;
+}
+
+const PROJECT_CARDS: ProjectCard[] = [
+  { name: '北歐極簡小宅', category: 'SCANDINAVIAN', image: projectThumb01 },
+  { name: '現代奢華大宅', category: 'MODERN LUXURY', image: projectThumb02 },
+  { name: '暖木系廚房', category: 'WARM KITCHEN', image: projectThumb03 },
+];
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
    COMPONENT
-   ═══════════════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
 
-  /* ─────────────────────────────────────────────────────────────
+  /* ─────────────────────────────────────────────────────────────────────
      §1 STATE — Brand Intro Viewport
-     ───────────────────────────────────────────────────────────── */
+     ───────────────────────────────────────────────────────────────────── */
   const [introVisible, setIntroVisible] = useState(true);
   const [introExiting, setIntroExiting] = useState(false);
 
@@ -102,9 +160,9 @@ const Home: React.FC = () => {
   }, []);
 
 
-  /* ─────────────────────────────────────────────────────────────
+  /* ─────────────────────────────────────────────────────────────────────
      §2 STATE — Hero Scroll Theatre
-     ───────────────────────────────────────────────────────────── */
+     ───────────────────────────────────────────────────────────────────── */
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -132,9 +190,31 @@ const Home: React.FC = () => {
   }, [handleScroll]);
 
 
-  /* ─────────────────────────────────────────────────────────────
+  /* ─────────────────────────────────────────────────────────────────────
+     §5 STATE — Comparison Slider
+     ───────────────────────────────────────────────────────────────────── */
+  const [sliderPos, setSliderPos] = useState(50);
+  const sliderContainerRef = useRef<HTMLDivElement>(null);
+
+  /* 初始化 CSS 自訂屬性 */
+  useEffect(() => {
+    if (sliderContainerRef.current) {
+      sliderContainerRef.current.style.setProperty('--slider-pos', '50%');
+    }
+  }, []);
+
+  const handleSliderChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    setSliderPos(val);
+    if (sliderContainerRef.current) {
+      sliderContainerRef.current.style.setProperty('--slider-pos', `${val}%`);
+    }
+  }, []);
+
+
+  /* ─────────────────────────────────────────────────────────────────────
      HELPER — 字卡位置 className
-     ───────────────────────────────────────────────────────────── */
+     ───────────────────────────────────────────────────────────────────── */
   const getCardClass = (index: number): string => {
     if (index === activeIndex) return 'hero-card card-active';
     if (index < activeIndex) return 'hero-card card-left';
@@ -142,15 +222,15 @@ const Home: React.FC = () => {
   };
 
 
-  /* ─────────────────────────────────────────────────────────────
+  /* ─────────────────────────────────────────────────────────────────────
      RENDER
-     ───────────────────────────────────────────────────────────── */
+     ───────────────────────────────────────────────────────────────────── */
   return (
     <div className="home-page">
 
-      {/* ══════════════════════════════════════════════════════════
+      {/* ══════════════════════════════════════════════════════════════════
           §1  BRAND INTRO VIEWPORT — 0ms 瞬間發光品牌帷幕
-      ══════════════════════════════════════════════════════════ */}
+      ══════════════════════════════════════════════════════════════════ */}
       {introVisible && (
         <div
           className={
@@ -166,13 +246,13 @@ const Home: React.FC = () => {
       )}
 
 
-      {/* ══════════════════════════════════════════════════════════
+      {/* ══════════════════════════════════════════════════════════════════
           §2  HERO SCROLL THEATRE — 400vh 優點鎖定劇場
-      ══════════════════════════════════════════════════════════ */}
+      ══════════════════════════════════════════════════════════════════ */}
       <div className="hero-scroll-container" ref={scrollContainerRef}>
         <div className="hero-sticky-stage">
 
-          {/* ── 背景圖片層（四張疊加，只顯示激活的） ── */}
+          {/* 背景圖片層 */}
           <div className="hero-bg-layer">
             {ADVANTAGES.map((adv, i) => (
               <img
@@ -189,10 +269,10 @@ const Home: React.FC = () => {
             ))}
           </div>
 
-          {/* ── 暗色遮罩層 ── */}
+          {/* 暗色遮罩 */}
           <div className="hero-overlay" />
 
-          {/* ── 前景內容層 ── */}
+          {/* 前景內容層 */}
           <div className="hero-content-layer">
 
             {/* 左側巨型幾何序號 */}
@@ -216,110 +296,163 @@ const Home: React.FC = () => {
       </div>
 
 
-      {/* ══════════════════════════════════════════════════════════
-          §3  COMPARISON SECTION — 設計模擬圖 vs. 實景完工照
-      ══════════════════════════════════════════════════════════ */}
-      <section className="comparison-section" aria-label="設計與落地真實對照">
-        <div className="comparison-header">
-          <p className="comparison-eyebrow">DESIGN vs. REALITY</p>
-          <h2 className="comparison-title">設計與落地，眼見為憑</h2>
-          <p className="comparison-subtitle">
-            許多裝修最怕「設計圖好看，實際落地卻走樣」。
-            南源從材料源頭與施工細節雙重把關，確保所見即所得——
-            以下是同一空間的設計模擬與完工實景真實對照。
-          </p>
-        </div>
-
-        <div className="comparison-panels">
-          {/* 左：設計模擬圖 */}
-          <div className="comparison-panel">
-            <img
-              className="comparison-panel-image"
-              src={compareRender}
-              alt="設計模擬圖"
-              loading="lazy"
-            />
-            <span className="comparison-panel-label">設計模擬圖 / RENDER</span>
+      {/* ══════════════════════════════════════════════════════════════════
+          §3  ABOUT NANYUAN — 滿版職人背景品牌介紹
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="about-section" aria-label="關於南源">
+        <img
+          className="about-bg-image"
+          src={aboutBrandBg}
+          alt=""
+          loading="lazy"
+        />
+        <div className="about-overlay" />
+        <div className="about-inner">
+          <div className="about-left">
+            <p className="about-eyebrow">ABOUT NANYUAN</p>
+            <h2 className="about-title">三十年職人傳承</h2>
+            <p className="about-title-en">CRAFTSMANSHIP SINCE 1995</p>
           </div>
-
-          {/* 右：實景完工照 */}
-          <div className="comparison-panel">
-            <img
-              className="comparison-panel-image"
-              src={compareReality}
-              alt="實景完工照"
-              loading="lazy"
-            />
-            <span className="comparison-panel-label">實景完工照 / REALITY</span>
+          <div className="about-right">
+            <p className="about-desc">
+              南源木材創立於上一個世代的木業全盛時期，三十年來始終堅守「源頭理解、細節品質、誠信透明」的品牌信條。
+              我們深信，一個家的溫度不該只停留在設計圖上——它應該從每一片木紋的觸感、每一道榫卯的密合、
+              每一次與屋主真誠的溝通中，被真實地建構出來。只為健康成家，是南源永恆不變的初衷。
+            </p>
+            <Link to="/about" className="capsule-link">
+              探索品牌故事 ➜
+            </Link>
           </div>
         </div>
       </section>
 
 
-      {/* ══════════════════════════════════════════════════════════
-          §4  PAGE TEASERS — 三大內頁導覽
-      ══════════════════════════════════════════════════════════ */}
-      <div className="page-teasers">
-
-        {/* ── 4-A：關於南源 ── */}
-        <div className="teaser-block">
-          <div className="teaser-inner">
-            <p className="teaser-eyebrow">ABOUT NANYUAN</p>
-            <h2 className="teaser-title">三十年職人傳承，只為健康成家</h2>
-            <p className="teaser-desc">
-              南源木材創立於上一個世代的木業全盛時期，三十年來始終堅守「源頭理解、細節品質、誠信透明」的品牌信條。
-              我們深信，一個家的溫度不該只停留在設計圖上——它應該從每一片木紋的觸感、每一道榫卯的密合、
-              每一次與屋主真誠的溝通中，被真實地建構出來。
-            </p>
-            <Link to="/about" className="teaser-link">
-              探索品牌故事 ➜
-            </Link>
-          </div>
+      {/* ══════════════════════════════════════════════════════════════════
+          §4  PROCESS TIMELINE — 圖形化六大職人流程軸
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="process-section" aria-label="服務流程">
+        <div className="process-header">
+          <p className="process-eyebrow">OUR PROCESS</p>
+          <h2 className="process-title">六大職人流程，從諮詢到售後</h2>
+          <p className="process-subtitle">
+            每一個環節都是不可跳過的儀式。一條龍整合服務，全程只需面對一個值得信賴的專業團隊。
+          </p>
         </div>
 
-        {/* ── 4-B：服務流程 ── */}
-        <div className="teaser-block">
-          <div className="teaser-inner">
-            <p className="teaser-eyebrow">OUR PROCESS</p>
-            <h2 className="teaser-title">六大職人流程，從諮詢到售後</h2>
-            <p className="teaser-desc">
-              初步諮詢、現場丈量、方案設計、材料精選、精工施作、驗收售後——
-              南源將每一個環節都視為不可跳過的儀式。我們以「一條龍整合服務」取代傳統碎片化發包，
-              讓業主從第一通電話到最終入住，全程只需面對一個值得信賴的專業團隊。
-            </p>
-            <Link to="/services" className="teaser-link">
-              查看完整流程 ➜
-            </Link>
-          </div>
-        </div>
-
-        {/* ── 4-C：作品案例 ── */}
-        <div className="teaser-block">
-          <div className="teaser-inner">
-            <p className="teaser-eyebrow">FEATURED PROJECTS</p>
-            <h2 className="teaser-title">匠心落地，經典案例</h2>
-            <p className="teaser-desc">
-              從北歐極簡小宅到現代奢華大宅，南源以木為魂，
-              將每一個空間雕琢成獨一無二的生活藝術品。
-            </p>
-            <div className="teaser-project-grid">
-              {PROJECT_TEASERS.map((proj) => (
-                <div className="teaser-project-card" key={proj.name}>
-                  <img src={proj.image} alt={proj.name} loading="lazy" />
-                  <div className="teaser-project-card-overlay">
-                    <span className="teaser-project-card-name">{proj.name}</span>
-                  </div>
-                </div>
-              ))}
+        <div className="process-timeline">
+          {PROCESS_STEPS.map((step) => (
+            <div className="process-node" key={step.number}>
+              <p className="process-node-number">{step.number}</p>
+              <h3 className="process-node-title">{step.title}</h3>
+              <p className="process-node-desc">{step.desc}</p>
             </div>
-            <Link to="/projects" className="teaser-link">
-              瀏覽更多案例 ➜
-            </Link>
-          </div>
+          ))}
         </div>
 
-      </div>
-      {/* §5 — <CTA /> 由 Footer.tsx 全局統一掛載，此處不重複渲染 */}
+        <div className="process-footer">
+          <Link to="/services" className="capsule-link">
+            查看完整流程 ➜
+          </Link>
+        </div>
+      </section>
+
+
+      {/* ══════════════════════════════════════════════════════════════════
+          §5  COMPARISON SLIDER — 推拉式前後對照滑桿
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="comparison-section" aria-label="設計與落地對照">
+        <div className="comparison-header">
+          <p className="comparison-eyebrow">DESIGN vs. REALITY</p>
+          <h2 className="comparison-title">設計與落地，眼見為憑</h2>
+          <p className="comparison-subtitle">
+            許多裝修最怕「設計圖好看，實際落地卻走樣」。
+            南源從材料源頭與施工細節雙重把關，確保所見即所得。
+            請拖曳中央滑桿，親手體驗設計圖與完工實景的無縫切換。
+          </p>
+        </div>
+
+        <div className="comparison-slider" ref={sliderContainerRef}>
+
+          {/* 底層：實景完工照（滿版鋪底） */}
+          <img
+            className="comparison-slider-bg"
+            src={compareReality}
+            alt="實景完工照"
+            loading="lazy"
+          />
+
+          {/* 上層：設計模擬圖（寬度由 --slider-pos 剪裁） */}
+          <div className="comparison-slider-overlay">
+            <img
+              className="comparison-slider-fg"
+              src={compareRender}
+              alt="設計模擬圖"
+              loading="lazy"
+            />
+          </div>
+
+          {/* 視覺把手：金色垂直中線 + 圓形拖曳鈕 */}
+          <div className="comparison-slider-handle">
+            <div className="comparison-slider-handle-circle">
+              <span className="comparison-slider-arrows">◀ ▶</span>
+            </div>
+          </div>
+
+          {/* 左右標籤 */}
+          <div className="comparison-slider-labels">
+            <span className="comparison-slider-label">設計模擬圖 / RENDER</span>
+            <span className="comparison-slider-label">實景完工照 / REALITY</span>
+          </div>
+
+          {/* 透明互動控制條 */}
+          <input
+            type="range"
+            className="comparison-slider-input"
+            min="0"
+            max="100"
+            value={sliderPos}
+            onChange={handleSliderChange}
+            aria-label="對照滑桿"
+          />
+
+        </div>
+      </section>
+
+
+      {/* ══════════════════════════════════════════════════════════════════
+          §6  PROJECTS WALL — 精選案例卡片牆
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="projects-section" aria-label="精選案例">
+        <div className="projects-header">
+          <p className="projects-eyebrow">FEATURED PROJECTS</p>
+          <h2 className="projects-title">匠心落地，經典案例</h2>
+        </div>
+
+        <div className="projects-grid">
+          {PROJECT_CARDS.map((proj) => (
+            <div className="projects-card" key={proj.name}>
+              <img
+                className="projects-card-image"
+                src={proj.image}
+                alt={proj.name}
+                loading="lazy"
+              />
+              <div className="projects-card-overlay">
+                <h3 className="projects-card-name">{proj.name}</h3>
+                <p className="projects-card-category">{proj.category}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="projects-footer">
+          <Link to="/projects" className="capsule-link">
+            瀏覽更多案例 ➜
+          </Link>
+        </div>
+      </section>
+
+      {/* §7 — <CTA /> 由 Footer.tsx 全局統一掛載，此處不重複渲染 */}
 
     </div>
   );
