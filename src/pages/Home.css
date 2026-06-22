@@ -1,726 +1,580 @@
-/* ═══════════════════════════════════════════════════════════════
-   HOME.CSS — 南源木材 · NANYUAN TIMBER DESIGN
-   ─────────────────────────────────────────────────────────────
-   ARCHITECTURE:
-   1. Overflow safety: html/body/#root must NOT have overflow:hidden.
-      Declared explicitly here to defeat any global resets.
-   2. Preloader curtain (.brand-intro-viewport) — fixed z:9999,
-      logo glows on frame 0 via @keyframes (zero delay).
-      --exit variant dissolves via CSS transition.
-   3. Scroll theatre: 400vh container + sticky stage.
-      3 CSS states per slide: future / active / past.
-   4. Comparison slider structural rules.
-   ZERO inline style props. ZERO <style> tags in TSX.
-═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   Home.css — 南源木材首頁完全體樣式表（From-Scratch Rewrite）
+   ═══════════════════════════════════════════════════════════════════════
+   五大版塊：
+     1. Brand Intro Viewport — 0ms 瞬間發光前導帷幕
+     2. Hero Scroll Theatre  — 400vh sticky 優點鎖定劇場
+     3. Comparison Section   — 設計 vs. 實景對照面板
+     4. Page Teasers         — 三大內頁導覽
+     5. Responsive & GPU     — RWD + 硬體加速
+   ═══════════════════════════════════════════════════════════════════════ */
 
 
-/* ──────────────────────────────────────────────────────────────
-   ★ STICKY SAFETY ZONE ★
-   overflow:hidden on ANY ancestor kills position:sticky.
-   We explicitly override here for html, body, and #root
-   so the 400vh scroll theatre works unconditionally.
-   ────────────────────────────────────────────────────────────── */
-html,
-body {
-  overflow-x: hidden;
-  overflow-y: auto;   /* explicitly auto — NOT hidden */
+/* ═══════════════════════════════════════════════════════════════════════
+   §1  BRAND INTRO VIEWPORT — 全螢幕品牌序幕
+   ═══════════════════════════════════════════════════════════════════════ */
+.brand-intro-viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #050505;
+  will-change: transform, opacity;
 }
 
-#root {
-  overflow: visible;  /* must not be hidden */
+/* ── 退場帷幕穿透淡出 ── */
+.brand-intro-viewport.viewport-exit-slide {
+  animation: introExitSlide 1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
-
-/* ──────────────────────────────────────────────────────────────
-   KEYFRAMES
-   ────────────────────────────────────────────────────────────── */
-
-/*
-  Brand logo glow — ZERO animation-delay.
-  Fires on the very first CSS paint frame.
-  Phases:
-    0%→18%  : fade in from invisible + gold glow builds
-    18%→80% : holds at full luminance
-    80%→100%: slight dim before JS curtain exits at 2.5s
-*/
-@keyframes brandGlow {
-  0%   {
-    opacity:     0;
-    text-shadow: none;
-  }
-  18%  {
+@keyframes introExitSlide {
+  0% {
     opacity: 1;
-    text-shadow:
-      0 0  28px rgba(197, 168, 128, 0.75),
-      0 0  60px rgba(197, 168, 128, 0.50),
-      0 0 120px rgba(197, 168, 128, 0.28);
-  }
-  80%  {
-    opacity: 1;
-    text-shadow:
-      0 0  28px rgba(197, 168, 128, 0.75),
-      0 0  60px rgba(197, 168, 128, 0.50),
-      0 0 120px rgba(197, 168, 128, 0.28);
+    transform: scale(1);
   }
   100% {
-    opacity: 0.72;
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+/* ── 品牌大字：0ms 瞬間掛載發光淡入（禁止 animation-delay） ── */
+.brand-intro-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  letter-spacing: 0.35em;
+  color: #c5a880;
+  margin: 0 0 1rem 0;
+  animation: brandGlowIn 2s ease-out forwards;
+}
+
+.brand-intro-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.85rem, 2vw, 1.4rem);
+  letter-spacing: 0.6em;
+  color: rgba(197, 168, 128, 0.6);
+  margin: 0;
+  animation: brandGlowIn 2s ease-out forwards;
+}
+
+@keyframes brandGlowIn {
+  0% {
+    opacity: 0;
     text-shadow:
-      0 0 20px rgba(197, 168, 128, 0.50),
-      0 0 40px rgba(197, 168, 128, 0.28);
+      0 0 0 transparent,
+      0 0 0 transparent;
   }
-}
-
-/* Scroll cue bounce */
-@keyframes scrollBounce {
-  0%, 100% { transform: translateY(0);   }
-  50%       { transform: translateY(8px); }
-}
-
-/* Progress rail fill — extends smoothly on each activeIndex step */
-@keyframes railPulse {
-  from { opacity: 0.6; }
-  to   { opacity: 1;   }
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   PAGE SHELL
-   ────────────────────────────────────────────────────────────── */
-.home-page {
-  background: #050505;
-  min-height: 100vh;
-  /* GPU compositing — critical for sticky scroll performance on mobile */
-  -webkit-overflow-scrolling: touch;
-  overflow-x: hidden;
-  /* Must NOT be overflow:hidden — would kill sticky */
-  overflow-y: visible;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   PRELOADER CURTAIN — .brand-intro-viewport
-   ─────────────────────────────────────────────────────────────
-   Base:  fixed, full-screen, z:9999, opaque black.
-          Transition declared on BASE so --exit activates it.
-
-   Exit:  JS adds --exit at 2500ms.
-          opacity:0 + scale(1.06) curtain dissolve.
-          pointer-events:none so page is interactive underneath.
-          JS removes from DOM at 3500ms.
-═══════════════════════════════════════════════════════════════ */
-.brand-intro-viewport {
-  position:        fixed;
-  inset:           0;
-  z-index:         9999;
-  background:      #0a0a0a;
-  display:         flex;
-  justify-content: center;
-  align-items:     center;
-  /* Transition on BASE — fires when --exit class is added */
-  transition:
-    opacity   1s cubic-bezier(0.85, 0, 0.15, 1),
-    transform 1s cubic-bezier(0.85, 0, 0.15, 1);
-  will-change: opacity, transform;
-}
-
-.brand-intro-viewport--exit {
-  opacity:        0;
-  transform:      scale(1.06);
-  pointer-events: none;
-}
-
-/* Logo content wrapper */
-.brand-intro-logo {
-  display:        flex;
-  flex-direction: column;
-  align-items:    center;
-  gap:            clamp(10px, 1.6vh, 18px);
-  pointer-events: none;
-}
-
-/*
-  ★ animation-delay: 0ms ★
-  Glow is visible on the very first frame — no waiting.
-*/
-.brand-intro-zh {
-  font-size:       clamp(2.5rem, 6vw, 4.5rem);
-  font-weight:     900;
-  letter-spacing:  0.3em;
-  color:           #ffffff;
-  line-height:     1;
-  margin:          0;
-  /* @keyframes starts at 0ms */
-  animation:       brandGlow 2.5s ease-out 0ms forwards;
-}
-
-.brand-intro-en {
-  font-size:       clamp(0.5rem, 1.1vw, 0.84rem);
-  font-weight:     200;
-  letter-spacing:  0.52em;
-  color:           rgba(197, 168, 128, 0.50);
-  text-transform:  uppercase;
-  margin:          0;
-  /* Tiny offset so English appears just after kanji */
-  animation:       brandGlow 2.5s ease-out 0.15s forwards;
-  opacity:         0;
-}
-
-@media (max-width: 768px) {
-  .brand-intro-zh {
-    font-size:      clamp(1.8rem, 8vw, 2.6rem);
-    letter-spacing: 0.18em;
+  50% {
+    opacity: 0.8;
+    text-shadow:
+      0 0 40px rgba(197, 168, 128, 0.8),
+      0 0 80px rgba(197, 168, 128, 0.4),
+      0 0 120px rgba(197, 168, 128, 0.2);
+  }
+  100% {
+    opacity: 1;
+    text-shadow:
+      0 0 20px rgba(197, 168, 128, 0.35),
+      0 0 60px rgba(197, 168, 128, 0.15);
   }
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
-   SCROLL THEATRE — 400vh container + sticky stage
-   ─────────────────────────────────────────────────────────────
-   CRITICAL ARCHITECTURE:
+/* ═══════════════════════════════════════════════════════════════════════
+   §2  HERO SCROLL THEATRE — 400vh 優點鎖定劇場
+   ═══════════════════════════════════════════════════════════════════════ */
 
-   .hero-scroll-container
-     height: 400vh            ← creates the scroll track
-     position: relative       ← needed for sticky child
-     overflow: visible        ← must NOT be hidden
-
-   .hero-sticky-stage
-     position: sticky         ← glued to top while container scrolls
-     top: 0                   ← sticks at viewport top
-     height: 100vh            ← fills exactly one viewport
-     overflow: visible        ← must NOT be hidden
-
-   The browser scrolls the container (400vh) while the stage
-   stays fixed at the top. The RAF loop in Home.tsx reads
-   containerRef.getBoundingClientRect().top each frame and
-   maps it to activeIndex 0–3.
-═══════════════════════════════════════════════════════════════ */
+/* ── 外層滾動大容器 ── */
 .hero-scroll-container {
-  height:   400vh;
   position: relative;
-  overflow: visible; /* ★ MUST NOT be hidden — kills sticky ★ */
+  height: 400vh;
+  width: 100%;
 }
 
+/* ── 內層 sticky 劇場面板 ── */
 .hero-sticky-stage {
   position: sticky;
-  top:      0;
-  height:   100vh;
-  overflow: visible !important; /* ★ Belt-and-suspenders override ★ */
-  width:    100%;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: visible !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #050505;
+  will-change: transform;
 }
 
+/* ── 背景圖片容器（全幅鋪底） ── */
+.hero-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
 
-/* ── Background images — crossfade via opacity ── */
-.hero-bg {
-  position:    absolute;
-  inset:       0;
-  z-index:     0;
-  opacity:     0;
-  transition:  opacity 0.85s ease-in-out;
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: opacity;
 }
 
-.hero-bg--active {
+.hero-bg-image.hero-bg-active {
   opacity: 1;
 }
 
-.hero-bg-img {
-  width:      100%;
-  height:     100%;
-  object-fit: cover;
-  display:    block;
-}
-
-/* ── Dark gradient overlay ── */
+/* ── 暗色遮罩（保證字卡可讀性） ── */
 .hero-overlay {
-  position:       absolute;
-  inset:          0;
-  z-index:        1;
-  background:     linear-gradient(
-    180deg,
-    rgba(5, 5, 5, 0.40) 0%,
-    rgba(5, 5, 5, 0.50) 50%,
-    rgba(5, 5, 5, 0.82) 100%
-  );
-  pointer-events: none;
-}
-
-/* ── Radial vignette ── */
-.hero-vignette {
-  position:       absolute;
-  inset:          0;
-  z-index:        2;
-  background:     radial-gradient(
-    ellipse 55% 55% at 50% 50%,
-    transparent          0%,
-    rgba(5, 5, 5, 0.34)  58%,
-    rgba(5, 5, 5, 0.86)  100%
-  );
-  pointer-events: none;
-}
-
-/* ── Bracket frame corners ── */
-.hero-frame {
-  position:       absolute;
-  inset:          clamp(18px, 3.5vw, 56px);
-  z-index:        3;
-  pointer-events: none;
-}
-
-.hero-corner {
   position: absolute;
-  width:    clamp(14px, 2.5vw, 34px);
-  height:   clamp(14px, 2.5vw, 34px);
-}
-
-.hero-corner--tl {
-  top:  0; left:  0;
-  border-top:  1px solid rgba(197, 168, 128, 0.22);
-  border-left: 1px solid rgba(197, 168, 128, 0.22);
-}
-.hero-corner--tr {
-  top:  0; right: 0;
-  border-top:   1px solid rgba(197, 168, 128, 0.22);
-  border-right: 1px solid rgba(197, 168, 128, 0.22);
-}
-.hero-corner--bl {
-  bottom: 0; left: 0;
-  border-bottom: 1px solid rgba(197, 168, 128, 0.22);
-  border-left:   1px solid rgba(197, 168, 128, 0.22);
-}
-.hero-corner--br {
-  bottom: 0; right: 0;
-  border-bottom: 1px solid rgba(197, 168, 128, 0.22);
-  border-right:  1px solid rgba(197, 168, 128, 0.22);
-}
-
-/* ── Content deck — centred in stage ── */
-.hero-content {
-  position:        relative;
-  z-index:         10;
-  display:         flex;
-  flex-direction:  column;
-  align-items:     center;
-  justify-content: center;
-  height:          100%;
-  text-align:      center;
-  padding:         0 clamp(1rem, 5vw, 4rem);
-  max-width:       1080px;
-  margin:          0 auto;
-}
-
-/* ── Eyebrow ── */
-.hero-eyebrow {
-  display:       flex;
-  align-items:   center;
-  gap:           12px;
-  margin-bottom: clamp(1.4rem, 2.8vw, 2.2rem);
-}
-
-.hero-eyebrow-line {
-  display:    block;
-  width:      30px;
-  height:     1px;
+  inset: 0;
+  z-index: 2;
   background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(197, 168, 128, 0.26),
-    transparent
-  );
-}
-
-.hero-eyebrow-text {
-  font-size:      9px;
-  font-weight:    200;
-  letter-spacing: 0.34em;
-  color:          rgba(197, 168, 128, 0.40);
-  text-transform: uppercase;
-}
-
-/* ── Deck: number left, text right ── */
-.hero-deck {
-  display:         flex;
-  align-items:     center;
-  gap:             clamp(1.8rem, 4.5vw, 4.5rem);
-  width:           100%;
-  justify-content: center;
-}
-
-/* ──────────────────────────────────────────────────────────────
-   GIANT NUMBERS — 3-STATE CSS MACHINE
-   ─────────────────────────────────────────────────────────────
-   Default (future):   translateX(+80px)   opacity:0
-   .hero-num--active:  translateX(0)       opacity:1   gold glow
-   .hero-num--past:    translateX(-80px)   opacity:0
-   ────────────────────────────────────────────────────────────── */
-.hero-numbox {
-  position:    relative;
-  flex-shrink: 0;
-  width:       clamp(72px, 13vw, 200px);
-  height:      clamp(72px, 13vw, 200px);
-}
-
-.hero-num {
-  /* Layout */
-  position:         absolute;
-  inset:            0;
-  display:          flex;
-  align-items:      center;
-  justify-content:  center;
-  /* Typography */
-  font-size:        clamp(3.2rem, 11vw, 10rem);
-  font-weight:      900;
-  letter-spacing:   -0.06em;
-  line-height:      1;
-  color:            transparent;
-  -webkit-text-stroke: 1px rgba(197, 168, 128, 0.06);
-  /* Interaction */
-  pointer-events:   none;
-  user-select:      none;
-  /* DEFAULT STATE: future — positioned right, invisible */
-  opacity:          0;
-  transform:        translateX(80px) scale(0.88);
-  transition:
-    opacity   0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-/* ACTIVE STATE: centred, fully visible, gold glow */
-.hero-num--active {
-  opacity:                  1;
-  transform:                translateX(0) scale(1);
-  background:               linear-gradient(
     135deg,
-    #C5A880,
-    rgba(197, 168, 128, 0.26)
+    rgba(5, 5, 5, 0.82) 0%,
+    rgba(5, 5, 5, 0.55) 50%,
+    rgba(5, 5, 5, 0.72) 100%
   );
-  -webkit-background-clip:  text;
-  background-clip:          text;
-  -webkit-text-stroke:      1px rgba(197, 168, 128, 0.16);
-  filter:
-    drop-shadow(0 0 36px rgba(197, 168, 128, 0.55))
-    drop-shadow(0 0 70px rgba(197, 168, 128, 0.20));
+  pointer-events: none;
 }
 
-/* PAST STATE: slid to left, invisible */
-.hero-num--past {
-  opacity:   0;
-  transform: translateX(-80px) scale(0.88);
+/* ── 前景內容層 ── */
+.hero-content-layer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 clamp(2rem, 5vw, 6rem);
+  box-sizing: border-box;
+  height: 100%;
 }
 
-/* ──────────────────────────────────────────────────────────────
-   SLIDE TEXT CARDS — 3-STATE CSS MACHINE
-   ─────────────────────────────────────────────────────────────
-   Default (future):    translateX(+100%)  opacity:0   (right)
-   .hero-slide--active: translateX(0)      opacity:1   (centre)
-   .hero-slide--past:   translateX(-100%)  opacity:0   (left)
-
-   Transitions use easing with a slight stagger so number leads
-   the text card by ~100ms.
-   ────────────────────────────────────────────────────────────── */
-.hero-textbox {
-  position:   relative;
-  flex:       1;
-  min-height: clamp(95px, 12vw, 170px);
-  text-align: left;
-  overflow:   hidden; /* clip the sliding cards inside textbox */
-}
-
-.hero-slide {
-  /* Layout */
-  position:        absolute;
-  inset:           0;
-  display:         flex;
-  flex-direction:  column;
-  justify-content: center;
-  /* Interaction */
-  pointer-events:  none;
-  /* DEFAULT STATE: future — right side, invisible */
-  opacity:         0;
-  transform:       translateX(100%);
-  transition:
-    opacity   0.70s 0.10s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.80s 0.10s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-/* ACTIVE STATE: centre, fully visible */
-.hero-slide--active {
-  opacity:        1;
-  transform:      translateX(0);
-  pointer-events: auto;
-}
-
-/* PAST STATE: left side, invisible */
-.hero-slide--past {
-  opacity:   0;
-  transform: translateX(-100%);
-}
-
-/* Slide typography */
-.hero-slide-zh {
-  font-size:   clamp(1.5rem, 3.6vw, 2.7rem) !important;
-  font-weight: 900 !important;
-  color:       #ffffff;
-  text-shadow: 0 0 26px rgba(255, 255, 255, 0.16);
-  margin:      0 0 0.26rem;
-  line-height: 1.15;
-}
-
-.hero-slide-en {
-  font-size:      clamp(0.46rem, 0.88vw, 0.72rem);
-  font-weight:    200;
-  letter-spacing: 0.35em;
-  color:          rgba(197, 168, 128, 0.42);
-  text-transform: uppercase;
-  margin:         0 0 0.62rem;
-}
-
-.hero-slide-wire {
-  width:         clamp(20px, 3.2vw, 40px);
-  height:        1px;
-  background:    linear-gradient(
-    90deg,
-    #C5A880,
-    rgba(197, 168, 128, 0.08)
-  );
-  box-shadow:    0 0 8px rgba(197, 168, 128, 0.50);
-  margin-bottom: 0.62rem;
-}
-
-.hero-slide-desc {
-  font-size:      clamp(0.74rem, 1.02vw, 0.90rem);
-  font-weight:    300;
-  letter-spacing: 0.048em;
-  color:          rgba(255, 255, 255, 0.42);
-  line-height:    1.88;
-  max-width:      410px;
-  margin:         0;
-}
-
-/* ──────────────────────────────────────────────────────────────
-   PROGRESS RAIL — right edge, shows scroll depth
-   ─────────────────────────────────────────────────────────────
-   A thin vertical line on the right side of the stage.
-   The fill div grows in 4 steps corresponding to activeIndex.
-   CSS classes hero-progress-fill--0/1/2/3 set the height.
-   ────────────────────────────────────────────────────────────── */
-.hero-progress-rail {
-  position:         absolute;
-  right:            clamp(16px, 3vw, 40px);
-  top:              20%;
-  bottom:           20%;
-  width:            1px;
-  background:       rgba(197, 168, 128, 0.12);
-  z-index:          20;
-  border-radius:    1px;
-  overflow:         hidden;
-}
-
-.hero-progress-fill {
-  width:            100%;
-  background:       linear-gradient(
-    to bottom,
-    #C5A880,
-    rgba(197, 168, 128, 0.40)
-  );
-  box-shadow:       0 0 8px rgba(197, 168, 128, 0.60);
-  border-radius:    1px;
-  transition:       height 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-  animation:        railPulse 2s ease-in-out infinite alternate;
-}
-
-/* Height steps — one per activeIndex */
-.hero-progress-fill--0 { height: 25%; }
-.hero-progress-fill--1 { height: 50%; }
-.hero-progress-fill--2 { height: 75%; }
-.hero-progress-fill--3 { height: 100%; }
-
-/* ── Scroll cue — shown only on first slide (index 0) ── */
-.hero-scroll-cue {
-  position:        absolute;
-  bottom:          clamp(0.9rem, 3.2vh, 2rem);
-  left:            50%;
-  transform:       translateX(-50%);
-  z-index:         20;
-  display:         flex;
-  flex-direction:  column;
-  align-items:     center;
-  gap:             0.4rem;
-  pointer-events:  none;
-}
-
-.hero-scroll-label {
-  font-size:      clamp(7px, 0.82vw, 9px);
-  letter-spacing: 0.28em;
-  color:          rgba(197, 168, 128, 0.36);
-  font-weight:    200;
-}
-
-.hero-scroll-arrow {
-  color:     rgba(197, 168, 128, 0.36);
-  font-size: 1rem;
-  animation: scrollBounce 1.6s ease-in-out infinite;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   SECTION COMMON
-═══════════════════════════════════════════════════════════════ */
-.home-section-h {
-  font-size:      clamp(1.75rem, 4.8vw, 3.1rem) !important;
-  font-weight:    900 !important;
-  color:          #C5A880;
-  text-shadow:    0 0 26px rgba(197, 168, 128, 0.50);
-  margin-bottom:  0.75rem;
-  line-height:    1.1;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   COMPARISON SLIDER
-═══════════════════════════════════════════════════════════════ */
-.home-compare {
-  background:  #050505;
-  padding-top: clamp(3.2rem, 7.5vw, 4.8rem);
-  border-top:  1px solid rgba(255, 255, 255, 0.04);
-}
-
-.home-compare-p {
-  font-size:      clamp(0.78rem, 1.22vw, 0.96rem);
-  font-weight:    300;
-  letter-spacing: 0.07em;
-  color:          rgba(255, 255, 255, 0.40);
-  max-width:      660px;
-  line-height:    1.82;
-  margin-bottom:  2.4rem;
-}
-
-.cmp-box {
-  position:    relative;
-  width:       100%;
-  height:      clamp(240px, 48vh, 68vh);
-  cursor:      ew-resize;
-  user-select: none;
-  overflow:    hidden;
-}
-
-.cmp-layer {
+/* ── 左側巨型幾何序號 ── */
+.hero-giant-number {
   position: absolute;
-  inset:    0;
+  left: clamp(1rem, 4vw, 5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: clamp(8rem, 22vw, 20rem);
+  line-height: 1;
+  color: rgba(197, 168, 128, 0.06);
+  letter-spacing: -0.04em;
+  text-shadow:
+    0 0 60px rgba(197, 168, 128, 0.08),
+    0 0 120px rgba(197, 168, 128, 0.04);
+  user-select: none;
+  pointer-events: none;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
 }
 
-.cmp-img {
-  width:      100%;
-  height:     100%;
+/* ── 字卡滑入載具（右側佈局） ── */
+.hero-cards-track {
+  position: relative;
+  margin-left: auto;
+  width: 55%;
+  max-width: 700px;
+  height: auto;
+  display: flex;
+  align-items: center;
+}
+
+/* ── 單張優點字卡 ── */
+.hero-card {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  padding: clamp(2rem, 4vw, 4rem);
+  box-sizing: border-box;
+  will-change: transform, opacity;
+  transition:
+    transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.6s ease;
+}
+
+/* 預設：字卡等候在右側外圍 */
+.hero-card.card-right {
+  transform: translate(100%, -50%);
+  opacity: 0;
+}
+
+/* 激活：絲滑向左滑入復位 */
+.hero-card.card-active {
+  transform: translate(0, -50%);
+  opacity: 1;
+}
+
+/* 已過：向左側滑出 */
+.hero-card.card-left {
+  transform: translate(-100%, -50%);
+  opacity: 0;
+}
+
+/* ── 字卡內部排版 ── */
+.hero-card-number {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  letter-spacing: 0.25em;
+  color: #c5a880;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+}
+
+.hero-card-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  line-height: 1.25;
+  color: #fff;
+  margin: 0 0 1.2rem 0;
+  letter-spacing: 0.05em;
+}
+
+.hero-card-desc {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  max-width: 520px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   §3  COMPARISON SECTION — 設計 vs. 實景對照面板
+   ═══════════════════════════════════════════════════════════════════════ */
+.comparison-section {
+  position: relative;
+  padding: clamp(5rem, 10vh, 10rem) 0;
+  background: #050505;
+}
+
+.comparison-header {
+  text-align: center;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+  padding: 0 clamp(1.5rem, 4vw, 4rem);
+}
+
+.comparison-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: #c5a880;
+  margin-bottom: 1.5rem;
+}
+
+.comparison-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: #fff;
+  margin: 0 0 1rem 0;
+  letter-spacing: 0.08em;
+}
+
+.comparison-subtitle {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ── 對照面板容器（雙列並排） ── */
+.comparison-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 4rem);
+}
+
+.comparison-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  aspect-ratio: 4 / 3;
+  cursor: crosshair;
+}
+
+.comparison-panel-image {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  display:    block;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
 }
 
-.cmp-badge {
-  position:        absolute;
-  bottom:          1rem;
-  font-size:       clamp(8px, 0.95vw, 11px);
-  letter-spacing:  0.20em;
-  font-weight:     300;
-  color:           #ffffff;
-  background:      rgba(5, 5, 5, 0.58);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding:         5px 13px;
+.comparison-panel:hover .comparison-panel-image {
+  transform: scale(1.03);
 }
 
-.cmp-badge--r { right: 1rem; }
-.cmp-badge--l { left:  1rem; }
-
-.cmp-layer--reality { z-index: 1; }
-.cmp-layer--render  { z-index: 2; }
-
-.cmp-divider {
-  position:   absolute;
-  top:        0;
-  bottom:     0;
-  left:       50%;
-  transform:  translateX(-50%);
-  width:      2px;
-  background: #C5A880;
-  box-shadow: 0 0 20px rgba(197, 168, 128, 0.80);
-  z-index:    10;
-}
-
-.cmp-knob {
-  position:        absolute;
-  top:             50%;
-  left:            50%;
-  transform:       translate(-50%, -50%);
-  width:           38px;
-  height:          38px;
-  border-radius:   50%;
-  border:          1px solid #C5A880;
-  background:      rgba(5, 5, 5, 0.80);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-}
-
-.cmp-arrows {
-  color:     #C5A880;
-  font-size: 12px;
+/* ── 高奢微光標籤 ── */
+.comparison-panel-label {
+  position: absolute;
+  bottom: clamp(1rem, 2vw, 1.8rem);
+  left: clamp(1rem, 2vw, 1.8rem);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.65rem, 1vw, 0.8rem);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(5, 5, 5, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.6em 1.4em;
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  border-radius: 4px;
+  text-shadow: 0 0 12px rgba(197, 168, 128, 0.35);
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   §4  PAGE TEASERS — 三大內頁導覽區塊
+   ═══════════════════════════════════════════════════════════════════════ */
+.page-teasers {
+  background: #0a0a0a;
+}
 
-/* ── Mobile ── */
-@media (max-width: 768px) {
-  .hero-content { padding: 0 0.9rem; }
-  .hero-frame   { inset: 11px; }
-  .hero-corner  { width: 12px; height: 12px; }
+.teaser-block {
+  position: relative;
+  padding: clamp(4rem, 8vh, 8rem) clamp(1.5rem, 5vw, 6rem);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.08);
+}
 
-  .hero-deck {
+.teaser-block:last-child {
+  border-bottom: none;
+}
+
+.teaser-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.teaser-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.65rem, 1vw, 0.8rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: #c5a880;
+  margin-bottom: 1.5rem;
+}
+
+.teaser-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  color: #fff;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: 0.06em;
+}
+
+.teaser-desc {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.9rem, 1.4vw, 1.08rem);
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 2.5rem 0;
+  max-width: 720px;
+}
+
+/* ── 金色膠囊導覽按鈕 ── */
+.teaser-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  font-weight: 300;
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  letter-spacing: 0.15em;
+  color: #c5a880;
+  border: 1px solid rgba(197, 168, 128, 0.35);
+  border-radius: 100px;
+  padding: 0.85em 2.2em;
+  text-decoration: none;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.teaser-link:hover {
+  background: rgba(197, 168, 128, 0.12);
+  border-color: #c5a880;
+  color: #fff;
+  box-shadow: 0 0 30px rgba(197, 168, 128, 0.15);
+}
+
+/* ── 作品案例小網格 ── */
+.teaser-project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.8rem, 1.5vw, 1.5rem);
+  margin-bottom: 2.5rem;
+}
+
+.teaser-project-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  aspect-ratio: 4 / 3;
+}
+
+.teaser-project-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.teaser-project-card:hover img {
+  transform: scale(1.05);
+}
+
+.teaser-project-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 5, 5, 0.85) 0%,
+    rgba(5, 5, 5, 0) 55%
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(0.8rem, 1.5vw, 1.5rem);
+}
+
+.teaser-project-card-name {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 900;
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  color: #fff;
+  letter-spacing: 0.06em;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   §5  RESPONSIVE & GPU ACCELERATION
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── 硬體加速 ── */
+.hero-scroll-container,
+.hero-sticky-stage,
+.hero-cards-track,
+.brand-intro-viewport {
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+}
+
+/* ── Tablet（≤1024px） ── */
+@media (max-width: 1024px) {
+  .hero-content-layer {
     flex-direction: column;
-    gap:            0.35rem;
+    justify-content: center;
+    padding: 0 clamp(1.5rem, 4vw, 3rem);
   }
 
-  .hero-numbox {
-    width:  54px;
-    height: 54px;
+  .hero-giant-number {
+    position: absolute;
+    left: 50%;
+    top: 15%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(6rem, 18vw, 14rem);
+    opacity: 0.5;
   }
 
-  .hero-textbox {
+  .hero-cards-track {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-card {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
     text-align: center;
-    min-height: 138px;
   }
 
-  .hero-slide { align-items: center; }
-  .hero-slide--active { align-items: center; }
-
-  .hero-slide-wire {
-    margin-left:  auto;
+  .hero-card-desc {
+    margin-left: auto;
     margin-right: auto;
   }
-
-  .hero-slide-desc { text-align: center; }
-
-  .hero-progress-rail { display: none; }
-
-  .cmp-box { height: 220px; }
 }
 
-/* ── Small mobile ── */
+/* ── Mobile（≤768px） ── */
+@media (max-width: 768px) {
+  .brand-intro-title {
+    letter-spacing: 0.2em;
+  }
+
+  .brand-intro-subtitle {
+    letter-spacing: 0.3em;
+  }
+
+  .hero-giant-number {
+    font-size: clamp(5rem, 28vw, 10rem);
+    top: 18%;
+  }
+
+  .hero-card {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .comparison-panels {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .teaser-project-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Small Mobile（≤480px） ── */
 @media (max-width: 480px) {
-  .hero-slide-zh { font-size: clamp(1.2rem, 5.8vw, 1.65rem) !important; }
-  .cmp-box       { height: 185px; }
-}
+  .hero-giant-number {
+    font-size: 5rem;
+    top: 20%;
+  }
 
-/* ── Large desktop ── */
-@media (min-width: 1400px) {
-  .hero-content { max-width: 1200px; }
-  .hero-numbox  { width: 240px; height: 240px; }
-  .cmp-box      { height: 68vh; }
-  .hero-frame   { inset: 76px; }
+  .teaser-project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card-title {
+    font-size: 1.5rem;
+  }
 }

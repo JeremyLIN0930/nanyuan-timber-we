@@ -1,363 +1,325 @@
-import React, { useState, useEffect, useRef } from 'react';
-
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
-/* ─────────────────────────────────────────────────────────────
-   HERO IMAGES — 4 dedicated shots, one per advantage
-───────────────────────────────────────────────────────────── */
-import img01 from '../assets/home-hero-material.jpg';
-import img02 from '../assets/home-hero-craft.jpg';
-import img03 from '../assets/home-hero-transparency.jpg';
-import img04 from '../assets/home-hero-realization.jpg';
+/* ═══════════════════════════════════════════════════════════════════════
+   Home.tsx — 南源木材首頁完全體（From-Scratch Rewrite）
+   ═══════════════════════════════════════════════════════════════════════
+   五大版塊：
+     §1  Brand Intro Viewport — 0ms 瞬間發光序幕（2.5s 退場 → 3.5s 銷毀）
+     §2  Hero Scroll Theatre  — 400vh sticky 優點鎖定劇場
+     §3  Comparison Section   — 設計模擬圖 vs. 實景完工照
+     §4  Page Teasers         — 關於南源 / 服務流程 / 作品案例
+     §5  公共底座             — <CTA /> 由 Footer.tsx 全局統一掛載
 
-/* ─────────────────────────────────────────────────────────────
-   COMPARISON IMAGES
-───────────────────────────────────────────────────────────── */
+   ⚠ 鐵律：零行內 style / 零 <style> 標籤 / 100% 樣式在 Home.css
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── HERO IMAGES — 每張對應一個優點 ─── */
+import heroImg01 from '../assets/home-hero-material.jpg';
+import heroImg02 from '../assets/home-hero-craft.jpg';
+import heroImg03 from '../assets/home-hero-transparency.jpg';
+import heroImg04 from '../assets/home-hero-realization.jpg';
+
+/* ─── COMPARISON IMAGES ─── */
 import compareRender  from '../assets/compare-render.jpg';
 import compareReality from '../assets/compare-reality.jpg';
 
-/* ─────────────────────────────────────────────────────────────
-   DATA — FOUR B2C ADVANTAGES
-   Index 0–3 maps directly to activeIndex 0–3.
-───────────────────────────────────────────────────────────── */
-const ADVANTAGES = [
+/* ─── PROJECTS TEASER THUMBNAILS ─── */
+import projectThumb01 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
+import projectThumb02 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
+import projectThumb03 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DATA — 四大優點資料陣列
+   ═══════════════════════════════════════════════════════════════════════ */
+interface Advantage {
+  number: string;
+  title: string;
+  desc: string;
+  image: string;
+}
+
+const ADVANTAGES: Advantage[] = [
   {
-    num:  '01',
-    zh:   '嚴選頂級建材',
-    en:   'PREMIUM ECO-MATERIALS',
-    desc: '採用 F1/F2 低甲醛環保綠建材，從源頭為您的健康嚴格把關。每一塊木料皆可溯源產地認證。',
-    img:  img01,
+    number: '01',
+    title: '嚴選頂級建材',
+    desc: '南源深入木材產地源頭，逐批精選北美硬楓木、歐洲白橡與日本檜木，每片板材皆經含水率、密度與紋理三重品管，確保您家中的每一寸木質，都是自然與工藝的極致呈現。',
+    image: heroImg01,
   },
   {
-    num:  '02',
-    zh:   '精細職人工藝',
-    en:   'ARTISAN PRECISION',
-    desc: '三十年資深木作老師傅手工微調，接合收口精度嚴控於 ±1mm 誤差內。匠心鑄就每一個傳世細節。',
-    img:  img02,
+    number: '02',
+    title: '精細職人工藝',
+    desc: '傳承三十年的老師傅手藝，從榫卯接合到漆面打磨，每一道工序都以「不可逆的細節堅持」為信條。機器量產無法複製的手感溫潤，正是南源木材作品歷久彌新的秘密。',
+    image: heroImg02,
   },
   {
-    num:  '03',
-    zh:   '透明報價零隱藏',
-    en:   'TOTAL TRANSPARENCY',
-    desc: '報價單逐項逐料公開透明，白紙黑字簽約承諾——工程中絕不惡意追加任何費用，安心施工。',
-    img:  img03,
+    number: '03',
+    title: '透明報價零隱藏',
+    desc: '業界首創「全明細攤開式報價」——材料品牌、工法規格、施作單價一目了然。拒絕模糊灌水、拒絕事後追加，讓您的每一分預算都花在看得見的品質上。',
+    image: heroImg03,
   },
   {
-    num:  '04',
-    zh:   '一條龍完美成家',
-    en:   'TURNKEY DREAM HOME',
-    desc: '從高精度 3D 設計模擬到自有工班落地，現場總監全程監督控管，讓您輕鬆入住夢想居所。',
-    img:  img04,
+    number: '04',
+    title: '一條龍完美成家',
+    desc: '從空間丈量、風格設計、建材採購到現場施工與驗收售後，南源提供一站式整合服務。您只需描繪理想生活的樣貌，剩下的，交給我們用木頭實現。',
+    image: heroImg04,
   },
-] as const;
+];
 
-/* ─────────────────────────────────────────────────────────────
-   COMPARISON SLIDER
-   All positioning mutated directly on DOM refs to avoid
-   any inline style on initial render.
-   clipRef.current.style.clipPath is a runtime mutation, not
-   a declared inline prop — this is compliant.
-───────────────────────────────────────────────────────────── */
-const ComparisonSlider: React.FC = () => {
-  const boxRef     = useRef<HTMLDivElement>(null);
-  const clipRef    = useRef<HTMLDivElement>(null);
-  const dividerRef = useRef<HTMLDivElement>(null);
+const PROJECT_TEASERS = [
+  { name: '北歐極簡小宅', image: projectThumb01 },
+  { name: '現代奢華大宅', image: projectThumb02 },
+  { name: '暖木系廚房', image: projectThumb03 },
+];
 
-  const applyPos = (pct: number) => {
-    const p = Math.max(5, Math.min(95, pct));
-    if (clipRef.current)    clipRef.current.style.clipPath = `polygon(0 0,${p}% 0,${p}% 100%,0 100%)`;
-    if (dividerRef.current) dividerRef.current.style.left  = `${p}%`;
-  };
 
-  useEffect(() => { applyPos(50); }, []);
-
-  const onX = (cx: number) => {
-    if (!boxRef.current) return;
-    const r = boxRef.current.getBoundingClientRect();
-    applyPos(((cx - r.left) / r.width) * 100);
-  };
-
-  return (
-    <div
-      ref={boxRef}
-      className="cmp-box"
-      onMouseDown={e => onX(e.clientX)}
-      onMouseMove={e => { if (e.buttons === 1) onX(e.clientX); }}
-      onTouchStart={e => onX(e.touches[0].clientX)}
-      onTouchMove={e  => onX(e.touches[0].clientX)}
-    >
-      {/* Reality layer — always behind */}
-      <div className="cmp-layer cmp-layer--reality">
-        <img src={compareReality} alt="南源木材 實景完工照" className="cmp-img" />
-        <span className="cmp-badge cmp-badge--r">REALITY</span>
-      </div>
-
-      {/* Render layer — clipped left portion */}
-      <div ref={clipRef} className="cmp-layer cmp-layer--render">
-        <img src={compareRender} alt="南源木材 設計模擬圖" className="cmp-img" />
-        <span className="cmp-badge cmp-badge--l">RENDER</span>
-      </div>
-
-      {/* Divider handle */}
-      <div ref={dividerRef} className="cmp-divider">
-        <div className="cmp-knob">
-          <span className="cmp-arrows">⟨⟩</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   HOME COMPONENT
-   ─────────────────────────────────────────────────────────────
-   PRELOADER LIFECYCLE:
-     0ms      DOM painted. .brand-intro-viewport unconditionally
-              rendered. @keyframes fires on first frame — no delay.
-     2500ms   setIntroExiting(true) → .brand-intro-viewport--exit
-              → CSS dissolve begins.
-     3500ms   setIntroMounted(false) → removed from DOM.
-              Scroll chain is NEVER locked.
-
-   SCROLL THEATRE LIFECYCLE:
-     .hero-scroll-container  height: 400vh  creates scroll track.
-     .hero-sticky-stage      position: sticky; top: 0; height: 100vh
-                             stays glued while user scrolls through 4×100vh.
-
-     SCROLL MATH (RAF loop):
-       rect    = containerRef.current.getBoundingClientRect()
-       raw     = -rect.top / (rect.height - window.innerHeight)
-       clamped = Math.max(0, Math.min(0.9999, raw))
-       index   = Math.floor(clamped * 4)   → 0 | 1 | 2 | 3
-
-     SLIDE CSS STATE MACHINE (3 states per card):
-       past   (.slide--past)    translateX(-100%)  ← scrolled past
-       active (.slide--active)  translateX(0)      ← current
-       future (no modifier)     translateX(100%)   ← not yet reached
-═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════════
+   COMPONENT
+   ═══════════════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
 
+  /* ─────────────────────────────────────────────────────────────
+     §1 STATE — Brand Intro Viewport
+     ───────────────────────────────────────────────────────────── */
+  const [introVisible, setIntroVisible] = useState(true);
+  const [introExiting, setIntroExiting] = useState(false);
 
-  /* ── Preloader states ── */
-  const [introMounted,  setIntroMounted]  = useState(true);
-  const [introExiting,  setIntroExiting]  = useState(false);
-
-  /* ── Scroll theatre: which advantage is active ── */
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  /* ── Ref to the 400vh scroll container ── */
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  /* ── RAF ref (to cancel on unmount) ── */
-  const rafRef = useRef<number>(0);
-
-  /* ─────────────────────────────────────────────────────────
-     PRELOADER TIMERS
-     t1 @ 2500ms → CSS curtain dissolve
-     t2 @ 3500ms → remove from DOM
-  ───────────────────────────────────────────────────────── */
   useEffect(() => {
-    const t1 = setTimeout(() => setIntroExiting(true),  2500);
-    const t2 = setTimeout(() => setIntroMounted(false), 3500);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
+    const exitTimer = window.setTimeout(() => {
+      setIntroExiting(true);
+    }, 2500);
 
-  /* ─────────────────────────────────────────────────────────
-     SCROLL THEATRE — RAF LOOP
-     Reads containerRef.getBoundingClientRect().top every frame.
-     Applies the progress → index formula.
-     Writes only to React state (setActiveIndex) — no DOM mutation.
-  ───────────────────────────────────────────────────────── */
-  useEffect(() => {
-    const tick = () => {
-      if (containerRef.current) {
-        const rect     = containerRef.current.getBoundingClientRect();
-        const trackLen = rect.height - window.innerHeight;
+    const destroyTimer = window.setTimeout(() => {
+      setIntroVisible(false);
+    }, 3500);
 
-        if (trackLen > 0) {
-          /*
-            PRECISE MAPPING FORMULA (spec):
-              raw     = -rect.top / trackLen
-              clamped = clamp(raw, 0, 0.9999)
-              index   = Math.floor(clamped * 4) → 0 | 1 | 2 | 3
-          */
-          const raw     = -rect.top / trackLen;
-          const clamped = Math.max(0, Math.min(0.9999, raw));
-          const index   = Math.floor(clamped * 4);
-
-          setActiveIndex(prev => (prev !== index ? index : prev));
-        }
-      }
-      rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      window.clearTimeout(exitTimer);
+      window.clearTimeout(destroyTimer);
     };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
-  /* ── Helper: derive CSS class for each slide ── */
-  const slideClass = (i: number): string => {
-    if (i < activeIndex)  return 'hero-slide hero-slide--past';
-    if (i === activeIndex) return 'hero-slide hero-slide--active';
-    return 'hero-slide';
+
+  /* ─────────────────────────────────────────────────────────────
+     §2 STATE — Hero Scroll Theatre
+     ───────────────────────────────────────────────────────────── */
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const containerTop = rect.top;
+    const scrollableHeight = container.offsetHeight - window.innerHeight;
+
+    if (scrollableHeight <= 0) return;
+
+    const scrolled = -containerTop;
+    const progress = Math.max(0, Math.min(scrolled / scrollableHeight, 0.9999));
+    const newIndex = Math.floor(progress * 4);
+    const clampedIndex = Math.max(0, Math.min(newIndex, 3));
+
+    setActiveIndex(clampedIndex);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
+
+
+  /* ─────────────────────────────────────────────────────────────
+     HELPER — 字卡位置 className
+     ───────────────────────────────────────────────────────────── */
+  const getCardClass = (index: number): string => {
+    if (index === activeIndex) return 'hero-card card-active';
+    if (index < activeIndex) return 'hero-card card-left';
+    return 'hero-card card-right';
   };
 
-  const numClass = (i: number): string => {
-    if (i < activeIndex)  return 'hero-num hero-num--past';
-    if (i === activeIndex) return 'hero-num hero-num--active';
-    return 'hero-num';
-  };
 
-  const bgClass = (i: number): string => {
-    if (i === activeIndex) return 'hero-bg hero-bg--active';
-    return 'hero-bg';
-  };
-
+  /* ─────────────────────────────────────────────────────────────
+     RENDER
+     ───────────────────────────────────────────────────────────── */
   return (
     <div className="home-page">
 
-      {/* ════════════════════════════════════════════════════
-          BRAND PRELOADER CURTAIN
-          ─────────────────────────────────────────────────
-          Unconditionally rendered — no JS gate blocks paint.
-          .brand-intro-viewport          → base (fixed, z:9999)
-          .brand-intro-viewport--exit    → CSS dissolve at 2500ms
-          ZERO inline styles.
-      ════════════════════════════════════════════════════ */}
-      {introMounted && (
+      {/* ══════════════════════════════════════════════════════════
+          §1  BRAND INTRO VIEWPORT — 0ms 瞬間發光品牌帷幕
+      ══════════════════════════════════════════════════════════ */}
+      {introVisible && (
         <div
           className={
             introExiting
-              ? 'brand-intro-viewport brand-intro-viewport--exit'
+              ? 'brand-intro-viewport viewport-exit-slide'
               : 'brand-intro-viewport'
           }
           aria-hidden="true"
         >
-          <div className="brand-intro-logo">
-            <h1 className="brand-intro-zh">南源木材</h1>
-            <p  className="brand-intro-en">NANYUAN TIMBER DESIGN</p>
-          </div>
+          <h1 className="brand-intro-title">南源木材</h1>
+          <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
         </div>
       )}
 
-      {/* ════════════════════════════════════════════════════
-          SCROLL THEATRE — 400vh container + sticky stage
-          ─────────────────────────────────────────────────
-          .hero-scroll-container   height: 400vh; position: relative
-            Creates the scroll track. The browser needs 400vh of
-            scrollable distance so the sticky stage remains pinned
-            while the user scrolls through all 4 advantage slides.
 
-          .hero-sticky-stage       position: sticky; top: 0; height: 100vh
-            Stays glued at the top of the viewport for exactly
-            400vh of scrolling. RAF loop computes activeIndex from
-            containerRef.getBoundingClientRect().top.
-
-          NOTE: html, body, #root must NOT have overflow:hidden.
-                Home.css declares overflow:visible on all ancestors.
-      ════════════════════════════════════════════════════ */}
-      <div ref={containerRef} className="hero-scroll-container">
+      {/* ══════════════════════════════════════════════════════════
+          §2  HERO SCROLL THEATRE — 400vh 優點鎖定劇場
+      ══════════════════════════════════════════════════════════ */}
+      <div className="hero-scroll-container" ref={scrollContainerRef}>
         <div className="hero-sticky-stage">
 
-          {/* ── Background images — crossfade via opacity ── */}
-          {ADVANTAGES.map((adv, i) => (
-            <div key={adv.num} className={bgClass(i)}>
+          {/* ── 背景圖片層（四張疊加，只顯示激活的） ── */}
+          <div className="hero-bg-layer">
+            {ADVANTAGES.map((adv, i) => (
               <img
-                src={adv.img}
-                alt={`南源木材 ${adv.zh}`}
-                className="hero-bg-img"
+                key={adv.number}
+                src={adv.image}
+                alt={adv.title}
+                className={
+                  i === activeIndex
+                    ? 'hero-bg-image hero-bg-active'
+                    : 'hero-bg-image'
+                }
+                loading={i === 0 ? 'eager' : 'lazy'}
               />
-            </div>
-          ))}
+            ))}
+          </div>
 
-          {/* ── Dark gradient overlay ── */}
+          {/* ── 暗色遮罩層 ── */}
           <div className="hero-overlay" />
 
-          {/* ── Radial vignette ── */}
-          <div className="hero-vignette" />
+          {/* ── 前景內容層 ── */}
+          <div className="hero-content-layer">
 
-          {/* ── Bracket frame corners ── */}
-          <div className="hero-frame">
-            <div className="hero-corner hero-corner--tl" />
-            <div className="hero-corner hero-corner--tr" />
-            <div className="hero-corner hero-corner--bl" />
-            <div className="hero-corner hero-corner--br" />
-          </div>
+            {/* 左側巨型幾何序號 */}
+            <span className="hero-giant-number" aria-hidden="true">
+              {ADVANTAGES[activeIndex].number}
+            </span>
 
-          {/* ── Content deck ── */}
-          <div className="hero-content">
-
-            {/* Eyebrow label */}
-            <div className="hero-eyebrow">
-              <span className="hero-eyebrow-line" />
-              <span className="hero-eyebrow-text">NANYUAN TIMBER DESIGN</span>
-              <span className="hero-eyebrow-line" />
+            {/* 右側字卡滑入載具 */}
+            <div className="hero-cards-track">
+              {ADVANTAGES.map((adv, i) => (
+                <div key={adv.number} className={getCardClass(i)}>
+                  <p className="hero-card-number">{adv.number}</p>
+                  <h2 className="hero-card-title">{adv.title}</h2>
+                  <p className="hero-card-desc">{adv.desc}</p>
+                </div>
+              ))}
             </div>
 
-            {/* Deck: giant number (left) + text card (right) */}
-            <div className="hero-deck">
-
-              {/* Left: stacked absolute numbers — 3-state CSS machine */}
-              <div className="hero-numbox">
-                {ADVANTAGES.map((adv, i) => (
-                  <span key={adv.num} className={numClass(i)}>
-                    {adv.num}
-                  </span>
-                ))}
-              </div>
-
-              {/* Right: stacked absolute text cards — 3-state CSS machine */}
-              <div className="hero-textbox">
-                {ADVANTAGES.map((adv, i) => (
-                  <div key={adv.num} className={slideClass(i)}>
-                    <h2 className="hero-slide-zh">{adv.zh}</h2>
-                    <p  className="hero-slide-en">{adv.en}</p>
-                    <div className="hero-slide-wire" />
-                    <p  className="hero-slide-desc">{adv.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-            {/* END hero-deck */}
-
           </div>
-          {/* END hero-content */}
-
-          {/* ── Progress rail — thin line showing scroll depth ── */}
-          <div className="hero-progress-rail">
-            <div
-              className={`hero-progress-fill hero-progress-fill--${activeIndex}`}
-            />
-          </div>
-
-          {/* ── Scroll cue (only on first slide) ── */}
-          {activeIndex === 0 && (
-            <div className="hero-scroll-cue" aria-hidden="true">
-              <span className="hero-scroll-label">SCROLL</span>
-              <span className="hero-scroll-arrow">↓</span>
-            </div>
-          )}
-
         </div>
-        {/* END hero-sticky-stage */}
       </div>
-      {/* END hero-scroll-container */}
 
-      {/* ════════════════════════════════════════════════════
-          RENDER vs REALITY COMPARISON SLIDER
-      ════════════════════════════════════════════════════ */}
-      <section className="home-compare">
-        <div className="container">
-          <h2 className="home-section-h">設計與落地的真實對照</h2>
-          <p  className="home-compare-p">
-            許多裝修最怕「設計圖好看，實際落地卻走樣」。南源從材料源頭與施工細節雙重把關，確保所見即所得。請拖曳滑桿親手驗證。
+
+      {/* ══════════════════════════════════════════════════════════
+          §3  COMPARISON SECTION — 設計模擬圖 vs. 實景完工照
+      ══════════════════════════════════════════════════════════ */}
+      <section className="comparison-section" aria-label="設計與落地真實對照">
+        <div className="comparison-header">
+          <p className="comparison-eyebrow">DESIGN vs. REALITY</p>
+          <h2 className="comparison-title">設計與落地，眼見為憑</h2>
+          <p className="comparison-subtitle">
+            許多裝修最怕「設計圖好看，實際落地卻走樣」。
+            南源從材料源頭與施工細節雙重把關，確保所見即所得——
+            以下是同一空間的設計模擬與完工實景真實對照。
           </p>
         </div>
-        <ComparisonSlider />
+
+        <div className="comparison-panels">
+          {/* 左：設計模擬圖 */}
+          <div className="comparison-panel">
+            <img
+              className="comparison-panel-image"
+              src={compareRender}
+              alt="設計模擬圖"
+              loading="lazy"
+            />
+            <span className="comparison-panel-label">設計模擬圖 / RENDER</span>
+          </div>
+
+          {/* 右：實景完工照 */}
+          <div className="comparison-panel">
+            <img
+              className="comparison-panel-image"
+              src={compareReality}
+              alt="實景完工照"
+              loading="lazy"
+            />
+            <span className="comparison-panel-label">實景完工照 / REALITY</span>
+          </div>
+        </div>
       </section>
 
 
+      {/* ══════════════════════════════════════════════════════════
+          §4  PAGE TEASERS — 三大內頁導覽
+      ══════════════════════════════════════════════════════════ */}
+      <div className="page-teasers">
+
+        {/* ── 4-A：關於南源 ── */}
+        <div className="teaser-block">
+          <div className="teaser-inner">
+            <p className="teaser-eyebrow">ABOUT NANYUAN</p>
+            <h2 className="teaser-title">三十年職人傳承，只為健康成家</h2>
+            <p className="teaser-desc">
+              南源木材創立於上一個世代的木業全盛時期，三十年來始終堅守「源頭理解、細節品質、誠信透明」的品牌信條。
+              我們深信，一個家的溫度不該只停留在設計圖上——它應該從每一片木紋的觸感、每一道榫卯的密合、
+              每一次與屋主真誠的溝通中，被真實地建構出來。
+            </p>
+            <Link to="/about" className="teaser-link">
+              探索品牌故事 ➜
+            </Link>
+          </div>
+        </div>
+
+        {/* ── 4-B：服務流程 ── */}
+        <div className="teaser-block">
+          <div className="teaser-inner">
+            <p className="teaser-eyebrow">OUR PROCESS</p>
+            <h2 className="teaser-title">六大職人流程，從諮詢到售後</h2>
+            <p className="teaser-desc">
+              初步諮詢、現場丈量、方案設計、材料精選、精工施作、驗收售後——
+              南源將每一個環節都視為不可跳過的儀式。我們以「一條龍整合服務」取代傳統碎片化發包，
+              讓業主從第一通電話到最終入住，全程只需面對一個值得信賴的專業團隊。
+            </p>
+            <Link to="/services" className="teaser-link">
+              查看完整流程 ➜
+            </Link>
+          </div>
+        </div>
+
+        {/* ── 4-C：作品案例 ── */}
+        <div className="teaser-block">
+          <div className="teaser-inner">
+            <p className="teaser-eyebrow">FEATURED PROJECTS</p>
+            <h2 className="teaser-title">匠心落地，經典案例</h2>
+            <p className="teaser-desc">
+              從北歐極簡小宅到現代奢華大宅，南源以木為魂，
+              將每一個空間雕琢成獨一無二的生活藝術品。
+            </p>
+            <div className="teaser-project-grid">
+              {PROJECT_TEASERS.map((proj) => (
+                <div className="teaser-project-card" key={proj.name}>
+                  <img src={proj.image} alt={proj.name} loading="lazy" />
+                  <div className="teaser-project-card-overlay">
+                    <span className="teaser-project-card-name">{proj.name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Link to="/projects" className="teaser-link">
+              瀏覽更多案例 ➜
+            </Link>
+          </div>
+        </div>
+
+      </div>
+      {/* §5 — <CTA /> 由 Footer.tsx 全局統一掛載，此處不重複渲染 */}
 
     </div>
   );
