@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import CTA from '../components/CTA/CTA';
 import './Home.css';
 
 /* ─────────────────────────────────────────────────────────────
@@ -358,10 +357,7 @@ const Home: React.FC = () => {
         <ComparisonSlider />
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          GLOBAL CTA — single shared component
-      ════════════════════════════════════════════════════ */}
-      <CTA />
+
 
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Projects.css';
-import CTA from '../components/CTA/CTA';
+
 
 /* ═══════════════════════════════════════════════════════════════
    REAL PROJECT PHOTOS — semantic picks from src/assets/ album
@@ -400,8 +400,7 @@ const Projects: React.FC = () => {
 
       </div>
 
-      {/* ── Unified global CTA ── */}
-      <CTA />
+
 
       {/* ── Detail modal ── */}
       {selectedProject && (
