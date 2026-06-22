@@ -200,6 +200,17 @@ const Home: React.FC = () => {
     setSliderPos(val);
   }, []);
 
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    const container = sliderContainerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const touch = e.touches[0];
+    if (!touch) return;
+    const offsetX = touch.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(100, (offsetX / rect.width) * 100));
+    setSliderPos(Math.round(percentage));
+  }, []);
+
 
   /* ─────────────────────────────────────────────────────────────────────
      HELPER — 字卡位置 className
@@ -220,109 +231,70 @@ const Home: React.FC = () => {
       {/* ══════════════════════════════════════════════════════════════════
           §2  HERO SCROLL THEATRE — 500vh 優點鎖定劇場 (Panel 0-4)
           ══════════════════════════════════════════════════════════════ */}
-      {/* Desktop Scroll Theatre (lg screens and up) */}
-      <div className="d-none d-lg-block">
-        <div className="hero-scroll-container" ref={scrollContainerRef}>
-          <div className="hero-sticky-stage">
+      <div className="hero-scroll-container" ref={scrollContainerRef}>
+        <div className="hero-sticky-stage">
 
-            {/* 背景圖片層 */}
-            <div className="hero-bg-layer">
-              {HERO_IMAGES.map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt=""
-                  className={
-                    i === activeIndex
-                      ? 'hero-bg-image hero-bg-active'
-                      : 'hero-bg-image'
-                  }
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                />
+          {/* 背景圖片層 */}
+          <div className="hero-bg-layer">
+            {HERO_IMAGES.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt=""
+                className={
+                  i === activeIndex
+                    ? 'hero-bg-image hero-bg-active'
+                    : 'hero-bg-image'
+                }
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+            ))}
+          </div>
+
+          {/* 暗色遮罩 */}
+          <div className="hero-overlay" />
+
+          {/* 前景內容層 */}
+          <div className="hero-content-layer">
+
+            {/* 0號：品牌大字 (滿版置中，activeIndex === 0 時激活) */}
+            <div className={
+              activeIndex === 0
+                ? 'hero-brand-card card-active'
+                : 'hero-brand-card card-left'
+            }>
+              <div className="brand-intro-logo-box">
+                <h1 className="brand-intro-title">南源木材</h1>
+                <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
+              </div>
+            </div>
+
+            {/* 左側幾何序號 */}
+            <span className={
+              activeIndex > 0
+                ? 'hero-giant-number'
+                : 'hero-giant-number hero-giant-number-hidden'
+            } aria-hidden="true">
+              {activeIndex > 0 ? ADVANTAGES[activeIndex - 1].number : '01'}
+            </span>
+
+            {/* 右側字卡滑入載具 */}
+            <div className={
+              activeIndex > 0
+                ? 'hero-cards-track track-active'
+                : 'hero-cards-track track-right'
+            }>
+              {ADVANTAGES.map((adv, i) => (
+                <div key={adv.number} className={getCardClass(i + 1)}>
+                  <p className="hero-card-number">{adv.number}</p>
+                  <h2 className="hero-card-title">{adv.title}</h2>
+                  <p className="hero-card-desc">{adv.desc}</p>
+                </div>
               ))}
             </div>
 
-            {/* 暗色遮罩 */}
-            <div className="hero-overlay" />
-
-            {/* 前景內容層 */}
-            <div className="hero-content-layer">
-
-              {/* 0號：品牌大字 (滿版置中，activeIndex === 0 時激活) */}
-              <div className={
-                activeIndex === 0
-                  ? 'hero-brand-card card-active'
-                  : 'hero-brand-card card-left'
-              }>
-                <div className="brand-intro-logo-box">
-                  <h1 className="brand-intro-title">南源木材</h1>
-                  <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
-                </div>
-              </div>
-
-              {/* 左側幾何序號 */}
-              <span className={
-                activeIndex > 0
-                  ? 'hero-giant-number'
-                  : 'hero-giant-number hero-giant-number-hidden'
-              } aria-hidden="true">
-                {activeIndex > 0 ? ADVANTAGES[activeIndex - 1].number : '01'}
-              </span>
-
-              {/* 右側字卡滑入載具 */}
-              <div className={
-                activeIndex > 0
-                  ? 'hero-cards-track track-active'
-                  : 'hero-cards-track track-right'
-              }>
-                {ADVANTAGES.map((adv, i) => (
-                  <div key={adv.number} className={getCardClass(i + 1)}>
-                    <p className="hero-card-number">{adv.number}</p>
-                    <h2 className="hero-card-title">{adv.title}</h2>
-                    <p className="hero-card-desc">{adv.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-            </div>
           </div>
         </div>
-      </div>
-
-      {/* Mobile Flow (below lg screens) */}
-      <div className="d-lg-none mobile-advantages-flow">
-        {/* 0號: 品牌大字 */}
-        <div className="mobile-adv-block mobile-brand-block">
-          <img className="mobile-adv-bg" src={heroImgBrand} alt="" loading="eager" />
-          <div className="mobile-adv-overlay" />
-          <div className="container mobile-adv-content-wrapper">
-            <div className="row justify-content-center align-items-center w-100 mx-0">
-              <div className="col-12 text-center px-0">
-                <div className="brand-intro-logo-box">
-                  <h1 className="brand-intro-title">南源木材</h1>
-                  <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 01-04: 優勢介紹 */}
-        {ADVANTAGES.map((adv) => (
-          <div className="mobile-adv-block" key={adv.number}>
-            <img className="mobile-adv-bg" src={adv.image} alt="" loading="lazy" />
-            <div className="mobile-adv-overlay" />
-            <div className="container mobile-adv-content-wrapper">
-              <div className="row w-100 mx-0">
-                <div className="col-12 px-0">
-                  <p className="mobile-adv-number">{adv.number}</p>
-                  <h2 className="mobile-adv-title">{adv.title}</h2>
-                  <p className="mobile-adv-desc">{adv.desc}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
       </div>
 
 
@@ -409,7 +381,12 @@ const Home: React.FC = () => {
           </p>
         </div>
 
-        <div className="comparison-slider" ref={sliderContainerRef}>
+        <div 
+          className="comparison-slider" 
+          ref={sliderContainerRef}
+          onTouchMove={handleTouchMove}
+          onTouchStart={handleTouchMove}
+        >
 
           {/* 底層：實景完工照（滿版鋪底） */}
           <img
