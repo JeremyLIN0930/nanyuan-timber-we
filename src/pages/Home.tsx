@@ -397,7 +397,7 @@ const Home: React.FC = () => {
               <span className="comparison-slider-arrows">◀ ▶</span>
             </div>
           </div>
-
+<input type="range" className="comparison-slider-input" min="0" max="100" value={sliderPos} onChange={handleSliderChange} aria-label="Design vs Reality slider" />
           {/* 左右標籤 */}
           <div className="comparison-slider-labels">
             <span className="comparison-slider-label">設計模擬圖 / RENDER</span>
