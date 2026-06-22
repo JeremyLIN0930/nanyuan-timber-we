@@ -757,6 +757,7 @@
   cursor: ew-resize;
   -webkit-appearance: none;
   appearance: none;
+  touch-action: none !important;
 }
 
 .comparison-slider-input::-webkit-slider-thumb {
@@ -917,134 +918,185 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── 硬體加速 ── */
+/* ── 硬體加速 ── */
 .hero-scroll-container,
 .hero-sticky-stage,
 .hero-cards-track,
 .brand-intro-viewport,
-.comparison-slider {
+.comparison-slider,
+.projects-card,
+.process-node {
   -webkit-overflow-scrolling: touch;
   will-change: transform;
 }
 
-/* ── Tablet ≤ 1024px ── */
-@media (max-width: 1024px) {
+/* ── Tablet & Mobile (≤ 992px) ── */
+@media (max-width: 992px) {
+  /* §2 Sticky Theater vertical stack layout */
   .hero-content-layer {
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 clamp(1.5rem, 4vw, 3rem);
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    padding-top: clamp(3rem, 10vh, 6rem) !important;
+    padding-left: clamp(1.5rem, 4vw, 3rem) !important;
+    padding-right: clamp(1.5rem, 4vw, 3rem) !important;
   }
 
   .hero-giant-number {
-    position: absolute;
-    left: 50%;
-    top: 18%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(6rem, 18vw, 14rem);
-    opacity: 0.5;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    text-align: center !important;
+    width: 100% !important;
+    font-size: clamp(6rem, 16vw, 10rem) !important;
+    color: rgba(197, 168, 128, 0.12) !important;
+    margin-bottom: 1.5rem !important;
+    display: block !important;
+    line-height: 1 !important;
   }
 
   .hero-cards-track {
-    width: 100%;
-    max-width: 100%;
-    margin-left: 0;
-    justify-content: center;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
   }
 
   .hero-card {
-    text-align: center;
+    text-align: center !important;
+    padding: clamp(1.5rem, 4vw, 2.5rem) !important;
+    max-width: 500px !important;
   }
 
   .hero-card-desc {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
+  /* §3 About Nanyuan layout stack */
   .about-inner {
-    grid-template-columns: 1fr;
-    gap: clamp(2rem, 4vw, 3rem);
-    text-align: center;
-  }
-
-  .about-desc {
-    margin-left: auto;
-    margin-right: auto;
+    grid-template-columns: 1fr !important;
+    gap: clamp(2rem, 4vw, 3rem) !important;
+    text-align: center !important;
   }
 
   .about-left {
-    align-items: center;
+    align-items: center !important;
   }
 
+  .about-desc {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* §4 Process grid 2x3 for tablet */
   .process-timeline {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
   }
 
-  /* 隱藏水平軸線在平板上 */
   .process-timeline-line {
-    display: none;
+    display: none !important;
   }
 }
 
-/* ── Mobile ≤ 768px ── */
+/* ── Mobile (≤ 768px) ── */
 @media (max-width: 768px) {
+  /* §1 Brand Intro Mobile Safety */
+  .brand-intro-viewport {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    padding: 1.5rem !important;
+    box-sizing: border-box !important;
+  }
+
   .brand-intro-title {
-    letter-spacing: 0.2em;
+    letter-spacing: 0.20em !important;
+    font-size: clamp(2.2rem, 7vw, 4rem) !important;
   }
 
   .brand-intro-subtitle {
-    letter-spacing: 0.3em;
+    letter-spacing: 0.35em !important;
+    font-size: clamp(0.75rem, 2vw, 1.1rem) !important;
   }
 
-  .hero-giant-number {
-    font-size: clamp(5rem, 28vw, 10rem);
-    top: 20%;
+  /* §3 About Nanyuan Scroll Fallback & Deeper Dark Overlay */
+  .about-bg-image {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
   }
 
-  .hero-card {
-    padding: clamp(1.5rem, 4vw, 2.5rem);
+  .about-overlay {
+    background: rgba(5, 5, 5, 0.85) !important; /* Deepened to 85% opacity */
   }
 
+  /* §4 Process Timeline 1-column stack and vertical connecting line */
   .process-timeline {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding-left: clamp(2rem, 5vw, 3rem) !important;
   }
 
-  .projects-grid {
-    grid-template-columns: 1fr;
-    max-width: 540px;
+  .process-timeline-line {
+    display: block !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: calc(clamp(1.5rem, 4vw, 4rem) + clamp(1.8rem, 3vw, 2.5rem) + 7px) !important; /* Matches dot center */
+    width: 1px !important;
+    height: 100% !important;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(197, 168, 128, 0.3) 10%,
+      rgba(197, 168, 128, 0.3) 90%,
+      transparent 100%
+    ) !important;
   }
 
+  /* §5 Comparison Slider mobile RWD */
   .comparison-slider {
-    aspect-ratio: 4 / 3;
-    border-radius: 6px;
-    margin: 0 clamp(0.8rem, 2vw, 1.5rem);
+    aspect-ratio: 4 / 3 !important;
+    border-radius: 6px !important;
+    margin: 0 clamp(0.8rem, 2vw, 1.5rem) !important;
+    width: auto !important;
   }
 
   .comparison-slider-handle-circle {
-    width: 42px;
-    height: 42px;
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  /* §6 Projects Grid 1-column */
+  .projects-grid {
+    grid-template-columns: 1fr !important;
+    max-width: 540px !important;
   }
 }
 
-/* ── Small Mobile ≤ 480px ── */
+/* ── Small Mobile (≤ 480px) ── */
 @media (max-width: 480px) {
+  /* §2 Sticky Theater further scaling */
   .hero-giant-number {
-    font-size: 5rem;
-    top: 22%;
+    font-size: 5rem !important;
+    margin-bottom: 1rem !important;
   }
 
   .hero-card-title {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
   }
 
-  .process-timeline {
-    grid-template-columns: 1fr;
-  }
-
+  /* §5 Comparison Slider small handles */
   .comparison-slider-handle-circle {
-    width: 36px;
-    height: 36px;
+    width: 36px !important;
+    height: 36px !important;
   }
 
   .comparison-slider-arrows {
-    font-size: 0.7rem;
+    font-size: 0.7rem !important;
   }
 }
