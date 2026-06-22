@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Projects.css';
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -165,6 +166,19 @@ const Projects: React.FC = () => {
   const [currentView, setCurrentView] = useState<'list' | 'detail'>('list');
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeCategory, setActiveCategory] = useState<CategoryId>('all');
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state && location.state.projectId) {
+      const match = PROJECTS.find(p => p.id === location.state.projectId);
+      if (match) {
+        setActiveProject(match);
+        setCurrentView('detail');
+      }
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   /* ─── 進入全頁專題 ─── */
   const openProject = useCallback((project: Project) => {

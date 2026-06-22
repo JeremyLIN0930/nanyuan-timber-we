@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -123,16 +123,17 @@ const PROCESS_STEPS: ProcessStep[] = [
    DATA — 精選作品（4 張 16:10 橫圖）
    ═══════════════════════════════════════════════════════════════════════════ */
 interface ProjectCard {
+  id: string;
   name: string;
   category: string;
   image: string;
 }
 
 const PROJECT_CARDS: ProjectCard[] = [
-  { name: '北歐極簡小宅', category: 'SCANDINAVIAN', image: projectThumb01 },
-  { name: '現代奢華大宅', category: 'MODERN LUXURY', image: projectThumb02 },
-  { name: '暖木系廚房',   category: 'WARM KITCHEN', image: projectThumb03 },
-  { name: '日式禪風居所', category: 'JAPANESE ZEN', image: projectThumb04 },
+  { id: '1', name: '北歐極簡小宅', category: 'SCANDINAVIAN', image: projectThumb01 },
+  { id: '2', name: '現代奢華大宅', category: 'MODERN LUXURY', image: projectThumb02 },
+  { id: '3', name: '暖木系廚房',   category: 'WARM KITCHEN', image: projectThumb03 },
+  { id: '4', name: '日式禪風居所', category: 'JAPANESE ZEN', image: projectThumb04 },
 ];
 
 
@@ -140,6 +141,7 @@ const PROJECT_CARDS: ProjectCard[] = [
    COMPONENT
    ═══════════════════════════════════════════════════════════════════════════ */
 const Home: React.FC = () => {
+  const navigate = useNavigate();
 
   /* ─────────────────────────────────────────────────────────────────────
      §1 STATE — Brand Intro Viewport
@@ -440,7 +442,19 @@ const Home: React.FC = () => {
 
         <div className="projects-grid">
           {PROJECT_CARDS.map((proj) => (
-            <div className="projects-card" key={proj.name}>
+            <div
+              className="projects-card home-project-card"
+              key={proj.name}
+              onClick={() => navigate('/projects', { state: { projectId: proj.id } })}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  navigate('/projects', { state: { projectId: proj.id } });
+                }
+              }}
+              aria-label={`查看案例：${proj.name}`}
+            >
               <img
                 className="projects-card-image"
                 src={proj.image}
