@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import CTA from '../components/CTA/CTA';
 import './Home.css';
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -13,7 +12,7 @@ import './Home.css';
      §4  Process Timeline          — 圖形化六大流程軸（Hover 互動）
      §5  Comparison Slider         — 推拉式前後對照滑桿
      §6  Projects Wall             — 精選案例卡片牆（16:10 橫圖）
-     §7  CTA                       — 公共完全體組件唯一掛載
+     §7  CTA                       — 由 Footer.tsx 全局統一掛載，此處不重複渲染
 
    ⚠ 鐵律：零行內 style={{}} / 零 <style> 標籤 / 100% 樣式在 Home.css
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -464,10 +463,7 @@ const Home: React.FC = () => {
       </section>
 
 
-      {/* ══════════════════════════════════════════════════════════════════
-          §7  CTA — 公共完全體組件唯一掛載
-          ══════════════════════════════════════════════════════════════ */}
-      <CTA />
+      {/* §7 — <CTA /> 由 Footer.tsx 全局統一掛載，此處不重複渲染 */}
 
     </div>
   );
