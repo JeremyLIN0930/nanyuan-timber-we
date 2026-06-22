@@ -747,7 +747,7 @@
 
 .comparison-slider-arrows {
   font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
   color: #c5a880;
   letter-spacing: 0.15em;
   user-select: none;
@@ -970,14 +970,23 @@
 /* ── Tablet & Mobile (≤ 992px) ── */
 @media (max-width: 992px) {
   .hero-overlay {
-    background: linear-gradient(180deg, rgba(5, 5, 5, 0.85) 0%, rgba(10, 10, 10, 0.75) 100%) !important;
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.85) 0%, rgba(5, 5, 5, 0.9) 100%) !important;
+  }
+
+  .hero-sticky-stage {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
   }
 
   /* §2 Sticky Theater vertical stack layout */
   .hero-content-layer {
     flex-direction: column !important;
     justify-content: flex-start !important;
-    padding-top: clamp(3rem, 10vh, 6rem) !important;
+    padding-top: clamp(4rem, 12vh, 8rem) !important;
+    padding-bottom: clamp(4rem, 12vh, 8rem) !important;
+    height: auto !important;
+    min-height: 100dvh !important;
     padding-left: clamp(1.5rem, 4vw, 3rem) !important;
     padding-right: clamp(1.5rem, 4vw, 3rem) !important;
   }
@@ -1103,14 +1112,15 @@
   .process-timeline {
     grid-template-columns: 1fr !important;
     gap: 2rem !important;
-    padding-left: clamp(2rem, 5vw, 3rem) !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
   }
 
   .process-timeline-line {
     display: block !important;
     top: 0 !important;
     bottom: 0 !important;
-    left: calc(clamp(1.5rem, 4vw, 4rem) + clamp(1.8rem, 3vw, 2.5rem) + 7px) !important; /* Matches dot center */
+    left: calc(24px + clamp(1.8rem, 3vw, 2.5rem) + 7px) !important; /* Matches dot center */
     width: 1px !important;
     height: 100% !important;
     background: linear-gradient(
@@ -1124,15 +1134,33 @@
 
   /* §5 Comparison Slider mobile RWD */
   .comparison-slider {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
     aspect-ratio: 4 / 3 !important;
     border-radius: 6px !important;
-    margin: 0 clamp(0.8rem, 2vw, 1.5rem) !important;
-    width: auto !important;
+    margin: 0 !important;
+  }
+
+  .comparison-slider-bg,
+  .comparison-slider-overlay,
+  .comparison-slider-fg {
+    height: 100% !important;
   }
 
   .comparison-slider-handle-circle {
     width: 42px !important;
     height: 42px !important;
+  }
+
+  .comparison-slider-labels {
+    padding: 8px !important;
+  }
+
+  .comparison-slider-label {
+    font-size: 10px !important;
+    padding: 0.35em 0.8em !important;
+    letter-spacing: 0.1em !important;
   }
 
   /* §6 Projects Grid 1-column */
@@ -1162,5 +1190,11 @@
 
   .comparison-slider-arrows {
     font-size: 0.7rem !important;
+  }
+
+  .comparison-slider-label {
+    font-size: 8px !important;
+    padding: 0.25em 0.5em !important;
+    letter-spacing: 0.05em !important;
   }
 }
