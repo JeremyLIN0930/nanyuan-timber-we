@@ -1,19 +1,28 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Home.css — 南源木材首頁完全體樣式表 v3（Complete Rewrite from Scratch）
+   Home.css — 南源木材首頁完全體樣式表 v4（Complete Rewrite from Scratch）
    ═══════════════════════════════════════════════════════════════════════════
    七大劇場版塊：
-     §1  Brand Intro Viewport     — 0ms 瞬間發光前導帷幕
+     §1  Brand Intro Viewport     — 0ms 死亮（零動畫）前導帷幕
      §2  Hero Scroll Theatre      — 400vh sticky 優點鎖定劇場
-     §3  About Nanyuan             — 滿版職人背景 + 暗色遮罩
-     §4  Process Timeline          — 圖形化六大流程軸
-     §5  Comparison Slider         — Apple 級推拉式前後對照滑桿
-     §6  Projects Wall             — 精選案例卡片牆
+     §3  About Nanyuan             — 滿版職人背景 + 暗色遮罩 + 底部黑金漸層
+     §4  Process Timeline          — 圖形化六大流程軸（金色連接線 + Hover 互動）
+     §5  Comparison Slider         — 推拉式前後對照滑桿（CSS 自訂屬性裁剪）
+     §6  Projects Wall             — 精選案例卡片牆（16:10 橫向比例）
      §7  Responsive & GPU          — RWD + 硬體加速
    ═══════════════════════════════════════════════════════════════════════════ */
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   §1  BRAND INTRO VIEWPORT — 全螢幕品牌序幕（0ms 瞬間發光）
+   §0  HOME PAGE SHELL — 全頁外殼
+   ═══════════════════════════════════════════════════════════════════════════ */
+.home-page {
+  width: 100%;
+  overflow-x: clip;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §1  BRAND INTRO VIEWPORT — 全螢幕品牌序幕（0ms 死亮，零動畫！）
    ═══════════════════════════════════════════════════════════════════════════ */
 .brand-intro-viewport {
   position: fixed;
@@ -24,29 +33,22 @@
   align-items: center;
   justify-content: center;
   background: #050505;
-  will-change: transform, opacity;
+  /* 無任何 transition / animation — 第一幀即滿載 */
 }
 
-/* ── 退場穿透淡出 ── */
-.brand-intro-viewport.viewport-exit-slide {
-  animation: introExitSlide 1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-  pointer-events: none;
-}
-
-@keyframes introExitSlide {
-  0%   { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.05); }
-}
-
-/* ── 品牌大字：第 0 幀直接掛載發光淡入（禁止 animation-delay） ── */
+/* ── 品牌大字：第 0 毫秒死亮，嚴禁 animation / opacity: 0 ── */
 .brand-intro-title {
   font-family: 'Noto Sans TC', sans-serif;
-  font-weight: 900;
+  font-weight: 900 !important;
   font-size: clamp(2.8rem, 8vw, 6rem);
   letter-spacing: 0.35em;
-  color: #c5a880;
+  color: #c5a880 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
   margin: 0 0 1rem 0;
-  animation: brandGlowIn 2s ease-out forwards;
+  text-shadow:
+    0 0 20px rgba(197, 168, 128, 0.35),
+    0 0 50px rgba(197, 168, 128, 0.15);
 }
 
 .brand-intro-subtitle {
@@ -54,29 +56,17 @@
   font-weight: 300;
   font-size: clamp(0.85rem, 2vw, 1.4rem);
   letter-spacing: 0.6em;
-  color: rgba(197, 168, 128, 0.6);
+  color: rgba(197, 168, 128, 0.6) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
   margin: 0;
-  animation: brandGlowIn 2s ease-out forwards;
 }
 
-@keyframes brandGlowIn {
-  0% {
-    opacity: 0;
-    text-shadow: 0 0 0 transparent;
-  }
-  50% {
-    opacity: 0.85;
-    text-shadow:
-      0 0 35px rgba(197, 168, 128, 0.65),
-      0 0 70px rgba(197, 168, 128, 0.4),
-      0 0 120px rgba(197, 168, 128, 0.2);
-  }
-  100% {
-    opacity: 1;
-    text-shadow:
-      0 0 20px rgba(197, 168, 128, 0.35),
-      0 0 50px rgba(197, 168, 128, 0.15);
-  }
+/* ── 退場：整塊遮罩淡出（注入 viewport-exit-slide 類別後觸發） ── */
+.brand-intro-viewport.viewport-exit-slide {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
 }
 
 
@@ -257,7 +247,7 @@
 .about-section {
   position: relative;
   overflow: hidden;
-  padding: clamp(6rem, 12vh, 12rem) 0;
+  padding: clamp(8rem, 15vh, 14rem) 0 0 0;
 }
 
 .about-bg-image {
@@ -285,7 +275,7 @@
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 clamp(1.5rem, 4vw, 4rem);
+  padding: 0 clamp(1.5rem, 4vw, 4rem) clamp(6rem, 10vh, 10rem);
 }
 
 .about-left {
@@ -333,6 +323,7 @@
   max-width: 520px;
 }
 
+/* ── 膠囊按鈕（全頁通用） ── */
 .capsule-link {
   display: inline-flex;
   align-items: center;
@@ -360,6 +351,24 @@
   box-shadow: 0 0 30px rgba(197, 168, 128, 0.15);
 }
 
+/* ── 底部黑金過渡漸層（與下方流程板塊融合） ── */
+.about-bottom-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 180px;
+  z-index: 4;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(5, 5, 5, 0.5) 30%,
+    rgba(5, 5, 5, 0.85) 60%,
+    #050505 100%
+  );
+  pointer-events: none;
+}
+
 
 /* ═══════════════════════════════════════════════════════════════════════════
    §4  PROCESS TIMELINE — 圖形化六大職人流程軸
@@ -367,12 +376,12 @@
 .process-section {
   position: relative;
   background: #050505;
-  padding: clamp(5rem, 10vh, 10rem) 0;
+  padding: clamp(6rem, 12vh, 12rem) 0;
 }
 
 .process-header {
   text-align: center;
-  margin-bottom: clamp(3.5rem, 7vw, 6rem);
+  margin-bottom: clamp(4rem, 8vw, 7rem);
   padding: 0 clamp(1.5rem, 4vw, 4rem);
 }
 
@@ -405,23 +414,43 @@
   margin: 0 auto;
 }
 
-/* ── 流程網格 ── */
+/* ── 流程時間軸容器 ── */
 .process-timeline {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(1.2rem, 2vw, 2rem);
+  gap: clamp(1.5rem, 2.5vw, 2.5rem);
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 clamp(1.5rem, 4vw, 4rem);
 }
 
+/* ── 金色連接主軸線（水平貫穿所有節點） ── */
+.process-timeline-line {
+  position: absolute;
+  top: 42px;
+  left: clamp(1.5rem, 4vw, 4rem);
+  right: clamp(1.5rem, 4vw, 4rem);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(197, 168, 128, 0.3) 10%,
+    rgba(197, 168, 128, 0.3) 90%,
+    transparent 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* ── 單一流程節點 ── */
 .process-node {
   position: relative;
+  z-index: 2;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(197, 168, 128, 0.1);
   border-radius: 12px;
-  padding: clamp(1.8rem, 3vw, 2.5rem) clamp(1.2rem, 2vw, 2rem);
+  padding: clamp(2.2rem, 3.5vw, 3rem) clamp(1.4rem, 2vw, 2rem);
   transition:
     transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     border-color 0.4s ease,
@@ -431,45 +460,47 @@
 }
 
 .process-node:hover {
-  transform: translateY(-6px);
-  border-color: rgba(197, 168, 128, 0.45);
-  box-shadow: 0 8px 40px rgba(197, 168, 128, 0.1);
+  transform: translateY(-8px);
+  border-color: rgba(197, 168, 128, 0.5);
+  box-shadow:
+    0 8px 40px rgba(197, 168, 128, 0.12),
+    0 0 20px rgba(197, 168, 128, 0.06);
   background: rgba(197, 168, 128, 0.04);
 }
 
-/* ── 節點：金色圓點連接線（頂端裝飾） ── */
-.process-node::before {
-  content: '';
+/* ── 金色圓點（節點頂部裝飾，連接軸線） ── */
+.process-node-dot {
   position: absolute;
-  top: -1px;
+  top: -8px;
   left: clamp(1.8rem, 3vw, 2.5rem);
-  width: 32px;
-  height: 3px;
-  background: linear-gradient(90deg, #c5a880 0%, rgba(197, 168, 128, 0.2) 100%);
-  border-radius: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #050505;
+  border: 2px solid rgba(197, 168, 128, 0.4);
+  box-shadow: 0 0 12px rgba(197, 168, 128, 0.15);
+  transition:
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    background 0.4s ease;
 }
 
-/* ── 節點之間的連接線（右側延伸線） ── */
-.process-node::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: -1px;
-  transform: translate(100%, -50%);
-  width: clamp(1.2rem, 2vw, 2rem);
-  height: 1px;
-  background: linear-gradient(90deg, rgba(197, 168, 128, 0.3), rgba(197, 168, 128, 0.05));
+.process-node:hover .process-node-dot {
+  border-color: #c5a880;
+  background: #c5a880;
+  box-shadow: 0 0 20px rgba(197, 168, 128, 0.5);
 }
 
-.process-node:nth-child(3n)::after {
-  display: none;
+/* ── 節點內容 ── */
+.process-node-content {
+  padding-top: 0.6rem;
 }
 
 .process-node-number {
   font-family: 'Inter', sans-serif;
   font-weight: 900;
   font-size: clamp(2rem, 3.5vw, 2.8rem);
-  color: rgba(197, 168, 128, 0.15);
+  color: rgba(197, 168, 128, 0.12);
   letter-spacing: -0.02em;
   margin-bottom: 0.8rem;
   line-height: 1;
@@ -477,7 +508,7 @@
 }
 
 .process-node:hover .process-node-number {
-  color: rgba(197, 168, 128, 0.35);
+  color: rgba(197, 168, 128, 0.4);
   text-shadow: 0 0 30px rgba(197, 168, 128, 0.25);
 }
 
@@ -507,19 +538,19 @@
 /* ── 流程底部連結 ── */
 .process-footer {
   text-align: center;
-  padding-top: clamp(2.5rem, 5vw, 4rem);
+  padding-top: clamp(3rem, 6vw, 5rem);
   padding-left: clamp(1.5rem, 4vw, 4rem);
   padding-right: clamp(1.5rem, 4vw, 4rem);
 }
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   §5  COMPARISON SLIDER — Apple 級推拉式前後對照滑桿
+   §5  COMPARISON SLIDER — 推拉式前後對照滑桿
    ═══════════════════════════════════════════════════════════════════════════ */
 .comparison-section {
   position: relative;
   background: #0a0a0a;
-  padding: clamp(5rem, 10vh, 10rem) 0;
+  padding: clamp(6rem, 12vh, 12rem) 0;
 }
 
 .comparison-header {
@@ -559,6 +590,7 @@
 
 /* ── 滑桿主容器 ── */
 .comparison-slider {
+  --slider-pos: 50%;
   position: relative;
   max-width: 1100px;
   margin: 0 auto;
@@ -581,7 +613,7 @@
   z-index: 1;
 }
 
-/* ── 上層：設計模擬圖遮罩容器（寬度由 --slider-pos 剪裁） ── */
+/* ── 上層：設計模擬圖遮罩容器（寬度由 --slider-pos 裁剪） ── */
 .comparison-slider-overlay {
   position: absolute;
   top: 0;
@@ -592,26 +624,38 @@
   z-index: 2;
 }
 
-/* ── 上層圖片：必須與底層完全等尺寸，只透過外層寬度剪裁 ── */
+/* ── 上層圖片：鎖死為容器總寬，只透過外層寬度裁剪 ── */
 .comparison-slider-fg {
   display: block;
   position: absolute;
   top: 0;
   left: 0;
+  /* 寬度 = 父容器 .comparison-slider 的 100%，而非 overlay 的 100% */
+  /* 透過計算確保圖片與底圖完全對齊 */
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* 關鍵：圖片寬度鎖死為滑桿容器的總寬 */
+  /* 反向補償：overlay 寬度 = slider-pos，所以圖片實際寬 = 容器寬 */
 }
 
-.comparison-slider-fg-sizer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  overflow: hidden;
-  z-index: 2;
-  width: var(--slider-pos, 50%);
+/* 確保前景圖片寬度 = slider容器的寬度，而非 overlay 的寬度 */
+.comparison-slider-overlay .comparison-slider-fg {
+  width: calc(100% / (var(--slider-pos-decimal, 0.5)));
+}
+
+/* 
+   由於 CSS calc 無法直接使用百分比做除法來反推原始寬度，
+   我們改用更可靠的方式：讓 fg 圖片的寬度固定等於 slider 容器的寬度。
+   使用 min-width 鎖死。
+*/
+.comparison-slider-overlay > .comparison-slider-fg {
+  width: auto;
+  min-width: 100cqi;
+}
+
+/* 為 overlay 啟用 container query */
+.comparison-slider {
+  container-type: inline-size;
 }
 
 /* ── 視覺把手：金色垂直中線 ── */
@@ -633,7 +677,7 @@
   pointer-events: none;
 }
 
-/* ── 圓形金色拖曳鈕 ── */
+/* ── 圓形金色毛玻璃拖曳鈕 ── */
 .comparison-slider-handle-circle {
   position: absolute;
   top: 50%;
@@ -736,11 +780,11 @@
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   §6  PROJECTS WALL — 精選案例卡片牆
+   §6  PROJECTS WALL — 精選案例卡片牆（16:10 橫向黃金比例）
    ═══════════════════════════════════════════════════════════════════════════ */
 .projects-section {
   background: #050505;
-  padding: clamp(5rem, 10vh, 10rem) 0;
+  padding: clamp(6rem, 12vh, 12rem) 0;
 }
 
 .projects-header {
@@ -768,22 +812,22 @@
   letter-spacing: 0.08em;
 }
 
-/* ── 卡片網格 ── */
+/* ── 卡片網格（2×2 橫圖網格） ── */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: clamp(1rem, 2vw, 2rem);
   max-width: 1200px;
   margin: 0 auto clamp(3rem, 5vw, 4rem);
   padding: 0 clamp(1.5rem, 4vw, 4rem);
 }
 
-/* ── 單張案例卡片 ── */
+/* ── 單張案例卡片（16:10 橫向比例） ── */
 .projects-card {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 16 / 10;
   border: 1px solid rgba(197, 168, 128, 0.08);
   transition:
     border-color 0.5s ease,
@@ -800,6 +844,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  aspect-ratio: 16 / 10;
   transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change: transform;
 }
@@ -915,11 +960,8 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .process-node:nth-child(3n)::after {
-    display: block;
-  }
-
-  .process-node:nth-child(2n)::after {
+  /* 隱藏水平軸線在平板上 */
+  .process-timeline-line {
     display: none;
   }
 }
@@ -947,13 +989,9 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .process-node::after {
-    display: none;
-  }
-
   .projects-grid {
     grid-template-columns: 1fr;
-    max-width: 420px;
+    max-width: 540px;
   }
 
   .comparison-slider {

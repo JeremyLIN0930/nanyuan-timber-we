@@ -1,21 +1,23 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import CTA from '../components/CTA/CTA';
 import './Home.css';
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Home.tsx — 南源木材首頁完全體 v3（Complete Rewrite from Scratch）
+   Home.tsx — 南源木材首頁完全體 v4（Complete Rewrite from Scratch）
    ═══════════════════════════════════════════════════════════════════════════
    七大劇場版塊：
-     §1  Brand Intro Viewport     — 0ms 瞬間發光序幕（2.5s 退場 → 3.5s 銷毀）
+     §1  Brand Intro Viewport     — 0ms 死亮進站序幕（2s 退場 → 3s 銷毀）
      §2  Hero Scroll Theatre      — 400vh sticky 優點鎖定劇場（4 張）
      §3  About Nanyuan             — 滿版職人背景品牌介紹
      §4  Process Timeline          — 圖形化六大流程軸（Hover 互動）
      §5  Comparison Slider         — 推拉式前後對照滑桿
-     §6  Projects Wall             — 精選案例卡片牆
-     §7  CTA                       — 由 Footer.tsx 全局統一掛載
+     §6  Projects Wall             — 精選案例卡片牆（16:10 橫圖）
+     §7  CTA                       — 公共完全體組件唯一掛載
 
-   ⚠ 鐵律：零行內 style / 零 <style> 標籤 / 100% 樣式在 Home.css
+   ⚠ 鐵律：零行內 style={{}} / 零 <style> 標籤 / 100% 樣式在 Home.css
    ═══════════════════════════════════════════════════════════════════════════ */
+
 
 /* ─── §2 HERO IMAGES — 每張對應一個優點 ─── */
 import heroImg01 from '../assets/home-hero-material.jpg';
@@ -30,10 +32,11 @@ import aboutBrandBg from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
 import compareRender  from '../assets/compare-render.jpg';
 import compareReality from '../assets/compare-reality.jpg';
 
-/* ─── §6 PROJECTS THUMBNAILS ─── */
+/* ─── §6 PROJECTS THUMBNAILS（嚴選橫圖場景照） ─── */
 import projectThumb01 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
 import projectThumb02 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
 import projectThumb03 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+import projectThumb04 from '../assets/LINE_ALBUM_2026.6.17_260621_63.jpg';
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -118,7 +121,7 @@ const PROCESS_STEPS: ProcessStep[] = [
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   DATA — 精選作品
+   DATA — 精選作品（4 張 16:10 橫圖）
    ═══════════════════════════════════════════════════════════════════════════ */
 interface ProjectCard {
   name: string;
@@ -129,7 +132,8 @@ interface ProjectCard {
 const PROJECT_CARDS: ProjectCard[] = [
   { name: '北歐極簡小宅', category: 'SCANDINAVIAN', image: projectThumb01 },
   { name: '現代奢華大宅', category: 'MODERN LUXURY', image: projectThumb02 },
-  { name: '暖木系廚房', category: 'WARM KITCHEN', image: projectThumb03 },
+  { name: '暖木系廚房',   category: 'WARM KITCHEN', image: projectThumb03 },
+  { name: '日式禪風居所', category: 'JAPANESE ZEN', image: projectThumb04 },
 ];
 
 
@@ -145,13 +149,15 @@ const Home: React.FC = () => {
   const [introExiting, setIntroExiting] = useState(false);
 
   useEffect(() => {
+    /* 2 秒後注入退出類別 */
     const exitTimer = window.setTimeout(() => {
       setIntroExiting(true);
-    }, 2500);
+    }, 2000);
 
+    /* 3 秒後從 DOM 徹底銷毀 */
     const destroyTimer = window.setTimeout(() => {
       setIntroVisible(false);
-    }, 3500);
+    }, 3000);
 
     return () => {
       window.clearTimeout(exitTimer);
@@ -196,19 +202,16 @@ const Home: React.FC = () => {
   const [sliderPos, setSliderPos] = useState(50);
   const sliderContainerRef = useRef<HTMLDivElement>(null);
 
-  /* 初始化 CSS 自訂屬性 */
+  /* 同步 CSS 自訂屬性 --slider-pos */
   useEffect(() => {
     if (sliderContainerRef.current) {
-      sliderContainerRef.current.style.setProperty('--slider-pos', '50%');
+      sliderContainerRef.current.style.setProperty('--slider-pos', `${sliderPos}%`);
     }
-  }, []);
+  }, [sliderPos]);
 
   const handleSliderChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     setSliderPos(val);
-    if (sliderContainerRef.current) {
-      sliderContainerRef.current.style.setProperty('--slider-pos', `${val}%`);
-    }
   }, []);
 
 
@@ -229,8 +232,8 @@ const Home: React.FC = () => {
     <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════════════
-          §1  BRAND INTRO VIEWPORT — 0ms 瞬間發光品牌帷幕
-      ══════════════════════════════════════════════════════════════════ */}
+          §1  BRAND INTRO VIEWPORT — 0ms 死亮品牌帷幕
+          ══════════════════════════════════════════════════════════════ */}
       {introVisible && (
         <div
           className={
@@ -248,7 +251,7 @@ const Home: React.FC = () => {
 
       {/* ══════════════════════════════════════════════════════════════════
           §2  HERO SCROLL THEATRE — 400vh 優點鎖定劇場
-      ══════════════════════════════════════════════════════════════════ */}
+          ══════════════════════════════════════════════════════════════ */}
       <div className="hero-scroll-container" ref={scrollContainerRef}>
         <div className="hero-sticky-stage">
 
@@ -298,7 +301,7 @@ const Home: React.FC = () => {
 
       {/* ══════════════════════════════════════════════════════════════════
           §3  ABOUT NANYUAN — 滿版職人背景品牌介紹
-      ══════════════════════════════════════════════════════════════════ */}
+          ══════════════════════════════════════════════════════════════ */}
       <section className="about-section" aria-label="關於南源">
         <img
           className="about-bg-image"
@@ -310,7 +313,7 @@ const Home: React.FC = () => {
         <div className="about-inner">
           <div className="about-left">
             <p className="about-eyebrow">ABOUT NANYUAN</p>
-            <h2 className="about-title">三十年職人傳承</h2>
+            <h2 className="about-title">三十年職人傳承，只為健康成家</h2>
             <p className="about-title-en">CRAFTSMANSHIP SINCE 1995</p>
           </div>
           <div className="about-right">
@@ -324,12 +327,14 @@ const Home: React.FC = () => {
             </Link>
           </div>
         </div>
+        {/* 底部黑金過渡漸層 */}
+        <div className="about-bottom-gradient" />
       </section>
 
 
       {/* ══════════════════════════════════════════════════════════════════
           §4  PROCESS TIMELINE — 圖形化六大職人流程軸
-      ══════════════════════════════════════════════════════════════════ */}
+          ══════════════════════════════════════════════════════════════ */}
       <section className="process-section" aria-label="服務流程">
         <div className="process-header">
           <p className="process-eyebrow">OUR PROCESS</p>
@@ -340,11 +345,17 @@ const Home: React.FC = () => {
         </div>
 
         <div className="process-timeline">
+          {/* 金色連接主軸線 */}
+          <div className="process-timeline-line" aria-hidden="true" />
+
           {PROCESS_STEPS.map((step) => (
             <div className="process-node" key={step.number}>
-              <p className="process-node-number">{step.number}</p>
-              <h3 className="process-node-title">{step.title}</h3>
-              <p className="process-node-desc">{step.desc}</p>
+              <div className="process-node-dot" aria-hidden="true" />
+              <div className="process-node-content">
+                <p className="process-node-number">{step.number}</p>
+                <h3 className="process-node-title">{step.title}</h3>
+                <p className="process-node-desc">{step.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -359,7 +370,7 @@ const Home: React.FC = () => {
 
       {/* ══════════════════════════════════════════════════════════════════
           §5  COMPARISON SLIDER — 推拉式前後對照滑桿
-      ══════════════════════════════════════════════════════════════════ */}
+          ══════════════════════════════════════════════════════════════ */}
       <section className="comparison-section" aria-label="設計與落地對照">
         <div className="comparison-header">
           <p className="comparison-eyebrow">DESIGN vs. REALITY</p>
@@ -397,14 +408,14 @@ const Home: React.FC = () => {
               <span className="comparison-slider-arrows">◀ ▶</span>
             </div>
           </div>
-<input type="range" className="comparison-slider-input" min="0" max="100" value={sliderPos} onChange={handleSliderChange} aria-label="Design vs Reality slider" />
+
           {/* 左右標籤 */}
           <div className="comparison-slider-labels">
             <span className="comparison-slider-label">設計模擬圖 / RENDER</span>
             <span className="comparison-slider-label">實景完工照 / REALITY</span>
           </div>
 
-          {/* 透明互動控制條 */}
+          {/* 透明互動控制條（唯一一個 range input） */}
           <input
             type="range"
             className="comparison-slider-input"
@@ -412,7 +423,7 @@ const Home: React.FC = () => {
             max="100"
             value={sliderPos}
             onChange={handleSliderChange}
-            aria-label="對照滑桿"
+            aria-label="設計與實景對照滑桿"
           />
 
         </div>
@@ -420,8 +431,8 @@ const Home: React.FC = () => {
 
 
       {/* ══════════════════════════════════════════════════════════════════
-          §6  PROJECTS WALL — 精選案例卡片牆
-      ══════════════════════════════════════════════════════════════════ */}
+          §6  PROJECTS WALL — 精選案例卡片牆（16:10 橫向黃金比例）
+          ══════════════════════════════════════════════════════════════ */}
       <section className="projects-section" aria-label="精選案例">
         <div className="projects-header">
           <p className="projects-eyebrow">FEATURED PROJECTS</p>
@@ -452,7 +463,11 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* §7 — <CTA /> 由 Footer.tsx 全局統一掛載，此處不重複渲染 */}
+
+      {/* ══════════════════════════════════════════════════════════════════
+          §7  CTA — 公共完全體組件唯一掛載
+          ══════════════════════════════════════════════════════════════ */}
+      <CTA />
 
     </div>
   );
