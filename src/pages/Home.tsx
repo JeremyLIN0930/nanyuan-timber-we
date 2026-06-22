@@ -19,11 +19,11 @@ import './Home.css';
 
 
 /* ─── §2 HERO IMAGES — 每張對應一個優點 ─── */
-import heroImgBrand from '../assets/home-hero-brand.jpg';
-import heroImg01 from '../assets/home-hero-material.jpg';
-import heroImg02 from '../assets/home-hero-craft.jpg';
-import heroImg03 from '../assets/home-hero-transparency.jpg';
-import heroImg04 from '../assets/home-hero-realization.jpg';
+import heroImgBrand from '../assets/home-hero-brand-bg.jpg';
+import heroImg01 from '../assets/home-advantage-01.jpg';
+import heroImg02 from '../assets/home-advantage-02.jpg';
+import heroImg03 from '../assets/home-advantage-03.jpg';
+import heroImg04 from '../assets/home-advantage-04.jpg';
 
 const HERO_IMAGES = [
   heroImgBrand,
@@ -34,17 +34,17 @@ const HERO_IMAGES = [
 ];
 
 /* ─── §3 ABOUT BACKGROUND ─── */
-import aboutBrandBg from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
+import aboutBrandBg from '../assets/home-about-artisan.jpg';
 
 /* ─── §5 COMPARISON IMAGES ─── */
-import compareRender  from '../assets/compare-render.jpg';
-import compareReality from '../assets/compare-reality.jpg';
+import compareRender  from '../assets/home-compare-render.jpg';
+import compareReality from '../assets/home-compare-reality.jpg';
 
 /* ─── §6 PROJECTS THUMBNAILS（嚴選橫圖場景照） ─── */
-import projectThumb01 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
-import projectThumb02 from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
-import projectThumb03 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
-import projectThumb04 from '../assets/LINE_ALBUM_2026.6.17_260621_63.jpg';
+import projectThumb01 from '../assets/project-thumb-scand.jpg';
+import projectThumb02 from '../assets/project-thumb-luxury.jpg';
+import projectThumb03 from '../assets/project-thumb-kitchen.jpg';
+import projectThumb04 from '../assets/project-thumb-zen-home.jpg';
 
 
 /* ═══════════════════════════════════════════════════════════════════════════

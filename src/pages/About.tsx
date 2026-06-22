@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import './About.css';
 
-import aboutSlide01 from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
-import aboutSlide02 from '../assets/LINE_ALBUM_2026.6.17_260621_70.jpg';
-import aboutSlide03 from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
-import aboutDetail from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
+import aboutSlide01 from '../assets/project-thumb-kitchen.jpg';
+import aboutSlide02 from '../assets/about-slide-02.jpg';
+import aboutSlide03 from '../assets/project-thumb-scand.jpg';
+import aboutDetail from '../assets/home-about-artisan.jpg';
 
 /* ═══════════════════════════════════════════════════════════════
    DATA
@@ -108,8 +108,7 @@ const HeroSlider: React.FC = () => {
           animate="center"
           exit="exit"
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          className="about-hero-slide-bg"
-          style={{ backgroundImage: `url('${HERO_SLIDES[active].src}')` }}
+          className={`about-hero-slide-bg slide-bg-${active}`}
         />
       </AnimatePresence>
 
@@ -306,6 +305,12 @@ const FM_RINGS = [
 
 const RingsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  
+  const ringRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
 
   const { scrollYProgress } = useScroll({
     target:  sectionRef,
@@ -321,6 +326,22 @@ const RingsSection: React.FC = () => {
     useTransform(scrollYProgress, [r.scrollStart, r.scrollStart + 0.25], [0, 1])
   );
 
+  useEffect(() => {
+    const unsubscribes: (() => void)[] = [];
+    ringRefs.forEach((ref, idx) => {
+      const scaleVal = scaleR[idx];
+      const opacVal = opacR[idx];
+      const unsubScale = scaleVal.on("change", (latest) => {
+        if (ref.current) ref.current.style.transform = `translate(-50%, -50%) scale(${latest})`;
+      });
+      const unsubOpac = opacVal.on("change", (latest) => {
+        if (ref.current) ref.current.style.opacity = latest.toString();
+      });
+      unsubscribes.push(unsubScale, unsubOpac);
+    });
+    return () => unsubscribes.forEach(unsub => unsub());
+  }, [scaleR, opacR]);
+
   return (
     <section
       ref={sectionRef}
@@ -329,36 +350,19 @@ const RingsSection: React.FC = () => {
       <div className="container px-3 px-md-4">
         <div className="about-rings-container">
           {/* LAYER A: CSS-animated inner rings */}
-          {CSS_RINGS.map((r, i) => (
+          {CSS_RINGS.map((_, i) => (
             <div
               key={`css-ring-${i}`}
-              className="about-ring-css"
-              style={{
-                width:          `${r.size}px`,
-                height:         `${r.size}px`,
-                marginTop:      `${-r.size / 2}px`,
-                marginLeft:     `${-r.size / 2}px`,
-                border:         `1px solid rgba(197,168,128,${r.opacity})`,
-                animationDelay: r.delay,
-              }}
+              className={`about-ring-css ring-css-${i}`}
             />
           ))}
 
           {/* LAYER B: Framer Motion scroll-driven outer rings */}
-          {FM_RINGS.map((r, i) => (
+          {FM_RINGS.map((_, i) => (
             <motion.div
               key={`fm-ring-${i}`}
-              className="about-ring-fm"
-              style={{
-                width:         `${r.size}px`,
-                height:        `${r.size}px`,
-                marginTop:     `${-r.size / 2}px`,
-                marginLeft:    `${-r.size / 2}px`,
-                border:        `1px solid rgba(197,168,128,${r.borderOpacity})`,
-                boxShadow:     `0 0 ${40 + i * 20}px rgba(197,168,128,${r.shadowOpacity})`,
-                scale:         scaleR[i],
-                opacity:       opacR[i],
-              }}
+              ref={ringRefs[i]}
+              className={`about-ring-fm ring-fm-${i}`}
             />
           ))}
 

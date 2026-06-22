@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import './Services.css';
 
 
-import servicesHeroBg from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
+
 
 /* ─── Reveal animation wrapper ─── */
 interface RevealProps {
@@ -86,7 +86,6 @@ const Services: React.FC = () => {
       {/* ── Hero ── */}
       <section
         className="services-hero"
-        style={{ backgroundImage: `url(${servicesHeroBg})` }}
       >
         <div className="services-hero-overlay" />
         <div className="services-hero-content">

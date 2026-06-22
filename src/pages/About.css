@@ -48,6 +48,16 @@
   will-change: transform, opacity;
 }
 
+.slide-bg-0 {
+  background-image: url('../assets/project-thumb-kitchen.jpg');
+}
+.slide-bg-1 {
+  background-image: url('../assets/about-slide-02.jpg');
+}
+.slide-bg-2 {
+  background-image: url('../assets/project-thumb-scand.jpg');
+}
+
 .about-hero-gradient {
   position: absolute;
   inset: 0;
@@ -430,12 +440,81 @@
   transform-origin: center center;
 }
 
+.ring-css-0 {
+  width: 120px;
+  height: 120px;
+  margin-top: -60px;
+  margin-left: -60px;
+  border: 1px solid rgba(197, 168, 128, 0.50);
+  animation-delay: 0s;
+}
+.ring-css-1 {
+  width: 220px;
+  height: 220px;
+  margin-top: -110px;
+  margin-left: -110px;
+  border: 1px solid rgba(197, 168, 128, 0.35);
+  animation-delay: 1.2s;
+}
+.ring-css-2 {
+  width: 330px;
+  height: 330px;
+  margin-top: -165px;
+  margin-left: -165px;
+  border: 1px solid rgba(197, 168, 128, 0.22);
+  animation-delay: 2.4s;
+}
+.ring-css-3 {
+  width: 460px;
+  height: 460px;
+  margin-top: -230px;
+  margin-left: -230px;
+  border: 1px solid rgba(197, 168, 128, 0.14);
+  animation-delay: 3.6s;
+}
+.ring-css-4 {
+  width: 600px;
+  height: 600px;
+  margin-top: -300px;
+  margin-left: -300px;
+  border: 1px solid rgba(197, 168, 128, 0.08);
+  animation-delay: 4.8s;
+}
+
 .about-ring-fm {
   position: absolute;
   top: 50%;
   left: 50%;
   border-radius: 50%;
   pointer-events: none;
+}
+
+.ring-fm-0 {
+  width: 400px;
+  height: 400px;
+  margin-top: -200px;
+  margin-left: -200px;
+  border: 1px solid rgba(197, 168, 128, 0.45);
+  box-shadow: 0 0 40px rgba(197, 168, 128, 0.25);
+  transform: translate(-50%, -50%) scale(0);
+}
+.ring-fm-1 {
+  width: 560px;
+  height: 560px;
+  margin-top: -280px;
+  margin-left: -280px;
+  border: 1px solid rgba(197, 168, 128, 0.22);
+  box-shadow: 0 0 60px rgba(197, 168, 128, 0.12);
+  transform: translate(-50%, -50%) scale(0);
+}
+.ring-fm-2 {
+  width: 720px;
+  height: 720px;
+  margin-top: -360px;
+  margin-left: -360px;
+  border: 1px solid rgba(197, 168, 128, 0.10);
+  box-shadow: 0 0 80px rgba(197, 168, 128, 0.06);
+  transform: translate(-50%, -50%) scale(0);
 }
 
 @keyframes rings-pulse {

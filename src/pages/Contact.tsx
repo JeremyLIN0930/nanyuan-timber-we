@@ -348,7 +348,19 @@ const Step2: React.FC<{
       scopes: prev.scopes.includes(id) ? prev.scopes.filter(s => s !== id) : [...prev.scopes, id],
     }));
 
+  const sliderFillRef = useRef<HTMLDivElement>(null);
+  const sliderThumbRef = useRef<HTMLDivElement>(null);
+
   const sliderPct = ((formData.ping - 5) / 195) * 100;
+
+  useEffect(() => {
+    if (sliderFillRef.current) {
+      sliderFillRef.current.style.width = `${sliderPct}%`;
+    }
+    if (sliderThumbRef.current) {
+      sliderThumbRef.current.style.left = `calc(${sliderPct}% - 9px)`;
+    }
+  }, [sliderPct]);
 
   return (
     <motion.div key="s2" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={slideTransition}>
@@ -414,7 +426,7 @@ const Step2: React.FC<{
       <div className="contact-slider-wrap">
         <div className="contact-slider-track-wrap">
           <div className="contact-slider-track-bg" />
-          <div className="contact-slider-track-fill" style={{ width: `${sliderPct}%` }} />
+          <div className="contact-slider-track-fill" ref={sliderFillRef} />
           <input
             type="range"
             min="5"
@@ -423,7 +435,7 @@ const Step2: React.FC<{
             onChange={e => setFormData(prev => ({ ...prev, ping: parseInt(e.target.value) }))}
             className="contact-slider-native"
           />
-          <div className="contact-slider-thumb" style={{ left: `calc(${sliderPct}% - 9px)` }} />
+          <div className="contact-slider-thumb" ref={sliderThumbRef} />
         </div>
 
         <div className="contact-slider-value-wrap">

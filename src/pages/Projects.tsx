@@ -15,28 +15,28 @@ import './Projects.css';
 
 
 /* ─── 案例 1：機能小宅改造（局部改造系列照片） ─── */
-import photo1A from '../assets/LINE_ALBUM_2026.6.17_260621_5.jpg';
-import photo1B from '../assets/LINE_ALBUM_2026.6.17_260621_6.jpg';
-import photo1C from '../assets/LINE_ALBUM_2026.6.17_260621_7.jpg';
-import photo1D from '../assets/LINE_ALBUM_2026.6.17_260621_8.jpg';
+import photo1A from '../assets/project-thumb-scand.jpg';
+import photo1B from '../assets/project-scand-02.jpg';
+import photo1C from '../assets/project-scand-03.jpg';
+import photo1D from '../assets/project-scand-04.jpg';
 
 /* ─── 案例 2：曜石黑金大器邸（豪宅系列照片） ─── */
-import photo2A from '../assets/LINE_ALBUM_2026.6.17_260621_82.jpg';
-import photo2B from '../assets/LINE_ALBUM_2026.6.17_260621_83.jpg';
-import photo2C from '../assets/LINE_ALBUM_2026.6.17_260621_84.jpg';
-import photo2D from '../assets/LINE_ALBUM_2026.6.17_260621_85.jpg';
+import photo2A from '../assets/project-thumb-luxury.jpg';
+import photo2B from '../assets/project-luxury-02.jpg';
+import photo2C from '../assets/project-luxury-03.jpg';
+import photo2D from '../assets/project-luxury-04.jpg';
 
 /* ─── 案例 3：暖心交誼輕食區（木作廚房系列照片） ─── */
-import photo3A from '../assets/LINE_ALBUM_2026.6.17_260621_20.jpg';
-import photo3B from '../assets/LINE_ALBUM_2026.6.17_260621_21.jpg';
-import photo3C from '../assets/LINE_ALBUM_2026.6.17_260621_22.jpg';
-import photo3D from '../assets/LINE_ALBUM_2026.6.17_260621_23.jpg';
+import photo3A from '../assets/project-thumb-kitchen.jpg';
+import photo3B from '../assets/project-kitchen-02.jpg';
+import photo3C from '../assets/project-kitchen-03.jpg';
+import photo3D from '../assets/project-kitchen-04.jpg';
 
 /* ─── 案例 4：隱世侘寂睡眠艙（臥室系列照片） ─── */
-import photo4A from '../assets/LINE_ALBUM_2026.6.17_260621_10.jpg';
-import photo4B from '../assets/LINE_ALBUM_2026.6.17_260621_11.jpg';
-import photo4C from '../assets/LINE_ALBUM_2026.6.17_260621_12.jpg';
-import photo4D from '../assets/LINE_ALBUM_2026.6.17_260621_13.jpg';
+import photo4A from '../assets/project-thumb-zen.jpg';
+import photo4B from '../assets/project-zen-02.jpg';
+import photo4C from '../assets/project-zen-03.jpg';
+import photo4D from '../assets/project-zen-04.jpg';
 
 
 /* ═══════════════════════════════════════════════════════════════════════════

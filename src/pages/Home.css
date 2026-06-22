@@ -109,6 +109,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   overflow: visible !important;
   display: flex;
@@ -968,6 +969,10 @@
 
 /* ── Tablet & Mobile (≤ 992px) ── */
 @media (max-width: 992px) {
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(5, 5, 5, 0.85) 0%, rgba(10, 10, 10, 0.75) 100%) !important;
+  }
+
   /* §2 Sticky Theater vertical stack layout */
   .hero-content-layer {
     flex-direction: column !important;
@@ -1074,6 +1079,14 @@
   }
 
   /* §3 About Nanyuan Scroll Fallback & Deeper Dark Overlay */
+  .about-section {
+    padding: clamp(5rem, 10vh, 6rem) 0 !important;
+  }
+
+  .about-inner {
+    padding-bottom: 0 !important;
+  }
+
   .about-bg-image {
     position: absolute !important;
     top: 0 !important;

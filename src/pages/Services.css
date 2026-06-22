@@ -52,6 +52,7 @@
   background-size:     cover;
   background-position: center;
   background-repeat:   no-repeat;
+  background-image:    url('../assets/project-thumb-kitchen.jpg');
 
   /* ★ BUG 1 FIX ★ */
   padding-top:         150px !important;
