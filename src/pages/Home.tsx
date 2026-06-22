@@ -19,10 +19,19 @@ import './Home.css';
 
 
 /* ─── §2 HERO IMAGES — 每張對應一個優點 ─── */
+import heroImgBrand from '../assets/home-hero-brand.jpg';
 import heroImg01 from '../assets/home-hero-material.jpg';
 import heroImg02 from '../assets/home-hero-craft.jpg';
 import heroImg03 from '../assets/home-hero-transparency.jpg';
 import heroImg04 from '../assets/home-hero-realization.jpg';
+
+const HERO_IMAGES = [
+  heroImgBrand,
+  heroImg01,
+  heroImg02,
+  heroImg03,
+  heroImg04,
+];
 
 /* ─── §3 ABOUT BACKGROUND ─── */
 import aboutBrandBg from '../assets/LINE_ALBUM_2026.6.17_260621_40.jpg';
@@ -144,31 +153,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   /* ─────────────────────────────────────────────────────────────────────
-     §1 STATE — Brand Intro Viewport
-     ───────────────────────────────────────────────────────────────────── */
-  const [introVisible, setIntroVisible] = useState(true);
-  const [introExiting, setIntroExiting] = useState(false);
-
-  useEffect(() => {
-    /* 2 秒後注入退出類別 */
-    const exitTimer = window.setTimeout(() => {
-      setIntroExiting(true);
-    }, 2000);
-
-    /* 3 秒後從 DOM 徹底銷毀 */
-    const destroyTimer = window.setTimeout(() => {
-      setIntroVisible(false);
-    }, 3000);
-
-    return () => {
-      window.clearTimeout(exitTimer);
-      window.clearTimeout(destroyTimer);
-    };
-  }, []);
-
-
-  /* ─────────────────────────────────────────────────────────────────────
-     §2 STATE — Hero Scroll Theatre
+     §2 STATE — Hero Scroll Theatre (5 Panels: 0 to 4)
      ───────────────────────────────────────────────────────────────────── */
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -185,8 +170,8 @@ const Home: React.FC = () => {
 
     const scrolled = -containerTop;
     const progress = Math.max(0, Math.min(scrolled / scrollableHeight, 0.9999));
-    const newIndex = Math.floor(progress * 4);
-    const clampedIndex = Math.max(0, Math.min(newIndex, 3));
+    const newIndex = Math.floor(progress * 5);
+    const clampedIndex = Math.max(0, Math.min(newIndex, 4));
 
     setActiveIndex(clampedIndex);
   }, []);
@@ -233,38 +218,18 @@ const Home: React.FC = () => {
     <div className="home-page">
 
       {/* ══════════════════════════════════════════════════════════════════
-          §1  BRAND INTRO VIEWPORT — 0ms 死亮品牌帷幕
-          ══════════════════════════════════════════════════════════════ */}
-      {introVisible && (
-        <div
-          className={
-            introExiting
-              ? 'brand-intro-viewport viewport-exit-slide'
-              : 'brand-intro-viewport'
-          }
-          aria-hidden="true"
-        >
-          <div className="brand-intro-logo-box">
-            <h1 className="brand-intro-title">南源木材</h1>
-            <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
-          </div>
-        </div>
-      )}
-
-
-      {/* ══════════════════════════════════════════════════════════════════
-          §2  HERO SCROLL THEATRE — 400vh 優點鎖定劇場
+          §2  HERO SCROLL THEATRE — 500vh 優點鎖定劇場 (Panel 0-4)
           ══════════════════════════════════════════════════════════════ */}
       <div className="hero-scroll-container" ref={scrollContainerRef}>
         <div className="hero-sticky-stage">
 
           {/* 背景圖片層 */}
           <div className="hero-bg-layer">
-            {ADVANTAGES.map((adv, i) => (
+            {HERO_IMAGES.map((img, i) => (
               <img
-                key={adv.number}
-                src={adv.image}
-                alt={adv.title}
+                key={i}
+                src={img}
+                alt=""
                 className={
                   i === activeIndex
                     ? 'hero-bg-image hero-bg-active'
@@ -281,15 +246,35 @@ const Home: React.FC = () => {
           {/* 前景內容層 */}
           <div className="hero-content-layer">
 
-            {/* 左側巨型幾何序號 */}
-            <span className="hero-giant-number" aria-hidden="true">
-              {ADVANTAGES[activeIndex].number}
+            {/* 0號：品牌大字 (滿版置中，activeIndex === 0 時激活) */}
+            <div className={
+              activeIndex === 0
+                ? 'hero-brand-card card-active'
+                : 'hero-brand-card card-left'
+            }>
+              <div className="brand-intro-logo-box">
+                <h1 className="brand-intro-title">南源木材</h1>
+                <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
+              </div>
+            </div>
+
+            {/* 左側幾何序號 */}
+            <span className={
+              activeIndex > 0
+                ? 'hero-giant-number'
+                : 'hero-giant-number hero-giant-number-hidden'
+            } aria-hidden="true">
+              {activeIndex > 0 ? ADVANTAGES[activeIndex - 1].number : '01'}
             </span>
 
             {/* 右側字卡滑入載具 */}
-            <div className="hero-cards-track">
+            <div className={
+              activeIndex > 0
+                ? 'hero-cards-track track-active'
+                : 'hero-cards-track track-right'
+            }>
               {ADVANTAGES.map((adv, i) => (
-                <div key={adv.number} className={getCardClass(i)}>
+                <div key={adv.number} className={getCardClass(i + 1)}>
                   <p className="hero-card-number">{adv.number}</p>
                   <h2 className="hero-card-title">{adv.title}</h2>
                   <p className="hero-card-desc">{adv.desc}</p>
