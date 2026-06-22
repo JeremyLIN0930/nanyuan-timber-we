@@ -315,13 +315,6 @@
 .about-inner {
   position: relative;
   z-index: 3;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(3rem, 6vw, 6rem);
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(1.5rem, 4vw, 4rem) clamp(6rem, 10vh, 10rem);
 }
 
 .about-left {
@@ -860,13 +853,8 @@
 }
 
 /* ── 卡片網格（2×2 橫圖網格） ── */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(1rem, 2vw, 2rem);
-  max-width: 1200px;
-  margin: 0 auto clamp(3rem, 5vw, 4rem);
-  padding: 0 clamp(1.5rem, 4vw, 4rem);
+.projects-grid-bootstrap {
+  margin-bottom: clamp(3rem, 5vw, 4rem);
 }
 
 /* ── 單張案例卡片（16:10 橫向比例） ── */
@@ -1041,8 +1029,6 @@
 
   /* §3 About Nanyuan layout stack */
   .about-inner {
-    grid-template-columns: 1fr !important;
-    gap: clamp(2rem, 4vw, 3rem) !important;
     text-align: center !important;
   }
 
@@ -1163,11 +1149,7 @@
     letter-spacing: 0.1em !important;
   }
 
-  /* §6 Projects Grid 1-column */
-  .projects-grid {
-    grid-template-columns: 1fr !important;
-    max-width: 540px !important;
-  }
+
 }
 
 /* ── Small Mobile (≤ 480px) ── */

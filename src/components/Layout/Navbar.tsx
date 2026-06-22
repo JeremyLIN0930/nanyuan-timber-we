@@ -50,54 +50,26 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <>
-      {/* ═══ TOP BAR ═══ */}
-      <nav className={`nyn-navbar ${scrolled ? 'nyn-navbar--scrolled' : ''}`}>
+    <nav className={`navbar navbar-expand-lg navbar-dark fixed-top nyn-navbar ${scrolled ? 'nyn-navbar--scrolled' : ''}`}>
+      <div className="container-fluid px-3 px-md-5">
 
         {/* Brand */}
         <Link
           to="/"
           onClick={() => setIsOpen(false)}
-          className="nyn-navbar-brand"
+          className="navbar-brand nyn-navbar-brand"
         >
           <span className="nyn-navbar-brand-zh">南源木材</span>
           <span className="nyn-navbar-brand-en">NANYUAN TIMBER DESIGN</span>
         </Link>
 
-        {/* Desktop Inline Links (≥992px) */}
-        <div className="nyn-navbar-links">
-          {NAV_LINKS.map(link => {
-            const active = isActive(link.path);
-            return (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`nyn-navbar-link ${active ? 'nyn-navbar-link--active' : ''}`}
-              >
-                {link.name}
-                {active && (
-                  <motion.span
-                    layoutId="nav-underline"
-                    className="nyn-navbar-underline"
-                    transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* CTA Button (desktop) */}
-        <div className="nyn-navbar-cta-wrapper">
-          <Link to="/contact" className="nyn-navbar-cta">
-            立即預約
-          </Link>
-        </div>
-
-        {/* Hamburger (<992px) */}
+        {/* Hamburger Toggler Button */}
         <button
-          className="nyn-navbar-toggle"
+          className="navbar-toggler nyn-navbar-toggle"
+          type="button"
           onClick={() => setIsOpen(prev => !prev)}
+          aria-controls="nanyuanNavbarCollapse"
+          aria-expanded={isOpen}
           aria-label="Toggle navigation menu"
         >
           <AnimatePresence mode="wait" initial={false}>
@@ -126,77 +98,52 @@ const Navbar: React.FC = () => {
             )}
           </AnimatePresence>
         </button>
-      </nav>
 
-      {/* ═══ MOBILE FULLSCREEN OVERLAY ═══ */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            key="mobile-overlay"
-            className="nyn-mobile-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{   opacity: 0 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="nyn-mobile-links">
-              {NAV_LINKS.map((link, index) => {
-                const active = isActive(link.path);
-                return (
-                  <motion.div
-                    key={link.path}
-                    initial={{ opacity: 0, x: -32 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{   opacity: 0, x: -16 }}
-                    transition={{
-                      delay:    index * 0.055 + 0.08,
-                      duration: 0.5,
-                      ease:     [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    <Link
-                      to={link.path}
-                      onClick={() => setIsOpen(false)}
-                      className={`nyn-mobile-link ${active ? 'nyn-mobile-link--active' : ''}`}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
+        {/* Collapsible Menu links */}
+        <div className={`collapse navbar-collapse nyn-navbar-collapse ${isOpen ? 'show' : ''}`} id="nanyuanNavbarCollapse">
+          <div className="navbar-nav ms-auto align-items-lg-center nyn-navbar-links">
+            {NAV_LINKS.map(link => {
+              const active = isActive(link.path);
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`nav-link nyn-navbar-link ${active ? 'nyn-navbar-link--active' : ''}`}
+                >
+                  {link.name}
+                  {active && (
+                    <motion.span
+                      layoutId="nav-underline"
+                      className="nyn-navbar-underline"
+                      transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
 
-            {/* Mobile CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{   opacity: 0 }}
-              transition={{ delay: NAV_LINKS.length * 0.055 + 0.15, duration: 0.5 }}
-              className="nyn-mobile-cta-wrapper"
+          {/* Desktop CTA Button */}
+          <div className="d-none d-lg-block nyn-navbar-cta-wrapper">
+            <Link to="/contact" className="btn nyn-navbar-cta">
+              立即預約
+            </Link>
+          </div>
+
+          {/* Mobile CTA inside collapsed menu */}
+          <div className="d-lg-none w-100 nyn-mobile-cta-wrapper">
+            <Link
+              to="/contact"
+              onClick={() => setIsOpen(false)}
+              className="btn nyn-mobile-cta"
             >
-              <Link
-                to="/contact"
-                onClick={() => setIsOpen(false)}
-                className="nyn-mobile-cta"
-              >
-                立即預約諮詢 ➔
-              </Link>
-            </motion.div>
+              立即預約諮詢 ➔
+            </Link>
+          </div>
+        </div>
 
-            {/* Footer credit */}
-            <motion.p
-              className="nyn-mobile-footer"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{   opacity: 0 }}
-              transition={{ delay: 0.7, duration: 0.6 }}
-            >
-              © 2026 NANYUAN TIMBER DESIGN
-            </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+      </div>
+    </nav>
   );
 };
 

@@ -121,13 +121,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    §2  PROJECTS GRID — 多列作品卡片網格
    ═══════════════════════════════════════════════════════════════════════════ */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(1rem, 2vw, 2rem);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(1.5rem, 4vw, 4rem) clamp(4rem, 8vh, 8rem);
+.projects-grid-bootstrap {
+  padding-bottom: clamp(4rem, 8vh, 8rem);
 }
 
 .projects-grid-card {
@@ -320,13 +315,8 @@
 }
 
 /* ── 中間雙列故事區塊 ── */
-.project-story {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(3rem, 6vw, 6rem);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: clamp(4rem, 8vh, 8rem) clamp(2rem, 5vw, 6rem);
+.project-story-bootstrap {
+  /* Let Bootstrap container handle padding and width */
 }
 
 .project-story-left {
@@ -429,10 +419,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    §4  GALLERY GRID — 多圖錯落藝廊牆
    ═══════════════════════════════════════════════════════════════════════════ */
-.project-gallery {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(2rem, 5vw, 6rem) clamp(4rem, 8vh, 8rem);
+.project-gallery-bootstrap {
+  padding-bottom: clamp(4rem, 8vh, 8rem);
 }
 
 .project-gallery-eyebrow {
@@ -510,17 +498,7 @@
 }
 
 /* ── Tablet ≤ 1024px ── */
-/* ── Tablet ≤ 1024px ── */
 @media (max-width: 1024px) {
-  .projects-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  .project-story {
-    grid-template-columns: 1fr !important;
-    gap: clamp(2rem, 4vw, 3rem) !important;
-  }
-
   .project-specs-card {
     position: static !important;
   }
@@ -528,11 +506,6 @@
 
 /* ── Mobile ≤ 768px ── */
 @media (max-width: 768px) {
-  .projects-grid {
-    grid-template-columns: 1fr !important;
-    max-width: 540px !important;
-  }
-
   .filter-bar {
     justify-content: flex-start !important;
     flex-wrap: nowrap !important;
@@ -545,7 +518,7 @@
   }
 
   /* Full bleed scrolling gallery on mobile */
-  .project-gallery {
+  .project-gallery-bootstrap {
     padding-left: 0 !important;
     padding-right: 0 !important;
     padding-bottom: clamp(3rem, 6vh, 6rem) !important;

@@ -421,45 +421,48 @@ const Home: React.FC = () => {
       {/* ══════════════════════════════════════════════════════════════════
           §6  PROJECTS WALL — 精選案例卡片牆（16:10 橫向黃金比例）
           ══════════════════════════════════════════════════════════════ */}
-      <section className="projects-section" aria-label="精選案例">
-        <div className="projects-header">
-          <p className="projects-eyebrow">FEATURED PROJECTS</p>
-          <h2 className="projects-title">匠心落地，經典案例</h2>
-        </div>
+      <section className="projects-section py-5" aria-label="精選案例">
+        <div className="container">
+          <div className="text-center mb-5 projects-header">
+            <p className="projects-eyebrow">FEATURED PROJECTS</p>
+            <h2 className="projects-title">匠心落地，經典案例</h2>
+          </div>
 
-        <div className="projects-grid">
-          {PROJECT_CARDS.map((proj) => (
-            <div
-              className="projects-card home-project-card"
-              key={proj.name}
-              onClick={() => navigate('/projects', { state: { projectId: proj.id } })}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  navigate('/projects', { state: { projectId: proj.id } });
-                }
-              }}
-              aria-label={`查看案例：${proj.name}`}
-            >
-              <img
-                className="projects-card-image"
-                src={proj.image}
-                alt={proj.name}
-                loading="lazy"
-              />
-              <div className="projects-card-overlay">
-                <h3 className="projects-card-name">{proj.name}</h3>
-                <p className="projects-card-category">{proj.category}</p>
+          <div className="row g-4 justify-content-center projects-grid-bootstrap">
+            {PROJECT_CARDS.map((proj) => (
+              <div className="col-12 col-lg-6" key={proj.name}>
+                <div
+                  className="projects-card home-project-card"
+                  onClick={() => navigate('/projects', { state: { projectId: proj.id } })}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      navigate('/projects', { state: { projectId: proj.id } });
+                    }
+                  }}
+                  aria-label={`查看案例：${proj.name}`}
+                >
+                  <img
+                    className="projects-card-image"
+                    src={proj.image}
+                    alt={proj.name}
+                    loading="lazy"
+                  />
+                  <div className="projects-card-overlay">
+                    <h3 className="projects-card-name">{proj.name}</h3>
+                    <p className="projects-card-category">{proj.category}</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <div className="projects-footer">
-          <Link to="/projects" className="capsule-link">
-            瀏覽更多案例 ➜
-          </Link>
+          <div className="text-center mt-5 projects-footer">
+            <Link to="/projects" className="capsule-link">
+              瀏覽更多案例 ➜
+            </Link>
+          </div>
         </div>
       </section>
 

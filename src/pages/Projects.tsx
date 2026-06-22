@@ -205,61 +205,68 @@ const Projects: React.FC = () => {
      ═══════════════════════════════════════════════════════════════════════ */
   if (currentView === 'list') {
     return (
-      <div className="projects-page">
+      <div className="projects-page py-5">
 
         {/* ── 頁面大標題 ── */}
-        <div className="projects-page-header">
-          <p className="projects-page-eyebrow">OUR PROJECTS</p>
-          <h1 className="projects-page-title">匠心落地，經典案例</h1>
-          <p className="projects-page-subtitle">
-            從北歐極簡小宅到現代奢華大宅，南源以木為魂，將每一個空間雕琢成獨一無二的生活藝術品。
-          </p>
+        <div className="container px-3 px-md-4">
+          <div className="projects-page-header text-center">
+            <p className="projects-page-eyebrow">OUR PROJECTS</p>
+            <h1 className="projects-page-title">匠心落地，經典案例</h1>
+            <p className="projects-page-subtitle mx-auto">
+              從北歐極簡小宅到現代奢華大宅，南源以木為魂，將每一個空間雕琢成獨一無二的生活藝術品。
+            </p>
+          </div>
         </div>
 
         {/* ── 分類膠囊列 ── */}
-        <div className="filter-bar">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              className={
-                activeCategory === cat.id
-                  ? 'filter-pill filter-pill--active'
-                  : 'filter-pill'
-              }
-              onClick={() => setActiveCategory(cat.id)}
-              aria-label={`篩選 ${cat.label}`}
-            >
-              <span className="filter-pill-zh">{cat.label}</span>
-              <span className="filter-pill-en">{cat.en}</span>
-            </button>
-          ))}
+        <div className="container mb-5">
+          <div className="filter-bar d-flex justify-content-center flex-wrap gap-2 gap-md-3">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                className={
+                  activeCategory === cat.id
+                    ? 'filter-pill filter-pill--active'
+                    : 'filter-pill'
+                }
+                onClick={() => setActiveCategory(cat.id)}
+                aria-label={`篩選 ${cat.label}`}
+              >
+                <span className="filter-pill-zh">{cat.label}</span>
+                <span className="filter-pill-en">{cat.en}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ── 卡片網格 ── */}
-        <div className="projects-grid">
-          {filteredProjects.map(project => (
-            <div
-              key={project.id}
-              className="projects-grid-card"
-              onClick={() => openProject(project)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter') openProject(project); }}
-              aria-label={`查看案例：${project.title}`}
-            >
-              <img
-                className="projects-grid-card-img"
-                src={project.images[0]}
-                alt={project.title}
-                loading="lazy"
-              />
-              <div className="projects-grid-card-overlay">
-                <span className="projects-grid-card-type">{project.type}</span>
-                <h2 className="projects-grid-card-title">{project.title}</h2>
-                <p className="projects-grid-card-sub">{project.subtitle} · {project.size}</p>
+        <div className="container py-4">
+          <div className="row g-4 justify-content-center projects-grid-bootstrap">
+            {filteredProjects.map(project => (
+              <div className="col-12 col-md-6 col-lg-4" key={project.id}>
+                <div
+                  className="projects-grid-card"
+                  onClick={() => openProject(project)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter') openProject(project); }}
+                  aria-label={`查看案例：${project.title}`}
+                >
+                  <img
+                    className="projects-grid-card-img"
+                    src={project.images[0]}
+                    alt={project.title}
+                    loading="lazy"
+                  />
+                  <div className="projects-grid-card-overlay">
+                    <span className="projects-grid-card-type">{project.type}</span>
+                    <h2 className="projects-grid-card-title">{project.title}</h2>
+                    <p className="projects-grid-card-sub">{project.subtitle} · {project.size}</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* CTA 由 Footer.tsx 全局統一掛載 */}
@@ -299,64 +306,68 @@ const Projects: React.FC = () => {
             loading="eager"
           />
           <div className="project-hero-overlay">
-            <span className="project-hero-type">{p.type} · {p.location}</span>
-            <h1 className="project-hero-title">{p.title}</h1>
-            <p className="project-hero-subtitle">{p.subtitle}</p>
+            <div className="container px-3 px-md-5 w-100">
+              <span className="project-hero-type d-inline-block">{p.type} · {p.location}</span>
+              <h1 className="project-hero-title">{p.title}</h1>
+              <p className="project-hero-subtitle">{p.subtitle}</p>
+            </div>
           </div>
         </div>
 
         {/* ══════════════════════════════════════════════════════════
             STORY — 雙列故事 + 規格表
         ══════════════════════════════════════════════════════════ */}
-        <div className="project-story">
+        <div className="container py-5 project-story-bootstrap">
+          <div className="row g-5">
 
-          {/* 左側：設計理念 */}
-          <div className="project-story-left">
-            <p className="project-story-eyebrow">DESIGN CONCEPT</p>
-            <h2 className="project-story-heading">設計理念</h2>
-            {p.story.map((paragraph, i) => (
-              <p key={i} className="project-story-paragraph">{paragraph}</p>
-            ))}
-          </div>
+            {/* 左側：設計理念 */}
+            <div className="col-12 col-lg-7 project-story-left">
+              <p className="project-story-eyebrow">DESIGN CONCEPT</p>
+              <h2 className="project-story-heading">設計理念</h2>
+              {p.story.map((paragraph, i) => (
+                <p key={i} className="project-story-paragraph">{paragraph}</p>
+              ))}
+            </div>
 
-          {/* 右側：曜石黑規格表 */}
-          <div className="project-story-right">
-            <div className="project-specs-card">
-              <p className="project-specs-title">PROJECT SPECIFICATIONS</p>
-              <div className="project-spec-row">
-                <span className="project-spec-label">案例類型</span>
-                <span className="project-spec-value">{p.type}</span>
-              </div>
-              <div className="project-spec-row">
-                <span className="project-spec-label">所在區域</span>
-                <span className="project-spec-value">{p.location}</span>
-              </div>
-              <div className="project-spec-row">
-                <span className="project-spec-label">坪數</span>
-                <span className="project-spec-value">{p.size}</span>
-              </div>
-              <div className="project-spec-row">
-                <span className="project-spec-label">格局</span>
-                <span className="project-spec-value">{p.layout}</span>
-              </div>
-              <div className="project-spec-row">
-                <span className="project-spec-label">設計風格</span>
-                <span className="project-spec-value">{p.style}</span>
-              </div>
-              <div className="project-spec-row">
-                <span className="project-spec-label">核心建材</span>
-                <span className="project-spec-value">{p.materials}</span>
+            {/* 右側：曜石黑規格表 */}
+            <div className="col-12 col-lg-5 project-story-right">
+              <div className="project-specs-card">
+                <p className="project-specs-title">PROJECT SPECIFICATIONS</p>
+                <div className="project-spec-row">
+                  <span className="project-spec-label">案例類型</span>
+                  <span className="project-spec-value">{p.type}</span>
+                </div>
+                <div className="project-spec-row">
+                  <span className="project-spec-label">所在區域</span>
+                  <span className="project-spec-value">{p.location}</span>
+                </div>
+                <div className="project-spec-row">
+                  <span className="project-spec-label">坪數</span>
+                  <span className="project-spec-value">{p.size}</span>
+                </div>
+                <div className="project-spec-row">
+                  <span className="project-spec-label">格局</span>
+                  <span className="project-spec-value">{p.layout}</span>
+                </div>
+                <div className="project-spec-row">
+                  <span className="project-spec-label">設計風格</span>
+                  <span className="project-spec-value">{p.style}</span>
+                </div>
+                <div className="project-spec-row">
+                  <span className="project-spec-label">核心建材</span>
+                  <span className="project-spec-value">{p.materials}</span>
+                </div>
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
 
         {/* ══════════════════════════════════════════════════════════
             GALLERY — 多圖藝廊牆
         ══════════════════════════════════════════════════════════ */}
-        <div className="project-gallery">
-          <p className="project-gallery-eyebrow">SPACE GALLERY</p>
+        <div className="container py-5 project-gallery-bootstrap">
+          <p className="project-gallery-eyebrow text-center">SPACE GALLERY</p>
           <div className="project-gallery-grid">
             {galleryImages.map((img, i) => (
               <div key={i} className="project-gallery-item">
