@@ -244,8 +244,10 @@ const Home: React.FC = () => {
           }
           aria-hidden="true"
         >
-          <h1 className="brand-intro-title">南源木材</h1>
-          <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
+          <div className="brand-intro-logo-box">
+            <h1 className="brand-intro-title">南源木材</h1>
+            <p className="brand-intro-subtitle">NANYUAN TIMBER DESIGN</p>
+          </div>
         </div>
       )}
 

@@ -27,22 +27,31 @@
 .brand-intro-viewport {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0a0a0a !important;
+}
+
+/* ── 文字包裹盒：物理層級最高獨立定位 ── */
+.brand-intro-logo-box {
+  position: relative;
+  z-index: 10001 !important;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #050505;
-  /* 無任何 transition / animation — 第一幀即滿載 */
+  text-align: center;
 }
 
-/* ── 品牌大字：第 0 毫秒死亮，嚴禁 animation / opacity: 0 ── */
+/* ── 品牌大字：第 0 毫秒死亮，強行顯色與層級 ── */
 .brand-intro-title {
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 900 !important;
   font-size: clamp(2.8rem, 8vw, 6rem);
   letter-spacing: 0.35em;
-  color: #c5a880 !important;
+  color: #ffffff !important;
   opacity: 1 !important;
   visibility: visible !important;
   margin: 0 0 1rem 0;
@@ -56,7 +65,7 @@
   font-weight: 300;
   font-size: clamp(0.85rem, 2vw, 1.4rem);
   letter-spacing: 0.6em;
-  color: rgba(197, 168, 128, 0.6) !important;
+  color: #c5a880 !important;
   opacity: 1 !important;
   visibility: visible !important;
   margin: 0;
