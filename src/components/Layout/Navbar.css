@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════════════════════════
+/* =========================================================================
    NAVBAR — Grand Luxury Frosted Obsidian Glass
-   ─────────────────────────────────────────────────────────────
+   -------------------------------------------------------------------------
    南源木材 · NANYUAN TIMBER DESIGN
    
    Visual Philosophy:
@@ -10,16 +10,16 @@
    • CTA button enlarged with 3D gold glow
    • High-end frosted glass backdrop with gold hairline border
    • Mobile overlay: large thumb-friendly touch targets
-═══════════════════════════════════════════════════════════════ */
+ ========================================================================= */
 
 
-/* ═══════════════════════════════════════════════════════════════
+/* =========================================================================
    TOP BAR — Frosted Glass Foundation
-   ─────────────────────────────────────────────────────────────
+   -------------------------------------------------------------------------
    Generous padding creates the "breathing room" instead of a
    cramped fixed height. Desktop: ~24px 60px, scales down on
    mobile via clamp().
-═══════════════════════════════════════════════════════════════ */
+ ========================================================================= */
 .nyn-navbar {
   position: fixed;
   top: 0;
@@ -30,15 +30,15 @@
   align-items: center;
   justify-content: space-between;
 
-  /* ── Generous luxury padding — creates the grand scale ── */
+  /* -- Generous luxury padding — creates the grand scale -- */
   padding: clamp(16px, 2.4vh, 26px) clamp(20px, 5vw, 64px);
 
-  /* ── Frosted obsidian glass ── */
+  /* -- Frosted obsidian glass -- */
   background: rgba(10, 10, 10, 0.75);
   backdrop-filter: blur(16px) saturate(1.6);
   -webkit-backdrop-filter: blur(16px) saturate(1.6);
 
-  /* ── Delicate gold hairline border ── */
+  /* -- Delicate gold hairline border -- */
   border-bottom: 1px solid rgba(197, 168, 128, 0.15);
 
   transition:
@@ -49,7 +49,7 @@
 }
 
 
-/* ── Scrolled state — denser glass, tighter padding ── */
+/* -- Scrolled state — denser glass, tighter padding -- */
 .nyn-navbar--scrolled {
   background: rgba(5, 5, 5, 0.92);
   backdrop-filter: blur(28px) saturate(1.8);
@@ -60,12 +60,12 @@
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
+/* =========================================================================
    BRAND LOGO — Commanding Presence
-   ─────────────────────────────────────────────────────────────
+   -------------------------------------------------------------------------
    Scaled-up Chinese title for authoritative brand identity.
    English subtitle with widened letter-spacing for elegance.
-═══════════════════════════════════════════════════════════════ */
+ ========================================================================= */
 .nyn-navbar-brand {
   text-decoration: none;
   display: flex;
@@ -99,12 +99,12 @@
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
+/* =========================================================================
    DESKTOP LINKS — Expanded Spacing & Typography
-   ─────────────────────────────────────────────────────────────
+   -------------------------------------------------------------------------
    Font-size 1.02rem (vs 12.5px before), gap expanded to 40px.
    Wider padding-bottom for cleaner underline distance.
-═══════════════════════════════════════════════════════════════ */
+ ========================================================================= */
 .nyn-navbar-links {
   display: none;
   align-items: center;
@@ -146,7 +146,7 @@
 }
 
 
-/* ── Active underline wire (framer-motion layoutId) ── */
+/* -- Active underline wire (framer-motion layoutId) -- */
 .nyn-navbar-underline {
   position: absolute;
   bottom: -2px;
@@ -162,12 +162,12 @@
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
+/* =========================================================================
    CTA BUTTON — Solid Gold Metal Focal Point
-   ─────────────────────────────────────────────────────────────
+   -------------------------------------------------------------------------
    Enlarged padding, bolder weight, 3D gold glow shadow.
    The most eye-catching element on the navbar.
-═══════════════════════════════════════════════════════════════ */
+ ========================================================================= */
 .nyn-navbar-cta-wrapper {
   display: none;
   flex-shrink: 0;
@@ -193,7 +193,7 @@
   text-transform: uppercase;
   cursor: pointer;
 
-  /* ── 3D gold glow ── */
+  /* -- 3D gold glow -- */
   box-shadow:
     0 2px 10px rgba(197, 168, 128, 0.35),
     0 6px 24px rgba(197, 168, 128, 0.18),
@@ -220,9 +220,9 @@
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
+/* =========================================================================
    HAMBURGER TOGGLE — Mobile Only (<992px)
-═══════════════════════════════════════════════════════════════ */
+ ========================================================================= */
 .nyn-navbar-toggle {
   display: flex;
   align-items: center;
@@ -252,45 +252,12 @@
 }
 
 
-/* ═══════════════════════════════════════════════════════════════
-  text-decoration: none;
-  text-transform: uppercase;
-  box-shadow:
-    0 4px 18px rgba(197, 168, 128, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
+/* =========================================================================
+   RESPONSIVE BREAKPOINTS & MOBILE DRAWER
+ ========================================================================= */
 
-.nyn-mobile-cta:hover {
-  background: #d6c09a !important;
-  color: #050505 !important;
-  transform: translateY(-2px);
-  box-shadow:
-    0 6px 24px rgba(197, 168, 128, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-}
-
-
-/* ── Footer credit ── */
-.nyn-mobile-footer {
-  position: absolute;
-  bottom: clamp(1.5rem, 4vh, 2.5rem);
-  left: clamp(28px, 8vw, 64px);
-  font-size: clamp(9px, 1.2vw, 11px);
-  font-weight: 200;
-  letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.12);
-  text-transform: uppercase;
-  margin: 0;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-═══════════════════════════════════════════════════════════════ */
-
-/* ── Tablet (768–991px) ── */
-@media (max-width: 991px) and (min-width: 768px) {
+/* -- Mobile & Tablet Collapsed Menu Drawer (<=991px) -- */
+@media (max-width: 991px) {
   .nyn-navbar {
     padding: clamp(14px, 2vh, 22px) clamp(20px, 4vw, 40px);
   }
@@ -302,9 +269,95 @@
   .nyn-navbar-brand-en {
     font-size: 9px;
   }
+
+  .nyn-navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(5, 5, 5, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 24px 40px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+
+  .nyn-navbar-collapse.show {
+    opacity: 1;
+    visibility: visible;
+    display: flex !important;
+  }
+
+  .nyn-navbar-links {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px !important;
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .nyn-navbar-link {
+    font-size: clamp(1.2rem, 4vw, 1.6rem) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    padding: 6px 16px !important;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.35s ease;
+  }
+
+  .nyn-navbar-link:hover,
+  .nyn-navbar-link--active {
+    color: #C5A880 !important;
+    text-shadow: 0 0 15px rgba(197, 168, 128, 0.5);
+  }
+
+  .nyn-mobile-cta-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 24px;
+  }
+
+  .nyn-mobile-cta {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+    background: #C5A880 !important;
+    color: #0a0a0a !important;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 12px 24px;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow:
+      0 4px 18px rgba(197, 168, 128, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nyn-mobile-cta:hover {
+    background: #d6c09a !important;
+    color: #050505 !important;
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 24px rgba(197, 168, 128, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
 }
 
-/* ── Mobile (≤767px) ── */
+/* -- Mobile (<=767px) -- */
 @media (max-width: 767px) {
   .nyn-navbar {
     padding: clamp(14px, 2.2vh, 20px) clamp(16px, 4vw, 24px);
@@ -323,32 +376,9 @@
   .nyn-navbar-toggle {
     padding: 4px;
   }
-
-  /* ── Mobile overlay fine-tuning ── */
-  .nyn-mobile-overlay {
-    padding: 100px 24px 60px;
-  }
-
-  .nyn-mobile-links {
-    gap: clamp(1.3rem, 3.5vh, 1.8rem);
-  }
-
-  .nyn-mobile-link {
-    font-size: clamp(1.5rem, 5.5vw, 1.9rem);
-  }
-
-  .nyn-mobile-link:hover,
-  .nyn-mobile-link--active {
-    transform: translateX(14px);
-  }
-
-  .nyn-mobile-cta {
-    font-size: clamp(0.8rem, 3.2vw, 0.95rem);
-    padding: 0.9em 2.4em;
-  }
 }
 
-/* ── Ultra-wide (≥1600px) ── */
+/* -- Ultra-wide (>=1600px) -- */
 @media (min-width: 1600px) {
   .nyn-navbar {
     padding: 28px 80px;
